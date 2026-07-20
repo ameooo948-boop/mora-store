@@ -1,0 +1,352 @@
+/* ===========================
+   Root Variables
+=========================== */
+
+:root {
+
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+
+    --dark: #111827;
+
+    --sidebar-bg: #1e293b;
+
+    --body-bg: #f1f5f9;
+
+    --card-bg: #ffffff;
+
+    --border: #e2e8f0;
+
+    --text: #334155;
+
+    --muted: #94a3b8;
+
+    --radius: 14px;
+
+    --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+
+}
+
+/* ===========================
+   General
+=========================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+
+    background: var(--body-bg);
+
+    color: var(--text);
+
+    font-family: "Inter", sans-serif;
+
+}
+
+a {
+
+    text-decoration: none;
+
+}
+
+.wrapper {
+
+    display: flex;
+
+}
+
+.main {
+
+    flex: 1;
+
+    margin-left: 260px;
+
+    min-height: 100vh;
+
+}
+
+.content {
+
+    padding: 35px;
+
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+.sidebar {
+
+    width: 260px;
+
+    position: fixed;
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    background: var(--sidebar-bg);
+
+    overflow-y: auto;
+
+}
+
+.sidebar-header {
+
+    height: 75px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: white;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+}
+
+.sidebar-menu {
+
+    list-style: none;
+
+    padding: 25px 15px;
+
+}
+
+.sidebar-menu li {
+
+    margin-bottom: 8px;
+
+}
+
+.sidebar-menu a {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    color: #cbd5e1;
+
+    padding: 13px 18px;
+
+    border-radius: 12px;
+
+    transition: .25s;
+
+}
+
+.sidebar-menu a:hover {
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+.sidebar-menu a.active {
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+.sidebar-menu i {
+
+    font-size: 18px;
+
+}
+
+/* ===========================
+   Navbar
+=========================== */
+
+.navbar-custom {
+
+    height: 75px;
+
+    background: white;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 35px;
+
+    box-shadow: var(--shadow);
+
+}
+
+/* ===========================
+   Cards
+=========================== */
+
+.card {
+
+    border: none;
+
+    border-radius: var(--radius);
+
+    background: var(--card-bg);
+
+    box-shadow: var(--shadow);
+
+}
+
+.card-header {
+
+    background: white;
+
+    border: none;
+
+    padding: 20px;
+
+    font-weight: 600;
+
+}
+
+.card-body {
+
+    padding: 25px;
+
+}
+
+/* ===========================
+   Table
+=========================== */
+
+.table {
+
+    margin: 0;
+
+}
+
+.table thead th {
+
+    background: #f8fafc;
+
+    color: #475569;
+
+    border: none;
+
+    padding: 16px;
+
+    font-weight: 600;
+
+}
+
+.table tbody td {
+
+    padding: 18px 16px;
+
+    vertical-align: middle;
+
+}
+
+.table tbody tr {
+
+    transition: .2s;
+
+}
+
+.table tbody tr:hover {
+
+    background: #f8fafc;
+
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+.btn {
+
+    border-radius: 10px;
+
+    padding: 10px 18px;
+
+    font-weight: 500;
+
+}
+
+.btn-primary {
+
+    background: var(--primary);
+
+    border: none;
+
+}
+
+.btn-primary:hover {
+
+    background: var(--primary-hover);
+
+}
+
+/* ===========================
+   Forms
+=========================== */
+
+.form-control,
+
+.form-select {
+
+    border-radius: 10px;
+
+    padding: 11px 15px;
+
+    border: 1px solid var(--border);
+
+}
+
+.form-control:focus,
+
+.form-select:focus {
+
+    border-color: var(--primary);
+
+    box-shadow: none;
+
+}
+
+.badge {
+
+    padding: 7px 12px;
+
+    border-radius: 8px;
+
+    font-weight: 500;
+
+}
+
+.footer {
+
+    padding: 20px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+}
