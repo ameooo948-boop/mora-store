@@ -36,7 +36,7 @@
 
         <li>
 
-            {{-- <a href="{{ route('admin.brands.index') }}" class="{{ request()->routeIs('admin.brands.*') ? 'active' : '' }}"> --}}
+            <a href="{{ route('admin.brands.index') }}" class="{{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
 
                 <i class="bi bi-cart3"></i>
 
