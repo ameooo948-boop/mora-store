@@ -80,9 +80,11 @@ class CategoryService
         return $this->categoryRepository->getParents();
     }
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator
-    {
-        return $this->categoryRepository->paginate($perPage, $search);
+    public function paginate(
+        ?string $search = null,
+        ?int $status = null,
+    ): LengthAwarePaginator {
+        return $this->categoryRepository->paginate($search, $status);
     }
 
     public function getStatistics(): array

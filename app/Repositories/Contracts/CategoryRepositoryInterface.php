@@ -17,7 +17,10 @@ interface CategoryRepositoryInterface
 
     public function getParents();
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator;
+    public function paginate(
+        ?string $search = null,
+        ?int $status = null,
+    ): LengthAwarePaginator;
 
     public function getStatistics(): array;
 

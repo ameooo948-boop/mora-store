@@ -21,12 +21,42 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = $this->categoryService->paginate(
-            search: $request->search
+
+            $request->search,
+
+            $request->filled('status')
+                ? (int) $request->status
+                : null,
+
         );
 
         $statistics = $this->categoryService->getStatistics();
 
-        return view('admin.categories.index', compact('categories', 'statistics'));
+        return view(
+
+            'admin.categories.index',
+
+            compact(
+
+                'categories',
+
+                'statistics',
+
+            )
+
+        );
+    }
+
+    public function show(Category $category)
+    {
+        $category->load([
+            'parent',
+        ])->loadCount('products');
+
+        return view(
+            'admin.categories.show',
+            compact('category')
+        );
     }
 
     /**
@@ -90,7 +120,7 @@ class CategoryController extends Controller
         }
 
         return redirect()
-            ->route('categories.index')
+            ->route('admin.categories.index')
             ->with('success', 'Category deleted successfully.');
     }
 }

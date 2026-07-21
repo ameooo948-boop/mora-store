@@ -159,35 +159,75 @@
 
                     </td>
 
-                    <td>
+                    <td class="text-center">
 
-                        <a href="{{ route('admin.users.show', $user) }}" class="btn btn-info btn-sm">
+                        <div class="dropdown">
 
-                            View
+                            <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
 
-                        </a>
-
-                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning btn-sm">
-
-                            Edit
-
-                        </a>
-
-                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
-
-                            @csrf
-
-                            @method('DELETE')
-
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this user?')">
-
-                                Delete
+                                <i class="bi bi-three-dots-vertical"></i>
 
                             </button>
 
-                        </form>
+                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                <li>
+
+                                    <a href="{{ route('admin.users.show', $user) }}" class="dropdown-item">
+
+                                        <i class="bi bi-eye me-2"></i>
+
+                                        View
+
+                                    </a>
+
+                                </li>
+
+                                <li>
+
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="dropdown-item">
+
+                                        <i class="bi bi-pencil-square me-2"></i>
+
+                                        Edit
+
+                                    </a>
+
+                                </li>
+
+                                <li>
+
+                                    <hr class="dropdown-divider">
+
+                                </li>
+
+                                <li>
+
+                                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="delete-form">
+
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit" class="dropdown-item text-danger">
+
+                                            <i class="bi bi-trash me-2"></i>
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </li>
+
+                            </ul>
+
+                        </div>
 
                     </td>
+
+                </tr>
+
 
                 </tr>
 

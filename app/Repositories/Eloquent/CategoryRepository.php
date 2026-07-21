@@ -32,25 +32,39 @@ class CategoryRepository implements CategoryRepositoryInterface
             ->get();
     }
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator
-    {
+    public function paginate(
+        ?string $search = null,
+        ?int $status = null,
+    ):LengthAwarePaginator {
         return Category::query()
-            ->with('parent')
+
+            ->withCount('products')
+
             ->when($search, function ($query) use ($search) {
+
                 $query->where('name', 'like', "%{$search}%");
             })
-            ->orderBy('sort_order', 'asc')
-            ->paginate($perPage)
+
+            ->when(! is_null($status), function ($query) use ($status) {
+
+                $query->where('status', $status);
+            })
+
+            ->latest()
+
+            ->paginate(10)
+
             ->withQueryString();
     }
 
     public function getStatistics(): array
-{
+    {
         return [
             'total' => Category::count(),
             'active' => Category::where('status', true)->count(),
             'inactive' => Category::where('status', false)->count(),
             'main' => Category::whereNull('parent_id')->count(),
+            'with_products' => Category::has('products')->count(),
         ];
     }
 

@@ -14,11 +14,15 @@
         <div>
 
             <h3 class="fw-bold mb-1">
+
                 Categories
+
             </h3>
 
             <p class="text-muted mb-0">
+
                 Manage all categories
+
             </p>
 
         </div>
@@ -35,13 +39,17 @@
 
     <div class="row mb-4">
 
-        <div class="col-md-3">
+        <div class="col">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <small class="text-muted">Total Categories</small>
+                    <small class="text-muted">
+
+                        Total Categories
+
+                    </small>
 
                     <h2 class="fw-bold mt-2">
 
@@ -55,13 +63,17 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <small class="text-muted">Active</small>
+                    <small class="text-muted">
+
+                        Active
+
+                    </small>
 
                     <h2 class="fw-bold text-success mt-2">
 
@@ -75,13 +87,17 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <small class="text-muted">Inactive</small>
+                    <small class="text-muted">
+
+                        Inactive
+
+                    </small>
 
                     <h2 class="fw-bold text-danger mt-2">
 
@@ -95,15 +111,43 @@
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col">
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <small class="text-muted">Main Categories</small>
+                    <small class="text-muted">
+
+                        With Products
+
+                    </small>
 
                     <h2 class="fw-bold text-primary mt-2">
+
+                        {{ $statistics['with_products'] }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center">
+
+                    <small class="text-muted">
+
+                        Main Categories
+
+                    </small>
+
+                    <h2 class="fw-bold text-warning mt-2">
 
                         {{ $statistics['main'] }}
 
@@ -117,8 +161,9 @@
 
     </div>
 
+
     {{-- Search Card --}}
-    <div class="card mb-4">
+    <div class="card shadow-sm border-0 mb-4">
 
         <div class="card-body">
 
@@ -126,10 +171,35 @@
 
                 <div class="row g-3">
 
-                    <div class="col-md-10">
+                    <div class="col-md-8">
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                            placeholder="Search category...">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by category name...">
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <select name="status" class="form-select">
+
+                            <option value="">
+
+                                All Status
+
+                            </option>
+
+                            <option value="1" @selected(request('status')==='1' )>
+
+                                Active
+
+                            </option>
+
+                            <option value="0" @selected(request('status')==='0' )>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
 
                     </div>
 
@@ -137,9 +207,9 @@
 
                         <button class="btn btn-primary">
 
-                            <i class="bi bi-search"></i>
+                            <i class="bi bi-search me-2"></i>
 
-                            Search
+                            Filter
 
                         </button>
 
@@ -192,7 +262,11 @@
 
                         <td>
 
-                            {{ $category->id }}
+                            <span class="badge bg-light text-dark">
+
+                                #{{ $category->id }}
+
+                            </span>
 
                         </td>
 
@@ -200,13 +274,11 @@
 
                             @if($category->image)
 
-                            <img src="{{ $category->image_url }}" width="50" height="50" class="rounded"
-                                style="object-fit:cover">
+                            <img src="{{ $category->image_url }}" class="rounded border" width="60" height="60" style="object-fit:cover;" alt="{{ $category->name }}">
 
                             @else
 
-                            <div class="bg-light rounded d-flex justify-content-center align-items-center"
-                                style="width:50px;height:50px;">
+                            <div class="border rounded d-flex align-items-center justify-content-center bg-light" style="width:60px;height:60px;">
 
                                 <i class="bi bi-image text-secondary"></i>
 
@@ -218,17 +290,43 @@
 
                         <td>
 
-                            <strong>
+                            <div class="fw-semibold">
 
                                 {{ $category->name }}
 
-                            </strong>
+                            </div>
+
+                            @if($category->description)
+
+                            <small class="text-muted">
+
+                                {{ \Illuminate\Support\Str::limit($category->description, 50) }}
+
+                            </small>
+
+                            @endif
 
                         </td>
 
                         <td>
 
-                            {{ $category->parent?->name ?? '-' }}
+                            @if($category->parent)
+
+                            <span class="badge bg-info">
+
+                                {{ $category->parent->name }}
+
+                            </span>
+
+                            @else
+
+                            <span class="badge bg-secondary">
+
+                                Main Category
+
+                            </span>
+
+                            @endif
 
                         </td>
 
@@ -256,17 +354,21 @@
 
                         <td>
 
-                            {{ $category->sort_order }}
+                            <span class="badge bg-dark">
+
+                                {{ $category->sort_order }}
+
+                            </span>
 
                         </td>
 
                         <td>
 
-                            {{ $category->created_at->format('d M Y') }}
+                            {{ $category->created_at->format('Y-m-d') }}
 
                         </td>
 
-                        <td>
+                        <td class="text-center">
 
                             <div class="dropdown">
 
@@ -280,7 +382,19 @@
 
                                     <li>
 
-                                        <a class="dropdown-item" href="{{ route('admin.categories.edit',$category) }}">
+                                        <a href="{{ route('admin.categories.show', $category) }}" class="dropdown-item">
+
+                                            <i class="bi bi-eye me-2"></i>
+
+                                            View
+
+                                        </a>
+
+                                    </li>
+
+                                    <li>
+
+                                        <a href="{{ route('admin.categories.edit', $category) }}" class="dropdown-item">
 
                                             <i class="bi bi-pencil-square me-2"></i>
 
@@ -292,14 +406,18 @@
 
                                     <li>
 
-                                        <form action="{{ route('admin.categories.destroy',$category) }}" method="POST"
-                                            class="delete-form">
+                                        <hr class="dropdown-divider">
+
+                                    </li>
+
+                                    <li>
+
+                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="delete-form">
 
                                             @csrf
-
                                             @method('DELETE')
 
-                                            <button class="dropdown-item text-danger">
+                                            <button type="submit" class="dropdown-item text-danger">
 
                                                 <i class="bi bi-trash me-2"></i>
 
@@ -327,13 +445,19 @@
 
                             <div class="text-center py-5">
 
-                                <i class="bi bi-folder display-3 text-secondary"></i>
+                                <i class="bi bi-folder display-4 text-secondary"></i>
 
                                 <h5 class="mt-3">
 
                                     No Categories Found
 
                                 </h5>
+
+                                <p class="text-muted mb-0">
+
+                                    There are no categories matching your search.
+
+                                </p>
 
                             </div>
 
@@ -347,58 +471,58 @@
 
             </table>
 
+            @if($categories->hasPages())
+
+            <div class="card-footer">
+
+                {{ $categories->links() }}
+
+            </div>
+
+            @endif
+
         </div>
-
-        @if($categories->hasPages())
-
-        <div class="card-footer">
-
-            {{ $categories->links() }}
-
-        </div>
-
-        @endif
 
         @push('scripts')
 
         <script>
             document.querySelectorAll('.delete-form').forEach(form => {
-  
-               form.addEventListener('submit', function(e){
 
-                e.preventDefault();
+                form.addEventListener('submit', function(e) {
 
-                Swal.fire({
+                    e.preventDefault();
 
-                    title: 'Delete Category?',
+                    Swal.fire({
 
-                    text: "You won't be able to undo this action.",
+                        title: 'Delete Category?',
 
-                    icon: 'warning',
+                        text: "You won't be able to undo this action.",
 
-                    showCancelButton: true,
+                        icon: 'warning',
 
-                    confirmButtonColor: '#dc3545',
+                        showCancelButton: true,
 
-                    cancelButtonColor: '#6c757d',
+                        confirmButtonColor: '#dc3545',
 
-                    confirmButtonText: 'Yes, Delete',
+                        cancelButtonColor: '#6c757d',
 
-                    cancelButtonText: 'Cancel'
+                        confirmButtonText: 'Yes, Delete',
 
-                }).then((result)=>{
+                        cancelButtonText: 'Cancel'
 
-                    if(result.isConfirmed){
+                    }).then((result) => {
 
-                        form.submit();
+                        if (result.isConfirmed) {
 
-                    }
+                            form.submit();
+
+                        }
+
+                    });
 
                 });
 
             });
-
-        });
 
         </script>
 
