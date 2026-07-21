@@ -46,16 +46,13 @@ class ProductRepository implements ProductRepositoryInterface
                 });
             })
 
-            ->when($category, function ($query) use ($category) {
-
+            ->when($category !== null, function ($query) use ($category) {
                 $query->where('category_id', $category);
             })
 
-            ->when(! is_null($status), function ($query) use ($status) {
-
+            ->when($status !== null, function ($query) use ($status) {
                 $query->where('status', $status);
             })
-
             ->latest()
 
             ->paginate(10)

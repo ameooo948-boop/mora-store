@@ -15,7 +15,7 @@ interface BrandRepositoryInterface
 
     public function delete(Brand $brand): bool;
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator;
+    public function paginate(?int $status = null, ?string $search = null): LengthAwarePaginator;
 
     public function getStatistics(): array;
 

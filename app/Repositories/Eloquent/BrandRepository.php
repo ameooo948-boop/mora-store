@@ -25,23 +25,40 @@ class BrandRepository implements BrandRepositoryInterface
         return $brand->delete();
     }
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator
+    public function paginate(?int $status = null, ?string $search = null): LengthAwarePaginator
     {
         return Brand::query()
+
+            ->withCount('products')
+
             ->when($search, function ($query) use ($search) {
+
                 $query->where('name', 'like', "%{$search}%");
             })
-            ->orderBy('sort_order', 'asc')
-            ->paginate($perPage)
+
+            ->when($status !== null, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+
+            ->latest()
+
+            ->paginate(10)
+
             ->withQueryString();
     }
 
     public function getStatistics(): array
     {
         return [
+
             'total' => Brand::count(),
+
             'active' => Brand::where('status', true)->count(),
+
             'inactive' => Brand::where('status', false)->count(),
+
+            'with_products' => Brand::has('products')->count(),
+
         ];
     }
 

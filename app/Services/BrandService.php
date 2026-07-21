@@ -57,21 +57,21 @@ class BrandService
     {
         return DB::transaction(function () use ($brand) {
 
-            if ($brand->logo) {
-                $this->storageService->delete($brand->logo);
-            }
-
             if ($brand->products()->exists()) {
                 return false;
+            }
+
+            if ($brand->logo) {
+                $this->storageService->delete($brand->logo);
             }
 
             return $this->brandRepository->delete($brand);
         });
     }
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator
+    public function paginate(?int $status = null, ?string $search = null): LengthAwarePaginator
     {
-        return $this->brandRepository->paginate($perPage, $search);
+        return $this->brandRepository->paginate($status, $search);
     }
 
     public function getStatistics(): array

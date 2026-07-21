@@ -78,7 +78,7 @@ class ProductService
         ?int $category = null,
         ?int $status = null,
     ): LengthAwarePaginator {
-        return $this->productRepository->paginate($category, $status, $search);
+        return $this->productRepository->paginate($search, $category, $status);
     }
 
     public function getStatistics(): array

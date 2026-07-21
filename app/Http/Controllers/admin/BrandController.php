@@ -20,13 +20,35 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
+        $status = $request->filled('status')
+            ? (int) $request->status
+            : null;
+
+
         $brands = $this->brandService->paginate(
-            search: $request->search
+            $status,
+            $request->search,
         );
 
         $statistics = $this->brandService->getStatistics();
 
-        return view('admin.brands.index', compact('brands', 'statistics'));
+        return view(
+            'admin.brands.index',
+            compact(
+                'brands',
+                'statistics',
+            )
+        );
+    }
+
+    public function show(Brand $brand)
+    {
+        $brand->loadCount('products');
+
+        return view(
+            'admin.brands.show',
+            compact('brand')
+        );
     }
 
     /**
@@ -80,12 +102,12 @@ class BrandController extends Controller
     {
         if (! $this->brandService->delete($brand)) {
             return redirect()
-                ->route('admin.categories.index')
+                ->route('admin.brands.index')
                 ->with('error', 'Cannot delete Brand because it contains products.');
         }
 
         return redirect()
-            ->route('admin.categories.index')
+            ->route('admin.brands.index')
             ->with('success', 'Brand deleted successfully.');
     }
 }

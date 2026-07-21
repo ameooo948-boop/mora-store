@@ -25,12 +25,21 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        $status = $request->input('status');
+
+        $status = $request->filled('status')
+            ? (int) $request->status
+            : null;
+
+
         $products = $this->productService->paginate(
+
             $request->search,
             $request->category,
-            $request->filled('status')
-                ? (int) $request->status
-                : null,
+            $status,
+
+
+
         );
 
         $statistics = $this->productService->getStatistics();

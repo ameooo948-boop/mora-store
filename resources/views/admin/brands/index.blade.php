@@ -14,11 +14,15 @@
         <div>
 
             <h3 class="fw-bold mb-1">
+
                 Brands
+
             </h3>
 
             <p class="text-muted mb-0">
+
                 Manage all brands
+
             </p>
 
         </div>
@@ -35,13 +39,17 @@
 
     <div class="row mb-4">
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 
             <div class="card shadow-sm border-0">
 
                 <div class="card-body">
 
-                    <small class="text-muted">Total Brands</small>
+                    <small class="text-muted">
+
+                        Total Brands
+
+                    </small>
 
                     <h2 class="fw-bold mt-2">
 
@@ -55,13 +63,17 @@
 
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 
             <div class="card shadow-sm border-0">
 
                 <div class="card-body">
 
-                    <small class="text-muted">Active</small>
+                    <small class="text-muted">
+
+                        Active
+
+                    </small>
 
                     <h2 class="fw-bold text-success mt-2">
 
@@ -75,13 +87,17 @@
 
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
 
             <div class="card shadow-sm border-0">
 
                 <div class="card-body">
 
-                    <small class="text-muted">Inactive</small>
+                    <small class="text-muted">
+
+                        Inactive
+
+                    </small>
 
                     <h2 class="fw-bold text-danger mt-2">
 
@@ -95,10 +111,34 @@
 
         </div>
 
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+
+                        With Products
+
+                    </small>
+
+                    <h2 class="fw-bold text-primary mt-2">
+
+                        {{ $statistics['with_products'] }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
     {{-- Search Card --}}
-    <div class="card mb-4">
+    <div class="card shadow-sm border-0 mb-4">
 
         <div class="card-body">
 
@@ -106,9 +146,35 @@
 
                 <div class="row g-3">
 
-                    <div class="col-md-10">
+                    <div class="col-md-8">
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search brand...">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by brand name...">
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <select name="status" class="form-select">
+
+                            <option value="">
+
+                                All Status
+
+                            </option>
+
+                            <option value="1" @selected(request('status')==='1' )>
+
+                                Active
+
+                            </option>
+
+                            <option value="0" @selected(request('status')==='0' )>
+
+                                Inactive
+
+                            </option>
+
+                        </select>
 
                     </div>
 
@@ -116,9 +182,9 @@
 
                         <button class="btn btn-primary">
 
-                            <i class="bi bi-search"></i>
+                            <i class="bi bi-search me-2"></i>
 
-                            Search
+                            Filter
 
                         </button>
 
@@ -133,29 +199,49 @@
     </div>
 
     {{-- Table --}}
-    <div class="card">
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+
+                Brands
+
+            </h5>
+
+            <small class="text-muted">
+
+                Showing {{ $brands->total() }} Brands
+
+            </small>
+
+        </div>
 
         <div class="table-responsive">
 
-            <table class="table align-middle table-hover mb-0">
+            <table class="table align-middle mb-0">
 
-                <thead>
+                <thead class="table-light">
 
                     <tr>
 
-                        <th>#</th>
+                        <th>ID</th>
 
                         <th>Logo</th>
 
-                        <th>Name</th>
+                        <th>Brand</th>
+
+                        <th>Products</th>
 
                         <th>Status</th>
 
-                        <th>Order</th>
-
                         <th>Created</th>
 
-                        <th width="80"></th>
+                        <th class="text-center" width="80">
+
+                            Actions
+
+                        </th>
 
                     </tr>
 
@@ -169,7 +255,11 @@
 
                         <td>
 
-                            {{ $brand->id }}
+                            <span class="badge bg-light text-dark">
+
+                                #{{ $brand->id }}
+
+                            </span>
 
                         </td>
 
@@ -177,11 +267,11 @@
 
                             @if($brand->logo)
 
-                            <img src="{{ $brand->logo_url }}" class="rounded-circle" width="45" height="45" class="rounded" style="object-fit:cover">
+                            <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}" class="rounded border" width="60" height="60" style="object-fit:cover;">
 
                             @else
 
-                            <div class="bg-light rounded d-flex justify-content-center align-items-center" style="width:50px;height:50px;">
+                            <div class="border rounded d-flex align-items-center justify-content-center bg-light" style="width:60px;height:60px;">
 
                                 <i class="bi bi-image text-secondary"></i>
 
@@ -193,11 +283,43 @@
 
                         <td>
 
-                            <strong>
+                            <div class="fw-semibold">
 
                                 {{ $brand->name }}
 
-                            </strong>
+                            </div>
+
+                            @if($brand->description)
+
+                            <small class="text-muted">
+
+                                {{ Str::limit($brand->description, 50) }}
+
+                            </small>
+
+                            @endif
+
+                        </td>
+
+                        <td>
+
+                            @if($brand->products_count)
+
+                            <span class="badge bg-primary">
+
+                                {{ $brand->products_count }}
+
+                            </span>
+
+                            @else
+
+                            <span class="badge bg-secondary">
+
+                                0
+
+                            </span>
+
+                            @endif
 
                         </td>
 
@@ -225,17 +347,11 @@
 
                         <td>
 
-                            {{ $brand->sort_order }}
+                            {{ $brand->created_at->format('Y-m-d') }}
 
                         </td>
 
-                        <td>
-
-                            {{ $brand->created_at->format('d M Y') }}
-
-                        </td>
-
-                        <td>
+                        <td class="text-center">
 
                             <div class="dropdown">
 
@@ -249,7 +365,19 @@
 
                                     <li>
 
-                                        <a class="dropdown-item" href="{{ route('admin.brands.edit',$brand) }}">
+                                        <a href="{{ route('admin.brands.show', $brand) }}" class="dropdown-item">
+
+                                            <i class="bi bi-eye me-2"></i>
+
+                                            View
+
+                                        </a>
+
+                                    </li>
+
+                                    <li>
+
+                                        <a href="{{ route('admin.brands.edit', $brand) }}" class="dropdown-item">
 
                                             <i class="bi bi-pencil-square me-2"></i>
 
@@ -261,13 +389,18 @@
 
                                     <li>
 
-                                        <form action="{{ route('admin.brands.destroy',$brand) }}" method="POST" class="delete-form">
+                                        <hr class="dropdown-divider">
+
+                                    </li>
+
+                                    <li>
+
+                                        <form action="{{ route('admin.brands.destroy', $brand) }}" method="POST" class="delete-form">
 
                                             @csrf
-
                                             @method('DELETE')
 
-                                            <button class="dropdown-item text-danger">
+                                            <button type="submit" class="dropdown-item text-danger">
 
                                                 <i class="bi bi-trash me-2"></i>
 
@@ -295,13 +428,19 @@
 
                             <div class="text-center py-5">
 
-                                <i class="bi bi-folder display-3 text-secondary"></i>
+                                <i class="bi bi-tags display-4 text-secondary"></i>
 
                                 <h5 class="mt-3">
 
                                     No Brands Found
 
                                 </h5>
+
+                                <p class="text-muted mb-0">
+
+                                    There are no brands matching your search.
+
+                                </p>
 
                             </div>
 
@@ -327,52 +466,56 @@
 
         @endif
 
-        @push('scripts')
+    </div>
 
-        <script>
-            document.querySelectorAll('.delete-form').forEach(form => {
+</div>
 
-                form.addEventListener('submit', function(e) {
+@push('scripts')
 
-                    e.preventDefault();
+<script>
+    document.querySelectorAll('.delete-form').forEach(form => {
 
-                    Swal.fire({
+        form.addEventListener('submit', function(e) {
 
-                        title: 'Delete Brand?',
+            e.preventDefault();
 
-                        text: "You won't be able to undo this action.",
+            Swal.fire({
 
-                        icon: 'warning',
+                title: 'Delete Brand?',
 
-                        showCancelButton: true,
+                text: "You won't be able to undo this action.",
 
-                        confirmButtonColor: '#dc3545',
+                icon: 'warning',
 
-                        cancelButtonColor: '#6c757d',
+                showCancelButton: true,
 
-                        confirmButtonText: 'Yes, Delete',
+                confirmButtonColor: '#dc3545',
 
-                        cancelButtonText: 'Cancel'
+                cancelButtonColor: '#6c757d',
 
-                    }).then((result) => {
+                confirmButtonText: 'Yes, Delete',
 
-                        if (result.isConfirmed) {
+                cancelButtonText: 'Cancel'
 
-                            form.submit();
+            }).then((result) => {
 
-                        }
+                if (result.isConfirmed) {
 
-                    });
+                    form.submit();
 
-                });
+                }
 
             });
 
-        </script>
+        });
 
-        @endpush
+    });
 
-    </div>
+</script>
+
+@endpush
+
+</div>
 
 </div>
 
