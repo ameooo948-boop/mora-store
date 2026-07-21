@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use App\Services\StorageService;
 
 class CategoryService
 {

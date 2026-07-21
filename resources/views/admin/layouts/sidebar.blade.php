@@ -48,7 +48,7 @@
 
         <li>
 
-            {{-- <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}"> --}}
+            <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
 
                 <i class="bi bi-box-seam"></i>
 

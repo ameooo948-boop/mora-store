@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Traits\HasSlug;
@@ -57,8 +56,8 @@ class Category extends Model
         );
     }
 
-    // public function products(): HasMany
-    // {
-    //     return $this->hasMany(Product::class);
-    // }
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }
