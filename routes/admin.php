@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -19,3 +20,15 @@ Route::delete(
     'product-images/{productImage}',
     [ProductImageController::class, 'destroy']
 )->name('product-images.destroy');
+
+Route::get('/orders', [AdminOrderController::class, 'index'])
+    ->name('orders.index');
+
+Route::get('/orders/{order}', [AdminOrderController::class, 'show'])
+    ->name('orders.show');
+
+
+Route::patch(
+    'orders/{order}/status',
+    [AdminOrderController::class, 'updateStatus']
+)->name('orders.status');

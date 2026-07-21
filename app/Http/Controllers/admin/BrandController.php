@@ -24,7 +24,6 @@ class BrandController extends Controller
             ? (int) $request->status
             : null;
 
-
         $brands = $this->brandService->paginate(
             $status,
             $request->search,
