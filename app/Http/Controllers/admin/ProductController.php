@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
+use App\Models\Category;
 use App\Models\Product;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\BrandRepositoryInterface;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 
@@ -25,15 +26,39 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = $this->productService->paginate(
-            search: $request->search
+            $request->search,
+            $request->category,
+            $request->filled('status')
+                ? (int) $request->status
+                : null,
         );
 
         $statistics = $this->productService->getStatistics();
 
-        return view('admin.products.index', compact(
-            'products',
-            'statistics'
-        ));
+        $categories = Category::orderBy('name')->get();
+
+        return view(
+            'admin.products.index',
+            compact(
+                'products',
+                'statistics',
+                'categories',
+            )
+        );
+    }
+
+    public function show(Product $product)
+    {
+        $product->load([
+            'category',
+            'brand',
+            'images',
+        ]);
+
+        return view(
+            'admin.products.show',
+            compact('product')
+        );
     }
 
     /**
@@ -77,7 +102,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update( UpdateProductRequest $request, Product $product ) 
+    public function update(UpdateProductRequest $request, Product $product)
     {
         $this->productService->update(
             $product,

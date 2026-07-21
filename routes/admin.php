@@ -11,9 +11,9 @@ Route::resource('users', UserController::class);
 
 Route::patch('users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
 
-Route::resource('categories', CategoryController::class)->except('show');
-Route::resource('brands', BrandController::class)->except('show');
-Route::resource('products', ProductController::class)->except('show');
+Route::resource('categories', CategoryController::class);
+Route::resource('brands', BrandController::class);
+Route::resource('products', ProductController::class);
 
 Route::delete(
     'product-images/{productImage}',

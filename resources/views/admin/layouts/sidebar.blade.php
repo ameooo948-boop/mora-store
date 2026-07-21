@@ -72,9 +72,9 @@
 
         <li>
 
-            <a href="#">
+            <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('users.products.*') ? 'active' : '' }}">
 
-                <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('users.products.*') ? 'active' : '' }}">
+                <i class="bi bi-people"></i>
 
                 Users
 

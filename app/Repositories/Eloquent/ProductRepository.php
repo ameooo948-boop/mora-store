@@ -24,22 +24,42 @@ class ProductRepository implements ProductRepositoryInterface
         return $product->delete();
     }
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator
-    {
+    public function paginate(
+        ?string $search = null,
+        ?int $category = null,
+        ?int $status = null,
+    ): LengthAwarePaginator {
         return Product::query()
+
             ->with([
                 'category',
                 'brand',
                 'images',
             ])
+
             ->when($search, function ($query) use ($search) {
+
                 $query->where(function ($q) use ($search) {
+
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhere('sku', 'like', "%{$search}%");
                 });
             })
-            ->orderBy('sort_order', 'asc')
-            ->paginate($perPage)
+
+            ->when($category, function ($query) use ($category) {
+
+                $query->where('category_id', $category);
+            })
+
+            ->when(! is_null($status), function ($query) use ($status) {
+
+                $query->where('status', $status);
+            })
+
+            ->latest()
+
+            ->paginate(10)
+
             ->withQueryString();
     }
 
@@ -48,9 +68,15 @@ class ProductRepository implements ProductRepositoryInterface
     public function getStatistics(): array
     {
         return [
+
             'total' => Product::count(),
+
             'active' => Product::where('status', true)->count(),
+
             'inactive' => Product::where('status', false)->count(),
+
+            'out_of_stock' => Product::where('quantity', 0)->count(),
+
         ];
     }
 }

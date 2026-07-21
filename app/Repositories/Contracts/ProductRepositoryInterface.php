@@ -14,7 +14,11 @@ interface ProductRepositoryInterface
 
     public function delete(Product $product): bool;
 
-    public function paginate(int $perPage = 10, ?string $search = null): LengthAwarePaginator;
+    public function paginate(
+        ?string $search = null,
+        ?int $category = null,
+        ?int $status = null,
+    ): LengthAwarePaginator;
 
     public function getStatistics(): array;
 }
