@@ -74,7 +74,7 @@
 
             <a href="#">
 
-                <i class="bi bi-people"></i>
+                <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('users.products.*') ? 'active' : '' }}">
 
                 Users
 
