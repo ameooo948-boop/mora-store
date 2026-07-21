@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CartController;
@@ -7,9 +8,8 @@ use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\OrderController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', function () {
-    return view('welcome');
-})->name('dashboard')->middleware('auth');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home')->middleware('auth');
 
 
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');

@@ -2,133 +2,205 @@
 
 @section('title', 'User Details')
 
+@section('page-title', 'User Details')
+
 @section('content')
 
-<div class="card shadow-sm border-0">
+<div class="container-fluid">
 
-    <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card border-0 shadow-sm">
 
-        <h3 class="card-title mb-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
 
-            User Details
+            <div>
 
-        </h3>
+                <h5 class="mb-1">
 
-        <div>
+                    User Details
 
-            <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning">
+                </h5>
 
-                <i class="bi bi-pencil-square"></i>
+                <small class="text-muted">
 
-                Edit
+                    View user information
 
-            </a>
+                </small>
 
-            <a href="{{ route('admin.users.index') }}" class="btn btn-light">
+            </div>
 
-                Back
+            <div>
 
-            </a>
+                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning">
+
+                    <i class="bi bi-pencil-square me-1"></i>
+
+                    Edit
+
+                </a>
+
+                <a href="{{ route('admin.users.index') }}" class="btn btn-light">
+
+                    <i class="bi bi-arrow-left me-1"></i>
+
+                    Back
+
+                </a>
+
+            </div>
 
         </div>
 
-    </div>
+        <div class="card-body">
 
-    <div class="card-body">
+            <div class="text-center mb-5">
 
-        <div class="row">
+                <div class="rounded-circle bg-primary text-white fw-bold d-inline-flex justify-content-center align-items-center" style="width:100px;height:100px;font-size:40px;">
 
-            <div class="col-md-6 mb-4">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
 
-                <label class="form-label fw-semibold">
+                </div>
 
-                    Name
-
-                </label>
-
-                <div class="form-control bg-light">
+                <h4 class="mt-3 mb-1">
 
                     {{ $user->name }}
 
-                </div>
+                </h4>
 
-            </div>
-
-            <div class="col-md-6 mb-4">
-
-                <label class="form-label fw-semibold">
-
-                    Email
-
-                </label>
-
-                <div class="form-control bg-light">
+                <p class="text-muted mb-0">
 
                     {{ $user->email }}
 
-                </div>
+                </p>
 
             </div>
 
-            <div class="col-md-6 mb-4">
+            <div class="row">
 
-                <label class="form-label fw-semibold">
+                <div class="col-md-6 mb-4">
 
-                    Role
+                    <label class="form-label fw-semibold">
 
-                </label>
+                        Name
 
-                <div>
+                    </label>
 
-                    @foreach ($user->roles as $role)
+                    <div class="form-control bg-light">
 
-                    @php
-                    $badgeClass = match ($role->name) {
-                    'admin' => 'bg-danger',
-                    'customer' => 'bg-primary',
-                    default => 'bg-secondary',
-                    };
-                    @endphp
+                        {{ $user->name }}
 
-                    <span class="badge {{ $badgeClass }}">
-
-                        {{ ucfirst($role->name) }}
-
-                    </span>
-
-                    @endforeach
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="col-md-6 mb-4">
 
-            <div class="col-md-6 mb-4">
+                    <label class="form-label fw-semibold">
 
-                <label class="form-label fw-semibold">
+                        Email
 
-                    Created At
+                    </label>
 
-                </label>
+                    <div class="form-control bg-light">
 
-                <div class="form-control bg-light">
+                        {{ $user->email }}
 
-                    {{ $user->created_at->format('Y-m-d h:i A') }}
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="col-md-6 mb-4">
 
-            <div class="col-md-6 mb-4">
+                    <label class="form-label fw-semibold">
 
-                <label class="form-label fw-semibold">
+                        Roles
 
-                    Updated At
+                    </label>
 
-                </label>
+                    <div>
 
-                <div class="form-control bg-light">
+                        @forelse($user->roles as $role)
 
-                    {{ $user->updated_at->format('Y-m-d h:i A') }}
+                        @php
+
+                        $badgeClass = match ($role->name) {
+
+                        'admin' => 'bg-danger',
+
+                        'vendor' => 'bg-warning text-dark',
+
+                        'user' => 'bg-primary',
+
+                        default => 'bg-secondary',
+
+                        };
+
+                        @endphp
+
+                        <span class="badge {{ $badgeClass }} me-1">
+
+                            {{ ucfirst($role->name) }}
+
+                        </span>
+
+                        @empty
+
+                        <span class="badge bg-secondary">
+
+                            No Role
+
+                        </span>
+
+                        @endforelse
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        User ID
+
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        #{{ $user->id }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        Created At
+
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        {{ $user->created_at->format('M d, Y h:i A') }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        Updated At
+
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        {{ $user->updated_at->format('M d, Y h:i A') }}
+
+                    </div>
 
                 </div>
 

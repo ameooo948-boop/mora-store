@@ -21,4 +21,6 @@ interface ProductRepositoryInterface
     ): LengthAwarePaginator;
 
     public function getStatistics(): array;
+
+    public function latest(int $limit = 8);
 }

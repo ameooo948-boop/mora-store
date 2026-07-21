@@ -21,4 +21,13 @@ class StoreCartRequest extends FormRequest
             'quantity' => ['required', 'integer', 'min:1'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'quantity.required' => 'The quantity is required.',
+            'quantity.integer'  => 'The quantity must be an integer.',
+            'quantity.min'      => 'The quantity must be at least 1.',
+        ];
+    }
 }

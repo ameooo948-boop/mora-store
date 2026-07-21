@@ -96,4 +96,9 @@ class ProductService
 
         return 'PRD-' . str_pad($nextId, 6, '0', STR_PAD_LEFT);
     }
+
+    public function latest(int $limit = 8)
+    {
+        return $this->productRepository->latest($limit);
+    }
 }

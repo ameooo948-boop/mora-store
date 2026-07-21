@@ -35,6 +35,21 @@ class UserService
             ->withQueryString();
     }
 
+    public function getStatistics(): array
+    {
+        return [
+
+            'total' => User::count(),
+
+            'admins' => User::role('admin')->count(),
+
+            'vendor' => User::role('vendor')->count(),
+
+            'customers' => User::role('customer')->count(),
+
+        ];
+    }
+
     public function create(array $data): User
     {
         $user = User::create([

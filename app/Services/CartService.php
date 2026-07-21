@@ -29,10 +29,6 @@ class CartService
                 throw new \Exception('This product is unavailable.');
             }
 
-            if ($quantity > $product->quantity) {
-                throw new \Exception('Not enough stock available.');
-            }
-
             if ($newQuantity > $product->quantity) {
                 throw new \Exception('Not enough stock available.');
             }

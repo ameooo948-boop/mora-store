@@ -25,9 +25,21 @@ class UserController extends Controller
 
         $roles = Role::orderBy('name')->get();
 
+        $statistics = $this->userService->getStatistics();
+
         return view(
             'admin.users.index',
-            compact('users', 'roles')
+            compact('users', 'roles', 'statistics')
+        );
+    }
+
+    public function create()
+    {
+        $roles = Role::orderBy('name')->get();
+
+        return view(
+            'admin.users.create',
+            compact('roles')
         );
     }
 

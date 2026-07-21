@@ -76,4 +76,18 @@ class ProductRepository implements ProductRepositoryInterface
 
         ];
     }
+
+    public function latest(int $limit = 8)
+    {
+        return Product::query()
+            ->with([
+                'category',
+                'brand',
+                'images',
+            ])
+            ->where('status', true)
+            ->latest()
+            ->take($limit)
+            ->get();
+    }
 }
