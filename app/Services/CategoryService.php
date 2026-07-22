@@ -3,17 +3,21 @@
 namespace App\Services;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
+use App\Services\ProductService;
 use App\Services\StorageService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
 
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
-        private readonly StorageService $storageService
+        private readonly StorageService $storageService,
+        private readonly ProductService $productService
     ) {}
 
     public function create(array $data): Category
@@ -90,5 +94,10 @@ class CategoryService
     public function getStatistics(): array
     {
         return $this->categoryRepository->getStatistics();
+    }
+
+    public function getActive(): Collection
+    {
+        return $this->categoryRepository->getActive();
     }
 }

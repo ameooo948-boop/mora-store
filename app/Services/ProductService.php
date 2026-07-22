@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class ProductService
@@ -73,12 +72,21 @@ class ProductService
         });
     }
 
-    public function paginate(
+    public function paginateAdmin(
         ?string $search = null,
         ?int $category = null,
+        ?int $brand = null,
         ?int $status = null,
-    ): LengthAwarePaginator {
-        return $this->productRepository->paginate($search, $category, $status);
+    ) {
+        return $this->productRepository
+            ->paginateAdmin($search, $category, $brand, $status);
+    }
+
+    public function paginateStore(
+        array $filters = []
+    ) {
+        return $this->productRepository
+            ->paginateStore($filters);
     }
 
     public function getStatistics(): array
@@ -100,5 +108,20 @@ class ProductService
     public function latest(int $limit = 8)
     {
         return $this->productRepository->latest($limit);
+    }
+
+    public function find(Product $product)
+    {
+        return $this->productRepository->find($product);
+    }
+
+    public function related(
+        Product $product,
+        int $limit = 4
+    ) {
+        return $this->productRepository->related(
+            $product,
+            $limit
+        );
     }
 }

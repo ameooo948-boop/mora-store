@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\Contracts\BrandRepositoryInterface;
@@ -32,10 +33,11 @@ class ProductController extends Controller
             : null;
 
 
-        $products = $this->productService->paginate(
+        $products = $this->productService->paginateAdmin(
 
             $request->search,
             $request->category,
+            $request->brand,
             $status,
 
 
@@ -46,12 +48,15 @@ class ProductController extends Controller
 
         $categories = Category::orderBy('name')->get();
 
+        $brands = Brand::orderBy('name')->get();
+
         return view(
             'admin.products.index',
             compact(
                 'products',
                 'statistics',
                 'categories',
+                'brands'
             )
         );
     }

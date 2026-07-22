@@ -23,14 +23,17 @@ class CartService
 
             $cartItem = $this->cartItemRepository->find($cart, $product);
 
-            $newQuantity = ($cartItem?->quantity ?? 0) + $quantity;
+            $available = $product->quantity - ($cartItem?->quantity ?? 0);
 
             if (! $product->status) {
                 throw new \Exception('This product is unavailable.');
             }
 
-            if ($newQuantity > $product->quantity) {
-                throw new \Exception('Not enough stock available.');
+            if ($quantity > $available) {
+
+                throw new \Exception(
+                    "You can only add {$available} more item(s)."
+                );
             }
 
             if ($cartItem) {
@@ -44,7 +47,6 @@ class CartService
                     'cart_id'    => $cart->id,
                     'product_id' => $product->id,
                     'quantity'   => $quantity,
-                    'price'      => $product->sale_price ?: $product->price,
                 ]);
             }
 
@@ -54,11 +56,27 @@ class CartService
 
     public function getCart(int $userId): ?Cart
     {
-        return $this->cartRepository->getOrCreate($userId)
+        $cart = $this->cartRepository->getOrCreate($userId)
             ->load([
                 'items.product',
                 'items.product.images',
             ]);
+
+        foreach ($cart->items as $item) {
+
+            $currentPrice = $item->product->final_price;
+
+            if ($item->price != $currentPrice) {
+
+                $this->cartItemRepository->update($item, [
+                    'price' => $currentPrice,
+                ]);
+
+                $item->price = $currentPrice;
+            }
+        }
+
+        return $cart;
     }
 
     public function clear(int $userId): bool
@@ -100,7 +118,10 @@ class CartService
             $item = $this->cartItemRepository->find($cart, $product);
 
             if ($quantity > $product->quantity) {
-                throw new \Exception('Not enough stock available.');
+
+                throw new \Exception(
+                    "Only {$product->quantity} item(s) available."
+                );
             }
 
             if (! $item) {
@@ -116,7 +137,7 @@ class CartService
     public function calculateTotals(Cart $cart): array
     {
         $subtotal = $cart->items->sum(function ($item) {
-            return $item->price * $item->quantity;
+            return $item->product->final_price * $item->quantity;
         });
 
         return [

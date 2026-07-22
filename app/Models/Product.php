@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasSlug;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,6 +37,24 @@ class Product extends Model
         'featured'   => 'boolean',
     ];
 
+    protected $appends = [
+        'is_in_wishlist',
+        'final_price',
+        'has_discount',
+        'discount_percentage',
+    ];
+
+    public function getIsInWishlistAttribute(): bool
+    {
+        if (! Auth::check()) {
+            return false;
+        }
+
+        return $this->wishlists()
+            ->where('user_id', Auth::id())
+            ->exists();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relationships
@@ -56,6 +75,25 @@ class Product extends Model
     {
         return Attribute::make(
             get: fn() => $this->sale_price ?: $this->price,
+        );
+    }
+
+    protected function hasDiscount(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => ! is_null($this->sale_price)
+                && $this->sale_price < $this->price,
+        );
+    }
+
+    protected function discountPercentage(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->has_discount
+                ? round(
+                    (($this->price - $this->sale_price) / $this->price) * 100
+                )
+                : 0,
         );
     }
 
@@ -80,8 +118,8 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    // public function wishlists(): HasMany
-    // {
-    //     return $this->hasMany(Wishlist::class);
-    // }
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }

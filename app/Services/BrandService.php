@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\BrandRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\Brand;
+use App\Repositories\Contracts\BrandRepositoryInterface;
+use App\Services\StorageService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class BrandService
@@ -77,5 +79,10 @@ class BrandService
     public function getStatistics(): array
     {
         return $this->brandRepository->getStatistics();
+    }
+
+    public function getActive(): Collection
+    {
+        return $this->brandRepository->getActive();
     }
 }

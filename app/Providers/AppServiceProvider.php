@@ -11,6 +11,7 @@ use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Repositories\Contracts\WishlistRepositoryInterface;
 use App\Repositories\Eloquent\AddressRepository;
 use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\CartItemRepository;
@@ -20,6 +21,7 @@ use App\Repositories\Eloquent\OrderItemRepository;
 use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\ProductImageRepository;
 use App\Repositories\Eloquent\ProductRepository;
+use App\Repositories\Eloquent\WishlistRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -74,6 +76,10 @@ class AppServiceProvider extends ServiceProvider
             AddressRepository::class
         );
 
+        $this->app->bind(
+            WishlistRepositoryInterface::class,
+            WishlistRepository::class
+        );
     }
 
     /**

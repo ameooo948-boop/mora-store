@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -24,11 +23,12 @@ class ProductRepository implements ProductRepositoryInterface
         return $product->delete();
     }
 
-    public function paginate(
+    public function paginateAdmin(
         ?string $search = null,
         ?int $category = null,
+        ?int $brand = null,
         ?int $status = null,
-    ): LengthAwarePaginator {
+    ) {
         return Product::query()
 
             ->with([
@@ -41,13 +41,16 @@ class ProductRepository implements ProductRepositoryInterface
 
                 $query->where(function ($q) use ($search) {
 
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('sku', 'like', "%{$search}%");
+                    $q->where('name', 'like', "%{$search}%");
                 });
             })
 
             ->when($category !== null, function ($query) use ($category) {
                 $query->where('category_id', $category);
+            })
+
+            ->when($brand !== null, function ($query) use ($brand) {
+                $query->where('brand_id', $brand);
             })
 
             ->when($status !== null, function ($query) use ($status) {
@@ -60,6 +63,87 @@ class ProductRepository implements ProductRepositoryInterface
             ->withQueryString();
     }
 
+
+    public function paginateStore(array $filters = [])
+    {
+        return Product::query()
+
+            ->with([
+                'category',
+                'brand',
+                'images',
+            ])
+
+            ->where('status', true)
+
+            ->when(
+                filled($filters['search'] ?? null),
+                function ($query) use ($filters) {
+
+                    $query->where(function ($q) use ($filters) {
+
+                        $q->where(
+                            'name',
+                            'like',
+                            "%{$filters['search']}%"
+                        )
+
+                            ->orWhere(
+                                'sku',
+                                'like',
+                                "%{$filters['search']}%"
+                            );
+                    });
+                }
+            )
+
+            ->when(
+                filled($filters['category'] ?? null),
+                fn($query) => $query->where(
+                    'category_id',
+                    $filters['category']
+                )
+            )
+
+            ->when(
+                filled($filters['brand'] ?? null),
+                fn($query) => $query->where(
+                    'brand_id',
+                    $filters['brand']
+                )
+            )
+
+            ->when(
+                ($filters['sort'] ?? null) === 'price_low',
+                fn($query) => $query->orderBy('price')
+            )
+
+            ->when(
+                ($filters['sort'] ?? null) === 'price_high',
+                fn($query) => $query->orderByDesc('price')
+            )
+
+            ->when(
+                ($filters['sort'] ?? null) === 'oldest',
+                fn($query) => $query->oldest()
+            )
+
+            ->when(
+                ! in_array(
+                    $filters['sort'] ?? null,
+                    [
+                        'price_low',
+                        'price_high',
+                        'oldest',
+                    ]
+                ),
+                fn($query) => $query->latest()
+            )
+
+            ->paginate(12)
+
+            ->withQueryString();
+    }
 
 
     public function getStatistics(): array
@@ -88,6 +172,41 @@ class ProductRepository implements ProductRepositoryInterface
             ->where('status', true)
             ->latest()
             ->take($limit)
+            ->get();
+    }
+
+    public function find(Product $product)
+    {
+        return Product::query()
+
+            ->with([
+                'images',
+                'category',
+                'brand',
+            ])
+
+            ->where('status', true)
+            ->findOrFail($product->id);
+    }
+
+    public function related(Product $product, int $limit = 4)
+    {
+        return Product::query()
+
+            ->with([
+                'images',
+                'category',
+                'brand',
+            ])
+
+            ->where('status', true)
+
+            ->where('category_id', $product->category_id)
+
+            ->whereKeyNot($product->id)
+
+            ->take($limit)
+
             ->get();
     }
 }

@@ -155,13 +155,13 @@
 
                 <div class="row g-3">
 
-                    <div class="col-md-4">
+                    <div class="col">
 
                         <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by name or SKU...">
 
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col">
 
                         <select name="category" class="form-select">
 
@@ -185,7 +185,31 @@
 
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col">
+
+                        <select name="brand" class="form-select">
+
+                            <option value="">
+
+                                All Brands
+
+                            </option>
+
+                            @foreach($brands as $brand)
+
+                            <option value="{{ $brand->id }}" @selected(request('brand')==$brand->id)>
+
+                                {{ $brand->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                    <div class="col">
 
                         <select name="status" class="form-select">
 
