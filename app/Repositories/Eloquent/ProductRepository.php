@@ -86,13 +86,7 @@ class ProductRepository implements ProductRepositoryInterface
                             'name',
                             'like',
                             "%{$filters['search']}%"
-                        )
-
-                            ->orWhere(
-                                'sku',
-                                'like',
-                                "%{$filters['search']}%"
-                            );
+                        );
                     });
                 }
             )

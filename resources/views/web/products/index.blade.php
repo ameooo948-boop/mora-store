@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('web.layouts.app')
 
 @section('title', 'Products')
 
@@ -6,29 +6,9 @@
 
 <div class="container py-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="card filter-card border-0 shadow-sm mb-4">
 
-        <div>
-
-            <h2 class="fw-bold mb-1">
-
-                Products
-
-            </h2>
-
-            <p class="text-muted mb-0">
-
-                Browse all available products.
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="card border-0 shadow-sm mb-4">
-
-        <div class="card-header bg-white">
+        <div class="card-header filter-header">
 
             <h5 class="mb-0">
 
@@ -54,7 +34,7 @@
 
                         </label>
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by product name or SKU">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by product name">
 
                     </div>
 

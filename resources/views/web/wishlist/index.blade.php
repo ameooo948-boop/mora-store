@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('web.layouts.app')
 
 @section('title', 'My Wishlist')
 
@@ -26,7 +26,13 @@
 
                 @if($product->images->isNotEmpty())
 
-                <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" class="card-img-top" alt="{{ $product->name }}">
+                <img src="{{ $product->images->first()->image_url }}" class="card-img-top product-image" alt="{{ $product->name }}">
+
+                @else
+
+                <div class="bg-light d-flex justify-content-center align-items-center product-image">
+                    <i class="bi bi-image fs-1 text-secondary"></i>
+                </div>
 
                 @endif
 

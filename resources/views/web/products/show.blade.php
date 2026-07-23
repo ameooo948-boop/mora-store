@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('web.layouts.app')
 
 @section('title', $product->name)
 
