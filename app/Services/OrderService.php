@@ -148,10 +148,16 @@ class OrderService
             ->find($id);
     }
 
-    public function getStatistics(): array
+    public function getStatistics(User $user): array
     {
         return $this->orderRepository
-            ->getStatistics();
+            ->getStatistics($user);
+    }
+
+    public function getStatisticsAdmin(): array
+    {
+        return $this->orderRepository
+            ->getStatisticsAdmin();
     }
 
     public function findUserOrder(
@@ -173,46 +179,41 @@ class OrderService
     }
 
     public function getPaginatedOrders(
-    ?string $search = null,
-    ?string $status = null,
-)
-{
-    return Order::query()
+        ?string $search = null,
+        ?string $status = null,
+    ) {
+        return Order::query()
 
-        ->with([
-            'user',
-        ])
+            ->with([
+                'user',
+            ])
 
-        ->withCount('items')
+            ->withCount('items')
 
-        ->when($search, function ($query) use ($search) {
+            ->when($search, function ($query) use ($search) {
 
-            $query->where(function ($q) use ($search) {
+                $query->where(function ($q) use ($search) {
 
-                $q->where('order_number', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($user) use ($search) {
+                    $q->where('order_number', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($user) use ($search) {
 
-                        $user->where('name', 'like', "%{$search}%")
-                             ->orWhere('email', 'like', "%{$search}%");
+                            $user->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
+            })
 
-                    });
+            ->when($status, function ($query) use ($status) {
 
-            });
+                $query->where('status', $status);
+            })
 
-        })
+            ->latest()
 
-        ->when($status, function ($query) use ($status) {
+            ->paginate(10)
 
-            $query->where('status', $status);
-
-        })
-
-        ->latest()
-
-        ->paginate(10)
-
-        ->withQueryString();
-}
+            ->withQueryString();
+    }
 
     public function findForAdmin(int $id)
     {

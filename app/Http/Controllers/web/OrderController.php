@@ -15,12 +15,11 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $orders = $this->orderService->getUserOrders(
-            $request->user(),
-            $status,
-        );
+        $user = $request->user();
 
-        $statistics = $this->orderService->getStatistics();
+        $orders = $this->orderService->getUserOrders($user);
+
+        $statistics = $this->orderService->getStatistics($user);
 
         return view('web.orders.index', compact(
             'orders',

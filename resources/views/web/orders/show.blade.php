@@ -579,7 +579,7 @@
 
         <div class="d-flex justify-content-end gap-2 mt-3">
 
-            <a href="{{ route('admin.products.index') }}" class="btn btn-outline-primary">
+            <a href="{{ route('products.index') }}" class="btn btn-outline-primary">
 
                 <i class="bi bi-shop me-2"></i>
 

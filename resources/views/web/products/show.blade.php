@@ -184,7 +184,7 @@ $inWishlist = auth()->check()
 
             </div>
 
-            <form action="{{ route('cart.store', $product) }}" method="POST">
+            <form id="addToCartForm" action="{{ route('cart.store', $product) }}" method="POST">
 
                 @csrf
 
@@ -214,7 +214,7 @@ $inWishlist = auth()->check()
 
                 </div>
 
-                <button class="btn btn-primary" {{ $product->quantity == 0 ? 'disabled' : '' }}>
+                <button id="addToCartButton" class="btn btn-primary" {{ $product->quantity == 0 ? 'disabled' : '' }}>
 
                     <i class="bi bi-cart-plus me-2"></i>
 
@@ -224,16 +224,16 @@ $inWishlist = auth()->check()
 
             </form>
 
-            <form action="{{ route('wishlist.toggle', $product) }}" method="POST">
-
+            <form action="{{ route('wishlist.toggle', $product) }}" method="POST" class="wishlist-form">
                 @csrf
 
-                <button type="submit" class="btn btn-light rounded-circle shadow-sm">
+                <button type="submit" class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" title="{{ $inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
 
-                    <i class="bi {{ $product->is_in_wishlist ? 'bi-heart-fill text-danger' : 'bi-heart' }}"></i>
+                    <i class="bi {{ $inWishlist ? 'bi-heart-fill' : 'bi-heart' }}"></i>
 
                 </button>
             </form>
+
 
         </div>
 
@@ -295,65 +295,5 @@ $inWishlist = auth()->check()
     @endif
 
 </div>
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const quantity = document.getElementById('quantity');
-        const increase = document.getElementById('increaseQuantity');
-        const decrease = document.getElementById('decreaseQuantity');
-
-        const max = parseInt(quantity.max);
-
-        increase.addEventListener('click', function() {
-
-            let current = parseInt(quantity.value);
-
-            if (current < max) {
-                quantity.value = current + 1;
-            }
-
-        });
-
-        decrease.addEventListener('click', function() {
-
-            let current = parseInt(quantity.value);
-
-            if (current > 1) {
-                quantity.value = current - 1;
-            }
-
-        });
-
-    });
-
-    const mainImage = document.getElementById('mainImage');
-
-    const thumbnails = document.querySelectorAll('.thumbnail-image');
-
-    thumbnails.forEach(image => {
-
-        image.addEventListener('click', function() {
-
-            mainImage.src = this.dataset.image;
-
-            thumbnails.forEach(img => img.classList.remove('active'));
-
-            this.classList.add('active');
-
-        });
-
-    });
-
-    if (thumbnails.length) {
-
-        thumbnails[0].classList.add('active');
-
-    }
-
-</script>
-
-@endpush
 
 @endsection

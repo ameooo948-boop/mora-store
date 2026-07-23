@@ -21,7 +21,7 @@
             </p>
         </div>
 
-        <a href="{{ route('admin.products.index') }}" class="btn btn-primary">
+        <a href="{{ route('products.index') }}" class="btn btn-primary">
             <i class="bi bi-arrow-left me-2"></i>
             Continue Shopping
         </a>

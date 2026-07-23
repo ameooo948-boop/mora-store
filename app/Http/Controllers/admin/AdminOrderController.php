@@ -23,7 +23,7 @@ class AdminOrderController extends Controller
             : null;
 
         $statuses = OrderStatus::cases();
-        $statistics = $this->service->getStatistics();
+        $statistics = $this->service->getStatisticsAdmin();
         $orders = $this->service->paginateAdmin(
             $request->search,
             $status,

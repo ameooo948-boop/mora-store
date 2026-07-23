@@ -25,20 +25,28 @@ class WishlistController extends Controller
         );
     }
 
-    public function toggle(
-        Request $request,
-        Product $product
-    ) {
-        $added = $this->service->toggle(
+    public function toggle(Request $request, Product $product)
+    {
+        $attached = $this->service->toggle(
             $request->user(),
             $product
         );
 
-        return back()->with(
-            'success',
-            $added
-                ? 'Product added to wishlist.'
-                : 'Product removed from wishlist.'
-        );
+        if ($request->expectsJson()) {
+
+            return response()->json([
+
+                'success' => true,
+
+                'attached' => $attached,
+
+                'message' => $attached
+                    ? 'Added to wishlist.'
+                    : 'Removed from wishlist.',
+
+            ]);
+        }
+
+        return back();
     }
 }

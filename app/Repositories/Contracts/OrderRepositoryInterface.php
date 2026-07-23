@@ -19,7 +19,7 @@ interface OrderRepositoryInterface
 
     public function getUserOrders(User $user): LengthAwarePaginator;
 
-    public function getStatistics(): array;
+    public function getStatistics(User $user): array;
 
     public function findUserOrder(User $user, int $id): ?Order;
 
@@ -30,6 +30,8 @@ interface OrderRepositoryInterface
     ): LengthAwarePaginator;
 
     public function findForAdmin(int $id): ?Order;
-    
+
     public function updateStatus(Order $order, OrderStatus $status): bool;
+
+    public function getStatisticsAdmin(): array;
 }

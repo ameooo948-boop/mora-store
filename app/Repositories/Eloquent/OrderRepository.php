@@ -43,7 +43,24 @@ class OrderRepository implements OrderRepositoryInterface
             ->paginate(10);
     }
 
-    public function getStatistics(): array
+    public function getStatistics(User $user): array
+    {
+        return [
+            'total' => $user->orders()->count(),
+
+            'pending' => $user->orders()->where('status', 'pending')->count(),
+
+            'processing' => $user->orders()->where('status', 'processing')->count(),
+
+            'shipped' => $user->orders()->where('status', 'shipped')->count(),
+
+            'delivered' => $user->orders()->where('status', 'delivered')->count(),
+
+            'cancelled' => $user->orders()->where('status', 'cancelled')->count(),
+        ];
+    }
+
+    public function getStatisticsAdmin(): array
     {
         return [
             'total' => Order::count(),

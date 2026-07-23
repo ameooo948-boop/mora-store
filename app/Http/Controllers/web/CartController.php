@@ -31,16 +31,43 @@ class CartController extends Controller
 
     public function store(StoreCartRequest $request, Product $product)
     {
-        $this->cartService->add(
-            $request->user()->id,
-            $product,
-            $request->validated('quantity')
-        );
+        try {
 
-        return back()->with(
-            'success',
-            'Product added to cart.'
-        );
+            $this->cartService->add(
+                $request->user()->id,
+                $product,
+                $request->validated('quantity')
+            );
+
+            if ($request->expectsJson()) {
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Product added to cart.',
+                    'cartCount' => $this->cartService->count(
+                        $request->user()->id
+                    ),
+                ]);
+            }
+
+            return back()->with(
+                'success',
+                'Product added to cart.'
+            );
+        } catch (\Throwable $e) {
+
+            if ($request->expectsJson()) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+
+            return back()->withErrors([
+                'cart' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function update(UpdateCartRequest $request, Product $product)

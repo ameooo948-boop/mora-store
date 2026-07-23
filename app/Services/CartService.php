@@ -147,4 +147,12 @@ class CartService
             'total' => $subtotal,
         ];
     }
+
+    public function count(int $userId): int
+    {
+        return $this->cartRepository
+            ->getOrCreate($userId)
+            ->items()
+            ->sum('quantity');
+    }
 }
