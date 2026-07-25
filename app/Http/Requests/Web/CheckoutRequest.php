@@ -23,6 +23,11 @@ class CheckoutRequest extends FormRequest
                 'integer',
                 'exists:addresses,id',
             ],
+            'coupon' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
         ];
     }
 

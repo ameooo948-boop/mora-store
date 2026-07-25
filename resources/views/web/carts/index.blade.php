@@ -96,7 +96,7 @@
     <div class="row">
 
         {{-- Cart Table --}}
-        <div class="col-lg-8">
+        <div id="cart-content" class="col-lg-8">
 
             <div class="card shadow-sm border-0">
 
@@ -108,7 +108,6 @@
 
                             <tr>
 
-                                <th>#</th>
                                 <th>Image</th>
                                 <th>Product</th>
                                 <th>Price</th>
@@ -124,11 +123,7 @@
 
                             @forelse($cart->items as $item)
 
-                            <tr>
-
-                                <td>
-                                    {{ $item->id }}
-                                </td>
+                            <tr class="cart-row">
 
                                 <td>
 
@@ -164,16 +159,22 @@
 
                                 <td>
 
-                                    <form action="{{ route('cart.update', $item->product) }}" method="POST" class="d-flex gap-2">
+                                    <form action="{{ route('cart.update', $item->product) }}" method="POST" class="cart-update-form d-flex align-items-center justify-content-center gap-2">
 
                                         @csrf
                                         @method('PUT')
 
-                                        <input type="number" name="quantity" class="form-control" value="{{ $item->quantity }}" min="1">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm decrease-btn">
 
-                                        <button class="btn btn-success">
+                                            <i class="bi bi-dash"></i>
 
-                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+
+                                        <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->product->quantity }}" class="form-control text-center quantity-input" style="width:70px;" readonly>
+
+                                        <button type="button" class="btn btn-outline-secondary btn-sm increase-btn">
+
+                                            <i class="bi bi-plus"></i>
 
                                         </button>
 
@@ -183,7 +184,7 @@
 
                                 <td>
 
-                                    <strong>
+                                    <strong class="row-total">
 
                                         ${{ number_format($item->price * $item->quantity, 2) }}
 
@@ -205,17 +206,14 @@
 
                                             <li>
 
-                                                <form action="{{ route('cart.destroy',$item->product) }}" method="POST">
+                                                <form action="{{ route('cart.destroy',$item->product) }}" method="POST" class="remove-item-form">
 
                                                     @csrf
                                                     @method('DELETE')
 
                                                     <button class="dropdown-item text-danger">
-
                                                         <i class="bi bi-trash me-2"></i>
-
                                                         Remove
-
                                                     </button>
 
                                                 </form>
@@ -287,11 +285,11 @@
 
                         </span>
 
-                        <strong>
+                        <span id="summary-items">
 
                             {{ $cart->items->count() }}
 
-                        </strong>
+                        </span>
 
                     </div>
 
@@ -303,11 +301,11 @@
 
                         </span>
 
-                        <strong>
+                        <span id="summary-quantity">
 
                             {{ $cart->items->sum('quantity') }}
 
-                        </strong>
+                        </span>
 
                     </div>
 
@@ -319,7 +317,7 @@
 
                         </span>
 
-                        <strong>
+                        <strong id="summary-subtotal">
 
                             ${{ number_format($totals['subtotal'],2) }}
 
@@ -353,7 +351,7 @@
 
                         </h5>
 
-                        <h4 class="text-success mb-0">
+                        <h4 class="text-success mb-0" id="summary-total">
 
                             ${{ number_format($totals['total'],2) }}
 
@@ -375,17 +373,14 @@
 
                     </a>
 
-                    <form action="{{ route('cart.clear') }}" method="POST">
+                    <form action="{{ route('cart.clear') }}" method="POST" class="clear-cart-form">
 
                         @csrf
                         @method('DELETE')
 
                         <button class="btn btn-outline-danger w-100">
-
                             <i class="bi bi-trash me-2"></i>
-
                             Clear Cart
-
                         </button>
 
                     </form>

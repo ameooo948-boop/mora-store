@@ -84,7 +84,7 @@
 
         <li>
 
-            <a href="#">
+            <a href="{{ route('admin.coupons.index') }}" class="{{ request()->routeIs('users.coupons.*') ? 'active' : '' }}">
 
                 <i class="bi bi-ticket-perforated"></i>
 

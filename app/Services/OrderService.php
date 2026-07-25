@@ -23,11 +23,13 @@ class OrderService
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly OrderItemRepositoryInterface $orderItemRepository,
         private readonly AddressRepositoryInterface $addressRepository,
+        private readonly CouponService $couponService,
     ) {}
 
     public function placeOrder(
         User $user,
-        int $addressId
+        int $addressId,
+        ?string $couponCode = null,
     ): Order {
         return DB::transaction(function () use ($user, $addressId) {
 
@@ -51,6 +53,24 @@ class OrderService
 
             $totals = $this->cartService->calculateTotals($cart);
 
+            $coupon = null;
+
+            if ($couponCode) {
+
+                $couponData = $this->couponService
+                    ->applyCoupon(
+                        $couponCode,
+                        $totals['subtotal']
+                    );
+
+                $coupon = $couponData['coupon'];
+
+                $totals['discount'] = $couponData['discount'];
+
+                $totals['total'] =
+                    $couponData['total'] + $totals['shipping'];
+            }
+
             $order = $this->orderRepository->create([
                 'user_id' => $user->id,
 
@@ -71,6 +91,8 @@ class OrderService
                 'shipping_city' => $address->city,
                 'shipping_address' => $address->address_line,
                 'shipping_postal_code' => $address->postal_code,
+
+                'coupon_id' => $coupon?->id,
             ]);
 
             $items = [];
@@ -96,6 +118,12 @@ class OrderService
             );
 
             $this->cartService->clear($user->id);
+
+            if ($coupon) {
+
+                $this->couponService
+                    ->incrementUsedCount($coupon);
+            }
 
             return $order->fresh([
                 'items.product',

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\UserController;
@@ -32,3 +33,5 @@ Route::patch(
     'orders/{order}/status',
     [AdminOrderController::class, 'updateStatus']
 )->name('orders.status');
+
+Route::resource('coupons', CouponController::class);
