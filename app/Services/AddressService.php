@@ -87,4 +87,9 @@ class AddressService
         return $this->addressRepository
             ->getDefault($user);
     }
+
+    public function getUserAddresses(User $user)
+    {
+        return $user->addresses()->get();
+    }
 }

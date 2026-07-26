@@ -31,7 +31,7 @@ class OrderService
         int $addressId,
         ?string $couponCode = null,
     ): Order {
-        return DB::transaction(function () use ($user, $addressId) {
+        return DB::transaction(function () use ($user, $addressId, $couponCode) {
 
             $cart = $this->cartService->getCart($user->id);
 

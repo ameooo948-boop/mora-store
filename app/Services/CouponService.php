@@ -55,7 +55,7 @@ class CouponService
 
     public function validateCoupon(Coupon $coupon, float $subtotal): void
     {
-        if (! $coupon->is_active) {
+        if (! $coupon->status) {
             throw ValidationException::withMessages([
                 'coupon' => __('Coupon is inactive.'),
             ]);

@@ -86,7 +86,7 @@
 
                                     @if($item->product->images->isNotEmpty())
 
-                                    <img src="{{ $item->product->images->first()->image_url }}" width="60" height="60" class="rounded" style="object-fit: cover;">
+                                    <img src="{{ $item->product->images->first()->image_url }}" width="60" height="60" class="rounded" style="object-fit:cover;">
 
                                     @else
 
@@ -112,7 +112,7 @@
 
                                 <td>
 
-                                    ${{ number_format($item->price, 2) }}
+                                    ${{ number_format($item->price,2) }}
 
                                 </td>
 
@@ -126,7 +126,7 @@
 
                                     <strong>
 
-                                        ${{ number_format($item->price * $item->quantity, 2) }}
+                                        ${{ number_format($item->price * $item->quantity,2) }}
 
                                     </strong>
 
@@ -145,6 +145,46 @@
             </div>
 
         </div>
+        
+        @if(session()->has('coupon'))
+
+        <div class="alert alert-success">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <strong>
+
+                        Coupon Applied
+
+                    </strong>
+
+                    <br>
+
+                    {{ session('coupon.code') }}
+
+                </div>
+
+                <form action="{{ route('checkout.coupon.destroy') }}" method="POST">
+
+                    @csrf
+
+                    @method('DELETE')
+
+                    <button class="btn btn-sm btn-outline-danger">
+
+                        Remove
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        @endif
 
         {{-- Summary --}}
         <div class="col-lg-4">
@@ -177,7 +217,7 @@
 
                             <strong>
 
-                                ${{ number_format($totals['subtotal'], 2) }}
+                                ${{ number_format($totals['subtotal'],2) }}
 
                             </strong>
 
@@ -193,7 +233,7 @@
 
                             <strong>
 
-                                ${{ number_format($totals['shipping'], 2) }}
+                                ${{ number_format($totals['shipping'],2) }}
 
                             </strong>
 
@@ -209,7 +249,7 @@
 
                             <strong class="text-danger">
 
-                                -${{ number_format($totals['discount'], 2) }}
+                                -${{ number_format($totals['discount'],2) }}
 
                             </strong>
 
@@ -227,13 +267,70 @@
 
                             <h4 class="text-success">
 
-                                ${{ number_format($totals['total'], 2) }}
+                                ${{ number_format($totals['total'],2) }}
 
                             </h4>
 
                         </div>
 
                         <hr>
+
+                        {{-- Coupon --}}
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+
+                                Coupon Code
+
+                            </label>
+
+                            <div class="input-group">
+
+                                <input type="text" name="coupon_code" class="form-control @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" placeholder="Enter coupon code">
+
+                                <button type="submit" name="action" value="apply_coupon" class="btn btn-outline-primary">
+
+                                    <i class="bi bi-ticket-perforated"></i>
+
+                                    Apply
+
+                                </button>
+
+                            </div>
+
+                            @error('coupon_code')
+
+                            <div class="invalid-feedback d-block">
+
+                                {{ $message }}
+
+                            </div>
+
+                            @enderror
+
+                            @if(session('coupon_success'))
+
+                            <div class="alert alert-success mt-3 mb-0">
+
+                                {{ session('coupon_success') }}
+
+                            </div>
+
+                            @endif
+
+                            @if(session('coupon_error'))
+
+                            <div class="alert alert-danger mt-3 mb-0">
+
+                                {{ session('coupon_error') }}
+
+                            </div>
+
+                            @endif
+
+                        </div>
+
+                        {{-- Shipping Address --}}
 
                         <div class="mb-4">
 
@@ -257,45 +354,35 @@
 
                             @forelse($addresses as $address)
 
-                            <label for="address{{ $address->id }}" class="card border shadow-sm mb-3" style="cursor:pointer;">
+                            <label class="card border shadow-sm mb-3" style="cursor:pointer;">
 
                                 <div class="card-body">
 
-                                    <div class="d-flex justify-content-between align-items-start">
+                                    <div class="form-check">
 
-                                        <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="address_id" value="{{ $address->id }}" @checked(old('address_id', optional($addresses->firstWhere('is_default', true))->id) == $address->id)>
 
-                                            <input id="address{{ $address->id }}" class="form-check-input" type="radio" name="address_id" value="{{ $address->id }}" {{ old('address_id', optional($addresses->firstWhere('is_default', true))->id) == $address->id ? 'checked' : '' }}>
+                                        <span class="fw-bold ms-2">
 
-                                            <span class="fw-bold ms-2">
+                                            {{ $address->full_name }}
 
-                                                {{ $address->full_name }}
+                                        </span>
 
-                                            </span>
+                                        @if($address->is_default)
 
-                                            @if($address->is_default)
+                                        <span class="badge bg-success ms-2">
 
-                                            <span class="badge bg-success ms-2">
+                                            Default
 
-                                                Default
+                                        </span>
 
-                                            </span>
-
-                                            @endif
-
-                                        </div>
-
-                                        <a href="{{ route('addresses.edit', $address) }}" class="btn btn-sm btn-light">
-
-                                            <i class="bi bi-pencil"></i>
-
-                                        </a>
+                                        @endif
 
                                     </div>
 
                                     <div class="mt-3">
 
-                                        <div class="mb-2">
+                                        <div>
 
                                             <i class="bi bi-telephone me-2 text-primary"></i>
 
@@ -303,7 +390,7 @@
 
                                         </div>
 
-                                        <div class="mb-2">
+                                        <div>
 
                                             <i class="bi bi-geo-alt me-2 text-primary"></i>
 
@@ -313,7 +400,7 @@
 
                                         </div>
 
-                                        <div class="mb-2">
+                                        <div>
 
                                             <i class="bi bi-house-door me-2 text-primary"></i>
 
@@ -343,19 +430,7 @@
 
                             <div class="alert alert-warning">
 
-                                <i class="bi bi-exclamation-circle me-2"></i>
-
-                                You don't have any shipping addresses.
-
-                                <hr>
-
-                                <a href="{{ route('addresses.create') }}" class="btn btn-sm btn-primary">
-
-                                    <i class="bi bi-plus-circle me-2"></i>
-
-                                    Add Your First Address
-
-                                </a>
+                                You don't have any addresses.
 
                             </div>
 
@@ -363,11 +438,11 @@
 
                             @error('address_id')
 
-                            <div class="text-danger small">
+                            <small class="text-danger">
 
                                 {{ $message }}
 
-                            </div>
+                            </small>
 
                             @enderror
 
@@ -382,6 +457,26 @@
                         </button>
 
                     </form>
+
+                    @if(session()->has('coupon'))
+
+                    <form action="{{ route('checkout.coupon.destroy') }}" method="POST" class="mt-3">
+
+                        @csrf
+
+                        @method('DELETE')
+
+                        <button class="btn btn-outline-danger w-100">
+
+                            <i class="bi bi-x-circle me-2"></i>
+
+                            Remove Coupon
+
+                        </button>
+
+                    </form>
+
+                    @endif
 
                 </div>
 

@@ -150,87 +150,97 @@
 
     </div>
 
-    <div class="col-md-12 mb-4">
+    <div class="col-md-3 mb-3">
 
-        <div class="form-check">
+        <label class="form-label fw-semibold">
+            Status
+        </label>
 
-            <input type="hidden" name="is_active" value="0">
+        <select name="status" class="form-select @error('status') is-invalid @enderror">
 
-            <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" @checked(old('status', $coupon->status ?? true))
-            >
-
-            <label class="form-check-label" for="is_active">
-
+            <option value="1" @selected((string) old('status', (int) ($product->status ?? true)) === '1')
+                >
                 Active
+            </option>
 
-            </label>
+            <option value="0" @selected((string) old('status', (int) ($product->status ?? true)) === '0')
+                >
+                Inactive
+            </option>
+
+        </select>
+
+        @error('status')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+        @enderror
+
+    </div>
+
+
+    <div class="text-end">
+
+        <button type="submit" class="btn btn-primary">
+
+            <i class="fas fa-save me-1"></i>
+
+            Save
+
+        </button>
+
+        <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary">
+
+            Cancel
+
+        </a>
+
+    </div>
+
+    @if(isset($coupon))
+
+    <div class="card mt-4">
+
+        <div class="card-header">
+
+            Coupon Statistics
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <strong>Used:</strong>
+
+                    {{ $coupon->used_count }}
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <strong>Limit:</strong>
+
+                    {{ $coupon->usage_limit ?? 'Unlimited' }}
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <strong>Remaining:</strong>
+
+                    {{ $coupon->usage_limit ? max(0, $coupon->usage_limit - $coupon->used_count) : '∞' }}
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+    @endif
 
-<div class="text-end">
-
-    <button type="submit" class="btn btn-primary">
-
-        <i class="fas fa-save me-1"></i>
-
-        Save
-
-    </button>
-
-    <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary">
-
-        Cancel
-
-    </a>
-
-</div>
-
-@if(isset($coupon))
-
-<div class="card mt-4">
-
-    <div class="card-header">
-
-        Coupon Statistics
-
-    </div>
-
-    <div class="card-body">
-
-        <div class="row">
-
-            <div class="col-md-4">
-
-                <strong>Used:</strong>
-
-                {{ $coupon->used_count }}
-
-            </div>
-
-            <div class="col-md-4">
-
-                <strong>Limit:</strong>
-
-                {{ $coupon->usage_limit ?? 'Unlimited' }}
-
-            </div>
-
-            <div class="col-md-4">
-
-                <strong>Remaining:</strong>
-
-                {{ $coupon->usage_limit ? max(0, $coupon->usage_limit - $coupon->used_count) : '∞' }}
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-@endif
+</div
