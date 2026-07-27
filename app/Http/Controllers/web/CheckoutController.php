@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\CheckoutRequest;
+use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\CouponService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
-use App\Services\CartService;
 
 class CheckoutController extends Controller
 {
@@ -17,6 +19,7 @@ class CheckoutController extends Controller
         private readonly OrderService $orderService,
         private readonly CartService $cartService,
         private readonly CouponService $couponService,
+        private readonly PaymentService $paymentService,
     ) {}
 
     public function index(Request $request)
@@ -27,31 +30,50 @@ class CheckoutController extends Controller
                 ->getCheckoutData($request->user())
         );
     }
-
     public function store(
-        CheckoutRequest $request
+        CheckoutRequest $request,
     ) {
+        try {
 
-        $order = $this->orderService->placeOrder(
-
-            $request->user(),
-
-            $request->integer('address_id'),
-
-            session('coupon.code')
-
-        );
-
-        session()->forget('coupon');
-
-        return redirect()
-
-            ->route('orders.show', $order)
-
-            ->with(
-                'success',
-                'Order placed successfully.'
+            $order = $this->orderService->placeOrder(
+                $request->user(),
+                $request->integer('address_id'),
+                PaymentMethod::from(
+                    $request->string('payment_method')->value()
+                ),
+                session('coupon.code'),
             );
+
+            session()->forget('coupon');
+
+            $order->load('payment');
+
+            $redirectUrl = $this->paymentService->processPayment(
+                $order->payment
+            );
+
+            return redirect()->to($redirectUrl);
+        } catch (\Throwable $exception) {
+
+            report($exception);
+
+            if (isset($order)) {
+
+                return redirect()
+                    ->route('orders.show', $order)
+                    ->with(
+                        'error',
+                        'Unable to initialize payment.'
+                    );
+            }
+
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Unable to place your order.'
+                );
+        }
     }
 
 

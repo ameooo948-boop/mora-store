@@ -1,12 +1,14 @@
 <?php
 
-use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\OrderController;
+use App\Http\Controllers\Web\PaymentController;
+use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,11 +18,9 @@ Route::get('/', [HomeController::class, 'index'])
 
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-
-Route::middleware('auth')->group(function () {});
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 
 Route::middleware('auth')->group(function () {
@@ -65,20 +65,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'store'])
         ->name('checkout.store');
 
-    Route::get('/carts', [CartController::class, 'index'])
-        ->name('cart.index');
+    Route::post('/checkout/coupon', [CheckoutController::class, 'applyCoupon'])
+        ->name('checkout.coupon.store');
 
-    Route::post('/carts/{product}', [CartController::class, 'store'])
-        ->name('cart.store');
-
-    Route::put('/carts/{product}', [CartController::class, 'update'])
-        ->name('cart.update');
-
-    Route::delete('/carts/{product}', [CartController::class, 'destroy'])
-        ->name('cart.destroy');
-
-    Route::delete('/carts', [CartController::class, 'clear'])
-        ->name('cart.clear');
+    Route::delete('/checkout/coupon', [CheckoutController::class, 'removeCoupon'])
+        ->name('checkout.coupon.destroy');
 
 
     Route::get(
@@ -102,3 +93,24 @@ Route::middleware('auth')->group(function () {
         [ProductController::class, 'show']
     )->name('products.show');
 });
+
+Route::middleware('auth')
+    ->prefix('payments')
+    ->name('payments.')
+    ->group(function () {
+
+        Route::get(
+            '/{payment}/success',
+            [PaymentController::class, 'success']
+        )->name('success');
+
+        Route::get(
+            '/{payment}/cancel',
+            [PaymentController::class, 'cancel']
+        )->name('cancel');
+    });
+
+Route::post(
+    '/stripe/webhook',
+    StripeWebhookController::class
+)->name('stripe.webhook');

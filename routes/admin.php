@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('users', UserController::class);
@@ -35,3 +36,9 @@ Route::patch(
 )->name('orders.status');
 
 Route::resource('coupons', CouponController::class);
+
+Route::resource('payments', PaymentController::class)
+    ->only([
+        'index',
+        'show',
+    ]);

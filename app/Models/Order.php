@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Enums\OrderStatus;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -48,6 +50,11 @@ class Order extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function payment(): HasOne
+    {
+        return $this->hasOne(Payment::class);
     }
 
     public function getFormattedDateAttribute(): string

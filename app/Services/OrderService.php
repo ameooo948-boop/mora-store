@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
@@ -11,6 +12,8 @@ use App\Repositories\Contracts\AddressRepositoryInterface;
 use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Services\CartService;
+use App\Services\CouponService;
+use App\Services\PaymentService;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -24,14 +27,16 @@ class OrderService
         private readonly OrderItemRepositoryInterface $orderItemRepository,
         private readonly AddressRepositoryInterface $addressRepository,
         private readonly CouponService $couponService,
+        private readonly PaymentService $paymentService,
     ) {}
 
     public function placeOrder(
         User $user,
         int $addressId,
+        PaymentMethod $paymentMethod,
         ?string $couponCode = null,
     ): Order {
-        return DB::transaction(function () use ($user, $addressId, $couponCode) {
+        return DB::transaction(function () use ($user, $addressId, $paymentMethod, $couponCode) {
 
             $cart = $this->cartService->getCart($user->id);
 
@@ -94,6 +99,11 @@ class OrderService
 
                 'coupon_id' => $coupon?->id,
             ]);
+
+            $this->paymentService->createPayment(
+                $order,
+                $paymentMethod
+            );
 
             $items = [];
 

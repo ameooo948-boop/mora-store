@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Web;
 
+use App\Enums\PaymentMethod;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CheckoutRequest extends FormRequest
 {
@@ -28,6 +30,11 @@ class CheckoutRequest extends FormRequest
                 'string',
                 'max:50',
             ],
+
+            'payment_method' => [
+                'required',
+                Rule::enum(PaymentMethod::class),
+            ]
         ];
     }
 

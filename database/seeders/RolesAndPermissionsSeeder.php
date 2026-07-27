@@ -23,23 +23,25 @@ class RolesAndPermissionsSeeder extends Seeder
             'products.create',
             'products.update',
             'products.delete',
- 
+
             // Categories
             'categories.view',
             'categories.create',
             'categories.update',
             'categories.delete',
- 
+
             // Orders
             'orders.view',
             'orders.update',
- 
+
             // Users
             'users.view',
             'users.update',
             'users.delete',
+
+            'view payments',
         ];
- 
+
         foreach ($permissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
@@ -50,10 +52,10 @@ class RolesAndPermissionsSeeder extends Seeder
         $adminRole = Role::create(['name' => 'admin']);
         $vendorRole = Role::create(['name' => 'vendor']);
         $customerRole = Role::create(['name' => 'customer']);
- 
-   
 
-            // Assign permissions to roles
+
+
+        // Assign permissions to roles
         $adminRole->givePermissionTo(Permission::all());
 
         $vendorRole->givePermissionTo([
@@ -61,7 +63,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'products.view',
             'products.create',
             'products.update',
-            
+
             'orders.view',
             'orders.update',
 

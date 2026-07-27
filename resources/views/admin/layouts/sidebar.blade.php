@@ -72,7 +72,7 @@
 
         <li>
 
-            <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('users.products.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
 
                 <i class="bi bi-people"></i>
 
@@ -84,7 +84,19 @@
 
         <li>
 
-            <a href="{{ route('admin.coupons.index') }}" class="{{ request()->routeIs('users.coupons.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.payments.index') }}" class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
+
+                <i class="bi-credit-card"></i>
+
+                Payments
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="{{ route('admin.coupons.index') }}" class="{{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
 
                 <i class="bi bi-ticket-perforated"></i>
 

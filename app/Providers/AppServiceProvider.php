@@ -10,6 +10,7 @@ use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\CouponRepositoryInterface;
 use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
+use App\Repositories\Contracts\PaymentRepositoryInterface;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\WishlistRepositoryInterface;
@@ -24,6 +25,7 @@ use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\ProductImageRepository;
 use App\Repositories\Eloquent\ProductRepository;
 use App\Repositories\Eloquent\WishlistRepository;
+use App\Repositories\Eloquent\PaymentRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -86,6 +88,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CouponRepositoryInterface::class,
             CouponRepository::class
+        );
+
+        $this->app->bind(
+
+            PaymentRepositoryInterface::class,
+
+            PaymentRepository::class
+
         );
     }
 

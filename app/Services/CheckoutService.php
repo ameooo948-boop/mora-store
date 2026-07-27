@@ -10,6 +10,7 @@ class CheckoutService
         private readonly CartService $cartService,
         private readonly CouponService $couponService,
         private readonly AddressService $addressService,
+        private readonly PaymentService $paymentService,
     ) {}
 
     public function getCheckoutData(User $user): array
@@ -51,6 +52,9 @@ class CheckoutService
 
             'addresses' => $this->addressService
                 ->getUserAddresses($user),
+
+            'paymentMethods' => $this->paymentService
+                ->availableMethods(),
 
         ];
     }
