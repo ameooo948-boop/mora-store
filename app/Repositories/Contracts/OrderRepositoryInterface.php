@@ -11,7 +11,7 @@ interface OrderRepositoryInterface
 {
     public function create(array $data): Order;
 
-    public function update(Order $order, array $data): bool;
+    public function update(Order $order, array $data): Order;
 
     public function paginate(int $perPage = 10): LengthAwarePaginator;
 

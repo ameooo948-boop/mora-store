@@ -10,6 +10,7 @@ use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\CouponRepositoryInterface;
 use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
+use App\Repositories\Contracts\OrderStatusHistoryRepositoryInterface;
 use App\Repositories\Contracts\PaymentRepositoryInterface;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
@@ -22,10 +23,11 @@ use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\CouponRepository;
 use App\Repositories\Eloquent\OrderItemRepository;
 use App\Repositories\Eloquent\OrderRepository;
+use App\Repositories\Eloquent\OrderStatusHistoryRepository;
+use App\Repositories\Eloquent\PaymentRepository;
 use App\Repositories\Eloquent\ProductImageRepository;
 use App\Repositories\Eloquent\ProductRepository;
 use App\Repositories\Eloquent\WishlistRepository;
-use App\Repositories\Eloquent\PaymentRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -96,6 +98,11 @@ class AppServiceProvider extends ServiceProvider
 
             PaymentRepository::class
 
+        );
+
+        $this->app->bind(
+            OrderStatusHistoryRepositoryInterface::class,
+            OrderStatusHistoryRepository::class
         );
     }
 

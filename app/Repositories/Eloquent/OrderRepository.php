@@ -15,9 +15,11 @@ class OrderRepository implements OrderRepositoryInterface
         return Order::create($data);
     }
 
-    public function update(Order $order, array $data): bool
+    public function update(Order $order, array $data): Order
     {
-        return $order->update($data);
+        $order->update($data);
+
+        return $order->fresh();
     }
 
     public function paginate(int $perPage = 10): LengthAwarePaginator
@@ -123,6 +125,8 @@ class OrderRepository implements OrderRepositoryInterface
         return Order::with([
             'user',
             'items.product',
+            'payment',
+            'statusHistories.user',
         ])->find($id);
     }
 

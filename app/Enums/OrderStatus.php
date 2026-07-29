@@ -85,4 +85,27 @@ enum OrderStatus: string
             self::Cancelled => [],
         };
     }
+
+    public function canTransitionTo(
+        self $status,
+    ): bool {
+
+        return in_array(
+            $status,
+            $this->transitions(),
+            true
+        );
+    }
+
+    public function isFinal(): bool
+    {
+        return in_array(
+            $this,
+            [
+                self::Delivered,
+                self::Cancelled,
+            ],
+            true
+        );
+    }
 }

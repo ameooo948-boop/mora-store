@@ -28,6 +28,7 @@ class OrderService
         private readonly AddressRepositoryInterface $addressRepository,
         private readonly CouponService $couponService,
         private readonly PaymentService $paymentService,
+        protected OrderStatusHistoryService $historyService,
     ) {}
 
     public function placeOrder(
@@ -258,20 +259,34 @@ class OrderService
         return $this->orderRepository->findForAdmin($id);
     }
 
-    public function updateStatus(Order $order, OrderStatus $status): bool
-    {
+    public function updateStatus(
+        Order $order,
+        OrderStatus $status
+    ): Order {
+
         $currentStatus = $order->status;
 
-        if (! in_array(
-            $status,
-            $currentStatus->transitions(),
-            true
-        )) {
+        if (! $currentStatus->canTransitionTo($status)) {
             throw new DomainException(
                 'Invalid order status transition.'
             );
         }
 
-        return $this->orderRepository->updateStatus($order, $status);
+        $oldStatus = $currentStatus;
+
+        $updatedOrder = $this->orderRepository->update(
+            $order,
+            [
+                'status' => $status,
+            ]
+        );
+
+        $this->historyService->create(
+            $updatedOrder,
+            $oldStatus,
+            $status
+        );
+
+        return $updatedOrder;
     }
 }

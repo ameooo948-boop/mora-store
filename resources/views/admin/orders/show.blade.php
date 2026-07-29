@@ -274,6 +274,112 @@
 
         </div>
 
+        <div class="card border-0 shadow-sm mt-4">
+
+            <div class="card-header bg-white">
+
+                <h5 class="mb-0">
+                    Order Status History
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                @forelse($order->statusHistories as $history)
+
+                <div class="d-flex justify-content-between align-items-start border-bottom py-3">
+
+                    <div>
+
+                        @if($history->old_status)
+
+                        <div>
+
+                            <strong>
+
+                                {{ $history->old_status->label() }}
+
+                            </strong>
+
+                            →
+
+                            <strong>
+
+                                {{ $history->new_status->label() }}
+
+                            </strong>
+
+                        </div>
+
+                        @else
+
+                        <div>
+
+                            <strong>
+
+                                {{ $history->new_status->label() }}
+
+                            </strong>
+
+                            <span class="text-muted">
+
+                                (Initial Status)
+
+                            </span>
+
+                        </div>
+
+                        @endif
+
+                        @if($history->user)
+
+                        <small class="text-muted">
+
+                            By {{ $history->user->name }}
+
+                        </small>
+
+                        @endif
+
+                        @if($history->notes)
+
+                        <div class="small text-muted mt-1">
+
+                            {{ $history->notes }}
+
+                        </div>
+
+                        @endif
+
+                    </div>
+
+                    <div class="text-end">
+
+                        <small class="text-muted">
+
+                            {{ $history->changed_at->format('M d, Y h:i A') }}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <p class="text-muted mb-0">
+
+                    No status history available.
+
+                </p>
+
+                @endforelse
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
