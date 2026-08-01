@@ -59,6 +59,13 @@ class Order extends Model
         )->latest();
     }
 
+    public function stockMovements()
+    {
+        return $this->hasMany(
+            StockMovement::class
+        );
+    }
+
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);

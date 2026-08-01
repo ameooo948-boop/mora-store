@@ -13,7 +13,9 @@ use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Services\CartService;
 use App\Services\CouponService;
+use App\Services\OrderStatusHistoryService;
 use App\Services\PaymentService;
+use App\Services\ProductService;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -29,6 +31,7 @@ class OrderService
         private readonly CouponService $couponService,
         private readonly PaymentService $paymentService,
         protected OrderStatusHistoryService $historyService,
+        private readonly ProductService $productService,
     ) {}
 
     public function placeOrder(
@@ -119,7 +122,8 @@ class OrderService
 
                 $this->decreaseStock(
                     $item->product,
-                    $item->quantity
+                    $item->quantity,
+                    $order
                 );
             }
 
@@ -162,11 +166,16 @@ class OrderService
 
     private function decreaseStock(
         Product $product,
-        int $quantity
+        int $quantity,
+        Order $order
     ): void {
-        $product->decrement('quantity', $quantity);
-    }
 
+        $this->productService->decreaseStock(
+            $product,
+            $quantity,
+            $order
+        );
+    }
     private function generateOrderNumber(): string
     {
         return 'ORD-'

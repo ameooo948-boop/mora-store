@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\StockMovementType;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Services\StockMovementService;
+use DomainException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class ProductService
@@ -12,6 +16,7 @@ class ProductService
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
         private readonly ProductImageRepositoryInterface $productImageRepository,
+        protected StockMovementService $stockMovementService,
     ) {}
 
     public function create(array $data): Product
@@ -33,6 +38,25 @@ class ProductService
                 );
             }
 
+            if ($product->quantity > 0) {
+
+                $this->stockMovementService->create(
+
+                    product: $product,
+
+                    beforeQuantity: 0,
+
+                    type: StockMovementType::Increase,
+
+                    quantity: $product->quantity,
+
+                    reference: $product,
+
+                    notes: 'Initial stock.'
+
+                );
+            }
+
             return $product;
         });
     }
@@ -44,6 +68,7 @@ class ProductService
             $images = $data['images'] ?? [];
 
             unset($data['images']);
+            $beforeQuantity = $product->quantity;
 
             $updated = $this->productRepository->update(
                 $product,
@@ -55,6 +80,33 @@ class ProductService
                 $this->productImageRepository->createMany(
                     $product,
                     $images
+                );
+            }
+
+            $product->refresh();
+
+            if ($beforeQuantity !== $product->quantity) {
+
+                $type = $product->quantity > $beforeQuantity
+                    ? StockMovementType::Increase
+                    : StockMovementType::Decrease;
+
+                $this->stockMovementService->create(
+
+                    product: $product,
+
+                    beforeQuantity: $beforeQuantity,
+
+                    type: $type,
+
+                    quantity: abs(
+                        $product->quantity - $beforeQuantity
+                    ),
+
+                    reference: $product,
+
+                    notes: 'Stock adjusted from admin.'
+
                 );
             }
 
@@ -123,5 +175,89 @@ class ProductService
             $product,
             $limit
         );
+    }
+
+    public function decreaseStock(
+        Product $product,
+        int $quantity,
+        ?Model $reference = null,
+    ): Product {
+
+        if ($quantity <= 0) {
+            throw new DomainException(
+                'Quantity must be greater than zero.'
+            );
+        }
+
+        if ($product->quantity < $quantity) {
+            throw new DomainException(
+                'Not enough stock available.'
+            );
+        }
+
+        return DB::transaction(function () use (
+            $product,
+            $quantity,
+            $reference,
+        ) {
+
+            $beforeQuantity = $product->quantity;
+
+            $product->decrement(
+                'quantity',
+                $quantity
+            );
+
+            $product->refresh();
+
+            $this->stockMovementService->create(
+                $product,
+                $beforeQuantity,
+                StockMovementType::Decrease,
+                $quantity,
+                $reference
+            );
+
+            return $product;
+        });
+    }
+
+    public function increaseStock(
+        Product $product,
+        int $quantity,
+        ?Model $reference = null,
+    ): Product {
+
+        if ($quantity <= 0) {
+            throw new DomainException(
+                'Quantity must be greater than zero.'
+            );
+        }
+
+        return DB::transaction(function () use (
+            $product,
+            $quantity,
+            $reference,
+        ) {
+
+            $beforeQuantity = $product->quantity;
+
+            $product->increment(
+                'quantity',
+                $quantity
+            );
+
+            $product->refresh();
+
+            $this->stockMovementService->create(
+                $product,
+                $beforeQuantity,
+                StockMovementType::Increase,
+                $quantity,
+                $reference
+            );
+
+            return $product;
+        });
     }
 }

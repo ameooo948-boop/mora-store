@@ -96,6 +96,18 @@
 
         <li>
 
+            <a href="{{ route('admin.stock-movements.index') }}" class="{{ request()->routeIs('admin.stock-movements.*') ? 'active' : '' }}">
+
+                <i class="bi-credit-card"></i>
+
+                Stock Movements
+
+            </a>
+
+        </li>
+
+        <li>
+
             <a href="{{ route('admin.coupons.index') }}" class="{{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
 
                 <i class="bi bi-ticket-perforated"></i>

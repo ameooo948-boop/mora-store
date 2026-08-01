@@ -4,10 +4,11 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
+use App\Http\Controllers\Admin\StockMovementController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::resource('users', UserController::class);
@@ -38,6 +39,12 @@ Route::patch(
 Route::resource('coupons', CouponController::class);
 
 Route::resource('payments', PaymentController::class)
+    ->only([
+        'index',
+        'show',
+    ]);
+
+Route::resource('stock-movements', StockMovementController::class)
     ->only([
         'index',
         'show',

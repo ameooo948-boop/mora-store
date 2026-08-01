@@ -153,7 +153,7 @@
 
             <form method="GET">
 
-                <div class="row g-3">
+                <div class="row g-2">
 
                     <div class="col">
 
