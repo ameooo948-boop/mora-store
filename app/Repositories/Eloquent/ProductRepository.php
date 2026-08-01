@@ -159,10 +159,20 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return Product::query()
             ->with([
-                'category',
                 'brand',
+                'category',
                 'images',
+                'approvedReviews.user',
             ])
+
+            ->withAvg([
+                'approvedReviews',
+            ], 'rating')
+
+            ->withCount([
+                'approvedReviews',
+            ])
+
             ->where('status', true)
             ->latest()
             ->take($limit)
@@ -174,9 +184,18 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::query()
 
             ->with([
-                'images',
-                'category',
                 'brand',
+                'category',
+                'images',
+                'approvedReviews.user',
+            ])
+
+            ->withAvg([
+                'approvedReviews',
+            ], 'rating')
+
+            ->withCount([
+                'approvedReviews',
             ])
 
             ->where('status', true)
@@ -188,9 +207,18 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::query()
 
             ->with([
-                'images',
-                'category',
                 'brand',
+                'category',
+                'images',
+                'approvedReviews.user',
+            ])
+
+            ->withAvg([
+                'approvedReviews',
+            ], 'rating')
+
+            ->withCount([
+                'approvedReviews',
             ])
 
             ->where('status', true)

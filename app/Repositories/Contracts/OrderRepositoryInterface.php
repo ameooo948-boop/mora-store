@@ -4,6 +4,7 @@ namespace App\Repositories\Contracts;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -34,4 +35,9 @@ interface OrderRepositoryInterface
     public function updateStatus(Order $order, OrderStatus $status): bool;
 
     public function getStatisticsAdmin(): array;
+
+    public function hasPurchasedProduct(
+        User $user,
+        Product $product,
+    ): bool;
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\PaymentController;
 use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
 use Illuminate\Support\Facades\Route;
@@ -114,3 +115,23 @@ Route::post(
     '/stripe/webhook',
     StripeWebhookController::class
 )->name('stripe.webhook');
+
+
+Route::middleware('auth')
+    ->group(function () {
+
+        Route::post(
+            'products/{product}/reviews',
+            [ReviewController::class, 'store']
+        )->name('reviews.store');
+
+        Route::put(
+            'reviews/{review}',
+            [ReviewController::class, 'update']
+        )->name('reviews.update');
+
+        Route::delete(
+            'reviews/{review}',
+            [ReviewController::class, 'destroy']
+        )->name('reviews.destroy');
+    });

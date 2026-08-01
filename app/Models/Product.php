@@ -104,10 +104,47 @@ class Product extends Model
         );
     }
 
+    public function getAverageRatingAttribute(): float
+    {
+        return round(
+
+            $this->approvedReviews()
+
+                ->avg('rating') ?? 0,
+
+            1
+
+        );
+    }
+
+    public function getReviewsCountAttribute(): int
+    {
+        return $this->approvedReviews()
+
+            ->count();
+    }
+
     public function images(): HasMany
     {
         return $this->hasMany(ProductImage::class)
             ->orderBy('sort_order');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(
+            Review::class
+        );
+    }
+
+    public function approvedReviews()
+    {
+        return $this->hasMany(
+            Review::class
+        )->where(
+            'status',
+            true
+        );
     }
 
     public function getRouteKeyName(): string

@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -135,5 +136,35 @@ class OrderRepository implements OrderRepositoryInterface
         return $order->update([
             'status' => $status,
         ]);
+    }
+
+    public function hasPurchasedProduct(
+        User $user,
+        Product $product,
+    ): bool {
+
+        return Order::query()
+
+            ->where(
+                'user_id',
+                $user->id
+            )
+            ->where(
+                'status',
+                OrderStatus::Delivered
+            )
+
+            ->whereHas(
+                'items',
+                function ($query) use ($product) {
+
+                    $query->where(
+                        'product_id',
+                        $product->id
+                    );
+                }
+            )
+
+            ->exists();
     }
 }

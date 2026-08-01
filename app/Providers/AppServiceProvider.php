@@ -14,6 +14,7 @@ use App\Repositories\Contracts\OrderStatusHistoryRepositoryInterface;
 use App\Repositories\Contracts\PaymentRepositoryInterface;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Repositories\Contracts\ReviewRepositoryInterface;
 use App\Repositories\Contracts\StockMovementRepositoryInterface;
 use App\Repositories\Contracts\WishlistRepositoryInterface;
 use App\Repositories\Eloquent\AddressRepository;
@@ -28,6 +29,7 @@ use App\Repositories\Eloquent\OrderStatusHistoryRepository;
 use App\Repositories\Eloquent\PaymentRepository;
 use App\Repositories\Eloquent\ProductImageRepository;
 use App\Repositories\Eloquent\ProductRepository;
+use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\StockMovementRepository;
 use App\Repositories\Eloquent\WishlistRepository;
 use Illuminate\Support\ServiceProvider;
@@ -110,6 +112,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             StockMovementRepositoryInterface::class,
             StockMovementRepository::class
+        );
+
+        $this->app->bind(
+            ReviewRepositoryInterface::class,
+            ReviewRepository::class
         );
     }
 

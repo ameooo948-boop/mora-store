@@ -17,6 +17,7 @@ class ProductService
         private readonly ProductRepositoryInterface $productRepository,
         private readonly ProductImageRepositoryInterface $productImageRepository,
         protected StockMovementService $stockMovementService,
+        protected ReviewService $reviewService,
     ) {}
 
     public function create(array $data): Product
@@ -260,4 +261,21 @@ class ProductService
             return $product;
         });
     }
+
+    public function averageRating(
+        Product $product,
+    ): float {
+
+        return $this->reviewService
+            ->averageRating($product);
+    }
+
+    public function reviewsCount(
+        Product $product,
+    ): int {
+
+        return $this->reviewService
+            ->reviewsCount($product);
+    }
+    
 }

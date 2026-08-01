@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\StockMovementController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -49,3 +50,19 @@ Route::resource('stock-movements', StockMovementController::class)
         'index',
         'show',
     ]);
+
+Route::resource('reviews', ReviewController::class)
+    ->only([
+        'index',
+        'show',
+    ]);
+
+Route::patch(
+    'reviews/{review}/approve',
+    [ReviewController::class, 'approve']
+)->name('reviews.approve');
+
+Route::patch(
+    'reviews/{review}/reject',
+    [ReviewController::class, 'reject']
+)->name('reviews.reject');

@@ -60,6 +60,36 @@ $inWishlist = auth()->check()
         {{-- Product Info --}}
         <div class="col-lg-6">
 
+            <div class="d-flex align-items-center gap-2 mb-3">
+
+                <div>
+
+                    @for($i = 1; $i <= 5; $i++) @if($i <=round($averageRating)) <i class="bi bi-star-fill text-warning"></i>
+
+                        @else
+
+                        <i class="bi bi-star text-secondary"></i>
+
+                        @endif
+
+                        @endfor
+
+                </div>
+
+                <span>
+
+                    {{ number_format($averageRating,1) }}
+
+                </span>
+
+                <small class="text-muted">
+
+                    ({{ $reviewsCount }} Reviews)
+
+                </small>
+
+            </div>
+
             <span class="badge bg-primary mb-3">
 
                 {{ $product->category->name }}
@@ -264,6 +294,188 @@ $inWishlist = auth()->check()
         </div>
 
     </div>
+
+
+    <div class="mt-5">
+
+        <h4 class="mb-4">
+
+            Customer Reviews
+
+        </h4>
+
+        @forelse($reviews as $review)
+
+        <div class="card shadow-sm border-0 mb-3">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <strong>
+
+                        {{ $review->user->name }}
+
+                    </strong>
+
+                    <small class="text-muted">
+
+                        {{ $review->created_at->diffForHumans() }}
+
+                    </small>
+
+                </div>
+
+                <div class="my-2">
+
+                    @for($i=1;$i<=5;$i++) @if($i <=$review->rating)
+
+                        <i class="bi bi-star-fill text-warning"></i>
+
+                        @else
+
+                        <i class="bi bi-star text-secondary"></i>
+
+                        @endif
+
+                        @endfor
+
+                </div>
+
+                <p class="mb-0">
+
+                    {{ $review->comment }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        @empty
+
+        <div class="alert alert-light border">
+
+            No reviews yet.
+
+        </div>
+
+        @endforelse
+
+        {{ $reviews->links() }}
+
+    </div>
+
+    @auth
+
+    @if($canReview || $userReview)
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                {{ $userReview ? 'Update Your Review' : 'Write a Review' }}
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <form action="{{ $userReview
+                        ? route('reviews.update', $userReview)
+                        : route('reviews.store', $product) }}" method="POST">
+
+                @csrf
+
+                @if($userReview)
+
+                @method('PUT')
+
+                @endif
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Rating
+
+                    </label>
+
+                    <select name="rating" class="form-select @error('rating') is-invalid @enderror">
+
+                        @for($i = 5; $i >= 1; $i--)
+
+                        <option value="{{ $i }}" @selected(old('rating', $userReview?->rating) == $i)
+                            >
+
+                            {{ $i }} Star{{ $i > 1 ? 's' : '' }}
+
+                        </option>
+
+                        @endfor
+
+                    </select>
+
+                    @error('rating')
+
+                    <div class="invalid-feedback">
+
+                        {{ $message }}
+
+                    </div>
+
+                    @enderror
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Comment
+
+                    </label>
+
+                    <textarea name="comment" rows="5" class="form-control @error('comment') is-invalid @enderror">{{ old('comment', $userReview?->comment) }}</textarea>
+
+                    @error('comment')
+
+                    <div class="invalid-feedback">
+
+                        {{ $message }}
+
+                    </div>
+
+                    @enderror
+
+                </div>
+
+                <button class="btn btn-primary">
+
+                    {{ $userReview ? 'Update Review' : 'Submit Review' }}
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    @else
+
+    <div class="alert alert-info">
+
+        You can review this product only after purchasing and receiving it.
+
+    </div>
+
+    @endif
+
+    @endauth
+
 
     {{-- Related Products --}}
     @if($relatedProducts->isNotEmpty())
