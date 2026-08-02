@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StockMovementController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -70,3 +71,13 @@ Route::patch(
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard.index');
+
+Route::get(
+    'settings',
+    [SettingController::class, 'edit']
+)->name('settings.edit');
+
+Route::put(
+    'settings',
+    [SettingController::class, 'update']
+)->name('settings.update');
