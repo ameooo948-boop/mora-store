@@ -8,6 +8,7 @@ use App\Repositories\Contracts\CartItemRepositoryInterface;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\CouponRepositoryInterface;
+use App\Repositories\Contracts\DashboardRepositoryInterface;
 use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\OrderStatusHistoryRepositoryInterface;
@@ -23,6 +24,7 @@ use App\Repositories\Eloquent\CartItemRepository;
 use App\Repositories\Eloquent\CartRepository;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\CouponRepository;
+use App\Repositories\Eloquent\DashboardRepository;
 use App\Repositories\Eloquent\OrderItemRepository;
 use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\OrderStatusHistoryRepository;
@@ -117,6 +119,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ReviewRepositoryInterface::class,
             ReviewRepository::class
+        );
+
+        $this->app->bind(
+            DashboardRepositoryInterface::class,
+            DashboardRepository::class
         );
     }
 
