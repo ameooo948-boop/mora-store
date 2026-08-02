@@ -63,11 +63,11 @@ $inWishlist = auth()->check()
         <div class="mb-2">
 
             <span class="text-muted text-decoration-line-through small">
-                {{ number_format($product->price,2) }} EGP
+                {{ number_format($product->price,2) }} {{ setting('currency') }}
             </span>
 
             <h5 class="fw-bold text-danger mt-1 mb-0">
-                {{ number_format($product->final_price,2) }} EGP
+                {{ number_format($product->final_price,2) }} {{ setting('currency') }}
             </h5>
 
         </div>
@@ -75,7 +75,7 @@ $inWishlist = auth()->check()
         @else
 
         <h5 class="fw-bold mb-2">
-            {{ number_format($product->price,2) }} EGP
+            {{ number_format($product->price,2) }} {{ setting('currency') }}
         </h5>
 
         @endif

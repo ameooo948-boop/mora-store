@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\PaymentController;
 use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
@@ -93,6 +94,42 @@ Route::middleware('auth')->group(function () {
         '/products/{product}',
         [ProductController::class, 'show']
     )->name('products.show');
+
+    Route::post(
+        'products/{product}/reviews',
+        [ReviewController::class, 'store']
+    )->name('reviews.store');
+
+    Route::put(
+        'reviews/{review}',
+        [ReviewController::class, 'update']
+    )->name('reviews.update');
+
+    Route::delete(
+        'reviews/{review}',
+        [ReviewController::class, 'destroy']
+    )->name('reviews.destroy');
+
+
+    Route::get(
+        '/profile',
+        [ProfileController::class, 'edit']
+    )->name('profile.edit');
+
+    Route::put(
+        '/profile',
+        [ProfileController::class, 'update']
+    )->name('profile.update');
+
+    Route::get(
+        '/profile/password',
+        [ProfileController::class, 'password']
+    )->name('profile.password');
+
+    Route::put(
+        '/profile/password',
+        [ProfileController::class, 'updatePassword']
+    )->name('profile.password.update');
 });
 
 Route::middleware('auth')
@@ -115,23 +152,3 @@ Route::post(
     '/stripe/webhook',
     StripeWebhookController::class
 )->name('stripe.webhook');
-
-
-Route::middleware('auth')
-    ->group(function () {
-
-        Route::post(
-            'products/{product}/reviews',
-            [ReviewController::class, 'store']
-        )->name('reviews.store');
-
-        Route::put(
-            'reviews/{review}',
-            [ReviewController::class, 'update']
-        )->name('reviews.update');
-
-        Route::delete(
-            'reviews/{review}',
-            [ReviewController::class, 'destroy']
-        )->name('reviews.destroy');
-    });

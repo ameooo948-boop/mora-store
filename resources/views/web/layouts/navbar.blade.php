@@ -4,7 +4,7 @@
 
         <a class="navbar-brand fw-bold" href="{{ route('products.index') }}">
             <i class="bi bi-person-circle me-2"></i>
-            My Account
+            {{ setting('site_name') }}
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#accountNavbar">
@@ -47,25 +47,20 @@
 
             <div class="dropdown">
 
-                <button class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 
-                    {{ auth()->user()->name }}
+                    <img src="{{ auth()->user()->avatar_url }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;" alt="Avatar">
+
+                    <span>{{ auth()->user()->name }}</span>
 
                 </button>
 
                 <ul class="dropdown-menu dropdown-menu-end">
 
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
                             <i class="bi bi-person me-2"></i>
                             Profile
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bi bi-lock me-2"></i>
-                            Change Password
                         </a>
                     </li>
 
@@ -74,20 +69,21 @@
                     </li>
 
                     <li>
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+
                             @csrf
 
-                            <button class="dropdown-item text-danger">
+                            <button type="submit" class="dropdown-item text-danger">
                                 <i class="bi bi-box-arrow-right me-2"></i>
                                 Logout
                             </button>
+
                         </form>
                     </li>
 
                 </ul>
 
             </div>
-
         </div>
 
     </div>

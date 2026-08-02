@@ -168,7 +168,7 @@ $inWishlist = auth()->check()
 
                     {{ number_format($product->price, 2) }}
 
-                    EGP
+                    {{ setting('currency') }}
 
                 </span>
 
@@ -178,7 +178,7 @@ $inWishlist = auth()->check()
 
                 {{ number_format($product->final_price, 2) }}
 
-                EGP
+                {{ setting('currency') }}
 
             </h2>
 
@@ -188,7 +188,7 @@ $inWishlist = auth()->check()
 
                 {{ number_format($product->price, 2) }}
 
-                EGP
+                {{ setting('currency') }}
 
             </h2>
 
@@ -203,16 +203,6 @@ $inWishlist = auth()->check()
             </p>
 
             <hr>
-
-            <div class="mb-4">
-
-                <label class="form-label">
-
-                    Quantity
-
-                </label>
-
-            </div>
 
             <form id="addToCartForm" action="{{ route('cart.store', $product) }}" method="POST">
 
@@ -310,42 +300,48 @@ $inWishlist = auth()->check()
 
             <div class="card-body">
 
-                <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center justify-content-between">
 
-                    <strong>
+                    <div class="d-flex align-items-center">
 
-                        {{ $review->user->name }}
+                        <img src="{{ $review->user->avatar_url }}" class="rounded-circle me-3" width="45" height="45" style="object-fit: cover;" alt="{{ $review->user->name }}">
 
-                    </strong>
+                        <div>
 
-                    <small class="text-muted">
+                            <h6 class="mb-0 fw-semibold">
+                                {{ $review->user->name }}
+                            </h6>
 
-                        {{ $review->created_at->diffForHumans() }}
+                            <small class="text-muted">
+                                {{ $review->created_at->diffForHumans() }}
+                            </small>
 
-                    </small>
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        @for($i = 1; $i <= 5; $i++) @if($i <=$review->rating)
+
+                            <i class="bi bi-star-fill text-warning"></i>
+
+                            @else
+
+                            <i class="bi bi-star text-secondary"></i>
+
+                            @endif
+
+                            @endfor
+
+                    </div>
 
                 </div>
 
-                <div class="my-2">
+                <hr class="my-3">
 
-                    @for($i=1;$i<=5;$i++) @if($i <=$review->rating)
-
-                        <i class="bi bi-star-fill text-warning"></i>
-
-                        @else
-
-                        <i class="bi bi-star text-secondary"></i>
-
-                        @endif
-
-                        @endfor
-
-                </div>
-
-                <p class="mb-0">
-
+                <p class="mb-0 text-muted">
                     {{ $review->comment }}
-
                 </p>
 
             </div>

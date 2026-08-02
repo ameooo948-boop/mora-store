@@ -26,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
     ];
 
     /**
@@ -49,6 +50,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar
+
+            ? asset(
+                'storage/' . $this->avatar
+            )
+
+            : asset(
+                'images/default-avatar.png'
+            );
     }
 
     public function cart(): HasOne

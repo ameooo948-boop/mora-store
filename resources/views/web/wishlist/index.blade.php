@@ -7,9 +7,7 @@
 <div class="container">
 
     <h2 class="mb-4">
-
         My Wishlist
-
     </h2>
 
     <div class="row">
@@ -20,44 +18,47 @@
         $product = $wishlist->product;
         @endphp
 
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 col-lg-3 mb-4">
 
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm">
 
-                @if($product->images->isNotEmpty())
+                <a href="{{ route('products.show', $product) }}" class="text-decoration-none text-dark">
 
-                <img src="{{ $product->images->first()->image_url }}" class="card-img-top product-image" alt="{{ $product->name }}">
+                    @if($product->images->isNotEmpty())
 
-                @else
+                    <img src="{{ $product->images->first()->image_url }}" class="card-img-top product-image" alt="{{ $product->name }}">
 
-                <div class="bg-light d-flex justify-content-center align-items-center product-image">
-                    <i class="bi bi-image fs-1 text-secondary"></i>
-                </div>
+                    @else
 
-                @endif
+                    <div class="bg-light d-flex justify-content-center align-items-center product-image">
+                        <i class="bi bi-image fs-1 text-secondary"></i>
+                    </div>
 
-                <div class="card-body">
+                    @endif
 
-                    <h5>
+                    <div class="card-body">
 
-                        {{ $product->name }}
+                        <h5 class="card-title mb-2">
+                            {{ $product->name }}
+                        </h5>
 
-                    </h5>
+                        <h6 class="text-primary fw-bold mb-0">
+                            {{ $product->formatted_price ?? number_format($product->price, 2) }}
+                        </h6>
 
-                    <p>
+                    </div>
 
-                        {{ $product->formatted_price ?? number_format($product->price, 2) }}
+                </a>
 
-                    </p>
+                <div class="card-footer bg-white border-0 pt-0">
 
                     <form action="{{ route('wishlist.toggle', $product) }}" method="POST">
 
                         @csrf
 
-                        <button class="btn btn-outline-danger w-100">
-
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-heartbreak me-2"></i>
                             Remove
-
                         </button>
 
                     </form>
@@ -72,10 +73,8 @@
 
         <div class="col-12">
 
-            <div class="alert alert-info">
-
+            <div class="alert alert-info text-center">
                 Your wishlist is empty.
-
             </div>
 
         </div>
@@ -84,7 +83,9 @@
 
     </div>
 
-    {{ $wishlists->links() }}
+    <div class="d-flex justify-content-center">
+        {{ $wishlists->links() }}
+    </div>
 
 </div>
 
