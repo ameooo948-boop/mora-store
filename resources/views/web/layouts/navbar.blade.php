@@ -45,45 +45,150 @@
 
             </ul>
 
-            <div class="dropdown">
+            <div class="d-flex align-items-center gap-3">
 
-                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown">
+                    <a class="btn btn-outline-light position-relative" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-5"></i>
 
-                    <img src="{{ auth()->user()->avatar_url }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;" alt="Avatar">
+                        @if(auth()->user()->unreadNotifications->count())
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ auth()->user()->unreadNotifications->count() }}
+                        </span>
+                        @endif
+                    </a>
 
-                    <span>{{ auth()->user()->name }}</span>
+                    <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0" style="width:380px;border-radius:12px;overflow:hidden;">
 
-                </button>
+                        {{-- Header --}}
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+                            <strong>
+                                Notifications
+                                ({{ auth()->user()->unreadNotifications->count() }})
+                            </strong>
 
-                <ul class="dropdown-menu dropdown-menu-end">
+                            @if(auth()->user()->unreadNotifications->count())
+                            <form action="{{ route('notifications.read-all') }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button class="btn btn-sm btn-link text-decoration-none p-0">
+                                    Read All
+                                </button>
+                            </form>
+                            @endif
+                        </div>
 
-                    <li>
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                            <i class="bi bi-person me-2"></i>
-                            Profile
-                        </a>
-                    </li>
+                        {{-- Notifications --}}
+                        <div style="max-height:400px;overflow-y:auto;">
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                            @forelse(auth()->user()->notifications->take(10) as $notification)
 
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+                            <div class="border-bottom">
 
-                            @csrf
+                                <div class="d-flex justify-content-between align-items-start px-3 py-3 {{ is_null($notification->read_at) ? 'bg-light' : '' }}">
 
-                            <button type="submit" class="dropdown-item text-danger">
-                                <i class="bi bi-box-arrow-right me-2"></i>
-                                Logout
-                            </button>
+                                    <a href="{{ $notification->data['url'] }}" class="text-decoration-none text-dark flex-grow-1">
 
-                        </form>
-                    </li>
+                                        <div class="fw-semibold">
+                                            {{ $notification->data['title'] }}
+                                        </div>
 
-                </ul>
+                                        <small class="text-muted d-block">
+                                            {{ $notification->data['message'] }}
+                                        </small>
+
+                                        <small class="text-secondary">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </small>
+
+                                    </a>
+
+                                    @if(is_null($notification->read_at))
+
+                                    <form action="{{ route('notifications.read',$notification->id) }}" method="POST" class="ms-2">
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <button class="btn btn-sm btn-outline-success" title="Mark as Read">
+
+                                            <i class="bi bi-check-lg"></i>
+
+                                        </button>
+                                    </form>
+
+                                    @else
+
+                                    <i class="bi bi-check2-all text-success ms-2"></i>
+
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+                            @empty
+
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+                                No Notifications
+                            </div>
+
+                            @endforelse
+
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="border-top text-center">
+                            <a href="{{ route('notifications.index') }}" class="dropdown-item py-2 fw-semibold">
+                                View All Notifications
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- User --}}
+                <div class="dropdown">
+
+                    <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                        <img src="{{ auth()->user()->avatar_url }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;" alt="Avatar">
+
+                        <span>{{ auth()->user()->name }}</span>
+
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                <i class="bi bi-person me-2"></i>
+                                Profile
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
+
+                </div>
 
             </div>
+
         </div>
 
     </div>

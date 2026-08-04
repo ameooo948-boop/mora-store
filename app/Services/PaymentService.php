@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Repositories\Contracts\PaymentGatewayInterface;
 use App\Repositories\Contracts\PaymentRepositoryInterface;
+use App\Services\NotificationService;
 use App\Services\Payments\CashOnDeliveryGateway;
 use App\Services\Payments\PaypalGateway;
 use App\Services\Payments\StripeGateway;
@@ -16,13 +17,14 @@ class PaymentService
 {
     public function __construct(
         private readonly PaymentRepositoryInterface $paymentRepository,
+        private readonly NotificationService $notificationService,
     ) {}
 
     public function createPayment(
         Order $order,
         PaymentMethod $method,
     ): Payment {
-        return $this->paymentRepository->create([
+        $payment = $this->paymentRepository->create([
 
             'order_id' => $order->id,
 
@@ -33,6 +35,10 @@ class PaymentService
             'status' => PaymentStatus::Pending,
 
         ]);
+
+        $this->notificationService->newPayment($payment);
+
+        return $payment;
     }
 
     public function markAsPaid(

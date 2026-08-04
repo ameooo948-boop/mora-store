@@ -6,6 +6,7 @@ use App\Enums\StockMovementType;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Services\NotificationService;
 use App\Services\StockMovementService;
 use DomainException;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,7 @@ class ProductService
         private readonly ProductImageRepositoryInterface $productImageRepository,
         protected StockMovementService $stockMovementService,
         protected ReviewService $reviewService,
+        private readonly NotificationService $notificationService,
     ) {}
 
     public function create(array $data): Product
@@ -219,6 +221,23 @@ class ProductService
                 $reference
             );
 
+            $threshold = config(
+                'notifications.low_stock_threshold'
+            );
+
+            if (
+
+                $beforeQuantity > $threshold &&
+
+                $product->quantity <= $threshold
+
+            ) {
+
+                $this->notificationService->lowStock(
+                    $product
+                );
+            }
+
             return $product;
         });
     }
@@ -277,5 +296,4 @@ class ProductService
         return $this->reviewService
             ->reviewsCount($product);
     }
-    
 }

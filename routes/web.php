@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\NotificationController;
 use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\PaymentController;
 use App\Http\Controllers\Web\ProductController;
@@ -152,3 +153,28 @@ Route::post(
     '/stripe/webhook',
     StripeWebhookController::class
 )->name('stripe.webhook');
+
+
+Route::middleware('auth')
+
+    ->prefix('notifications')
+
+    ->name('notifications.')
+
+    ->group(function () {
+
+        Route::get(
+            '/',
+            [NotificationController::class, 'index']
+        )->name('index');
+
+        Route::patch(
+            '/{notification}',
+            [NotificationController::class, 'read']
+        )->name('read');
+
+        Route::patch(
+            '/',
+            [NotificationController::class, 'readAll']
+        )->name('read-all');
+    });

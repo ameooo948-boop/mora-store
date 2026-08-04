@@ -6,8 +6,10 @@ use App\Enums\ReviewStatus;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
+use App\Notifications\ReviewApprovedNotification;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\ReviewRepositoryInterface;
+use App\Services\NotificationService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +20,7 @@ class ReviewService
     public function __construct(
         protected ReviewRepositoryInterface $repository,
         protected OrderRepositoryInterface $orderRepository,
+        private readonly NotificationService $notificationService,
     ) {}
 
     public function create(
@@ -53,7 +56,7 @@ class ReviewService
             ]);
         }
 
-        return $this->repository->create([
+        $review = $this->repository->create([
 
             'product_id' => $product->id,
 
@@ -66,6 +69,12 @@ class ReviewService
             'status' => ReviewStatus::Pending,
 
         ]);
+
+        $this->notificationService->newReview(
+            $review
+        );
+
+        return $review;
     }
 
     public function update(
@@ -165,6 +174,14 @@ class ReviewService
     public function approve(
         Review $review,
     ): bool {
+
+        $review->user->notify(
+
+            new ReviewApprovedNotification(
+                $review
+            )
+
+        );
 
         return $this->repository->update(
             $review,

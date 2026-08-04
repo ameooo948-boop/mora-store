@@ -32,6 +32,7 @@ class OrderService
         private readonly PaymentService $paymentService,
         protected OrderStatusHistoryService $historyService,
         private readonly ProductService $productService,
+        protected NotificationService $notificationService,
     ) {}
 
     public function placeOrder(
@@ -131,6 +132,11 @@ class OrderService
                 $order,
                 $items
             );
+
+            $this->notificationService
+                ->newOrder(
+                    $order
+                );
 
             $this->cartService->clear($user->id);
 
@@ -295,6 +301,11 @@ class OrderService
             $oldStatus,
             $status
         );
+
+        $this->notificationService
+            ->orderStatusChanged(
+                $order
+            );
 
         return $updatedOrder;
     }
