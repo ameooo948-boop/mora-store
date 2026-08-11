@@ -36,35 +36,41 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    public function login(LoginRequest $request)
-    {
-        $credentials = $request->safe()->only([
-            'email',
-            'password'
-        ]);;
+public function login(LoginRequest $request)
+{
+    $credentials = $request->safe()->only([
+        'email',
+        'password',
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->route('home');
-        }
+    if (! Auth::attempt($credentials)) {
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ]);
 
-      $user = Auth::user();
+    }
 
-    // Email is not verified
+    $request->session()->regenerate();
+
+    $user = Auth::user();
+
     if (! $user->hasVerifiedEmail()) {
 
-    return redirect()
-        ->route('verification.notice')
-        ->with(
-            'success',
-            'Please verify your email address before continuing.'
-        );
-}
+    $user->sendEmailVerificationNotification();
+        return redirect()
+            ->route('verification.notice')
+            ->with(
+                'success',
+                'Please verify your email address before continuing.'
+            );
+
     }
+
+    return redirect()->route('home');
+}
+
+
 
     public function logout(Request $request)
     {

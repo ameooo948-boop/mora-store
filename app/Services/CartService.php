@@ -62,20 +62,6 @@ class CartService
                 'items.product.images',
             ]);
 
-        foreach ($cart->items as $item) {
-
-            $currentPrice = $item->product->final_price;
-
-            if ($item->price != $currentPrice) {
-
-                $this->cartItemRepository->update($item, [
-                    'price' => $currentPrice,
-                ]);
-
-                $item->price = $currentPrice;
-            }
-        }
-
         return $cart;
     }
 

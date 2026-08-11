@@ -26,10 +26,10 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.su
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth', 'verified');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware(['auth', 'verified']);
 
 
-Route::middleware('auth', 'verified')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/carts', [CartController::class, 'index'])
         ->name('cart.index');
@@ -136,7 +136,7 @@ Route::middleware('auth', 'verified')->group(function () {
     )->name('profile.password.update');
 });
 
-Route::middleware('auth', 'verified')
+Route::middleware(['auth', 'verified'])
     ->prefix('payments')
     ->name('payments.')
     ->group(function () {
@@ -158,9 +158,8 @@ Route::post(
 )->name('stripe.webhook');
 
 
-Route::middleware('auth', 'verified')
-
-    ->prefix('notifications')
+Route::prefix('notifications')
+    ->middleware(['auth', 'verified'])
 
     ->name('notifications.')
 
@@ -188,7 +187,7 @@ Route::get('/forgot-password', function () {
     return view('web.auth.forgot-password', compact('siteLogo'));
 })->middleware('guest')->name('password.request');
 
-Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
+Route::post('/forgot-password', function (Request $request) {
 
     $request->validate([
         'email' => ['required', 'email'],
@@ -214,7 +213,7 @@ Route::get('/reset-password/{token}', function ($token) {
     ));
 })->middleware('guest')->name('password.reset');
 
-Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
+Route::post('/reset-password', function (Request $request) {
 
     $request->validate([
         'token' => ['required'],

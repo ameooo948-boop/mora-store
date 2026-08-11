@@ -111,14 +111,14 @@ class OrderService
             );
 
             $items = [];
-
+            
             foreach ($cart->items as $item) {
 
                 $items[] = [
                     'product_id' => $item->product_id,
-                    'price'      => $item->price,
-                    'quantity'   => $item->quantity,
-                    'total'      => $item->price * $item->quantity,
+                    'price' => $item->product->final_price,
+                    'quantity' => $item->quantity,
+                    'total' => $item->product->final_price * $item->quantity,
                 ];
 
                 $this->decreaseStock(

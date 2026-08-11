@@ -1,3 +1,4 @@
+blade
 @extends('admin.layouts.app')
 
 @section('title', 'Dashboard')
@@ -13,20 +14,18 @@
         <div>
 
             <h3 class="fw-bold mb-1">
-
                 Dashboard
-
             </h3>
 
             <p class="text-muted mb-0">
-
                 Welcome back 👋
-
             </p>
 
         </div>
 
     </div>
+
+    {{-- Statistics --}}
 
     <div class="row g-4 mb-4">
 
@@ -37,15 +36,11 @@
                 <div class="card-body">
 
                     <small class="text-muted">
-
                         Revenue
-
                     </small>
 
                     <h3 class="fw-bold mt-2">
-
-                        {{ number_format($statistics['revenue'],2) }}
-
+                        {{ number_format($statistics['revenue'], 2) }}
                     </h3>
 
                 </div>
@@ -61,15 +56,11 @@
                 <div class="card-body">
 
                     <small class="text-muted">
-
                         Orders
-
                     </small>
 
                     <h3 class="fw-bold mt-2">
-
                         {{ $statistics['orders'] }}
-
                     </h3>
 
                 </div>
@@ -85,15 +76,11 @@
                 <div class="card-body">
 
                     <small class="text-muted">
-
                         Customers
-
                     </small>
 
                     <h3 class="fw-bold mt-2">
-
                         {{ $statistics['customers'] }}
-
                     </h3>
 
                 </div>
@@ -109,15 +96,11 @@
                 <div class="card-body">
 
                     <small class="text-muted">
-
                         Products
-
                     </small>
 
                     <h3 class="fw-bold mt-2">
-
                         {{ $statistics['products'] }}
-
                     </h3>
 
                 </div>
@@ -127,6 +110,8 @@
         </div>
 
     </div>
+
+    {{-- Charts --}}
 
     <div class="row">
 
@@ -171,6 +156,8 @@
         </div>
 
     </div>
+
+    {{-- Quick Actions --}}
 
     <div class="row mb-4">
 
@@ -218,9 +205,12 @@
 
     </div>
 
+    {{-- Top Selling Products & Low Stock --}}
+
     <div class="row mt-4">
 
         {{-- Top Selling Products --}}
+
         <div class="col-lg-6">
 
             <div class="card border-0 shadow-sm h-100">
@@ -228,9 +218,7 @@
                 <div class="card-header bg-white">
 
                     <h5 class="mb-0">
-
                         Top Selling Products
-
                     </h5>
 
                 </div>
@@ -243,12 +231,12 @@
 
                             <tr>
 
-                                <th>Product</th>
+                                <th>
+                                    Product
+                                </th>
 
                                 <th class="text-end">
-
                                     Sold
-
                                 </th>
 
                             </tr>
@@ -262,15 +250,11 @@
                             <tr>
 
                                 <td>
-
                                     {{ $item->product?->name }}
-
                                 </td>
 
                                 <td class="text-end fw-bold">
-
                                     {{ $item->sold }}
-
                                 </td>
 
                             </tr>
@@ -300,6 +284,7 @@
         </div>
 
         {{-- Low Stock --}}
+
         <div class="col-lg-6">
 
             <div class="card border-0 shadow-sm h-100">
@@ -307,9 +292,7 @@
                 <div class="card-header bg-white">
 
                     <h5 class="mb-0">
-
                         Low Stock Products
-
                     </h5>
 
                 </div>
@@ -322,12 +305,12 @@
 
                             <tr>
 
-                                <th>Product</th>
+                                <th>
+                                    Product
+                                </th>
 
                                 <th class="text-end">
-
                                     Quantity
-
                                 </th>
 
                             </tr>
@@ -341,17 +324,13 @@
                             <tr>
 
                                 <td>
-
                                     {{ $product->name }}
-
                                 </td>
 
                                 <td class="text-end">
 
                                     @if($product->quantity <= 5) <span class="badge bg-danger">
-
                                         {{ $product->quantity }}
-
                                         </span>
 
                                         @else
@@ -390,9 +369,12 @@
 
     </div>
 
+    {{-- Latest Orders & Payments --}}
+
     <div class="row mt-4">
 
         {{-- Latest Orders --}}
+
         <div class="col-lg-6">
 
             <div class="card border-0 shadow-sm">
@@ -400,9 +382,7 @@
                 <div class="card-header bg-white">
 
                     <h5 class="mb-0">
-
                         Latest Orders
-
                     </h5>
 
                 </div>
@@ -415,11 +395,17 @@
 
                             <tr>
 
-                                <th>Order</th>
+                                <th>
+                                    Order
+                                </th>
 
-                                <th>Customer</th>
+                                <th>
+                                    Customer
+                                </th>
 
-                                <th>Total</th>
+                                <th>
+                                    Total
+                                </th>
 
                             </tr>
 
@@ -432,21 +418,15 @@
                             <tr>
 
                                 <td>
-
                                     {{ $order->order_number }}
-
                                 </td>
 
                                 <td>
-
                                     {{ $order->user->name }}
-
                                 </td>
 
                                 <td>
-
-                                    {{ number_format($order->total,2) }}
-
+                                    {{ number_format($order->total, 2) }}
                                 </td>
 
                             </tr>
@@ -476,6 +456,7 @@
         </div>
 
         {{-- Latest Payments --}}
+
         <div class="col-lg-6">
 
             <div class="card border-0 shadow-sm">
@@ -483,9 +464,7 @@
                 <div class="card-header bg-white">
 
                     <h5 class="mb-0">
-
                         Latest Payments
-
                     </h5>
 
                 </div>
@@ -498,11 +477,17 @@
 
                             <tr>
 
-                                <th>Order</th>
+                                <th>
+                                    Order
+                                </th>
 
-                                <th>Status</th>
+                                <th>
+                                    Status
+                                </th>
 
-                                <th>Amount</th>
+                                <th>
+                                    Amount
+                                </th>
 
                             </tr>
 
@@ -515,25 +500,19 @@
                             <tr>
 
                                 <td>
-
                                     {{ $payment->order->order_number }}
-
                                 </td>
 
                                 <td>
 
                                     <span class="badge bg-{{ $payment->status->badge() }}">
-
                                         {{ $payment->status->label() }}
-
                                     </span>
 
                                 </td>
 
                                 <td>
-
-                                    {{ number_format($payment->amount,2) }}
-
+                                    {{ number_format($payment->amount, 2) }}
                                 </td>
 
                             </tr>
@@ -563,7 +542,172 @@
         </div>
 
     </div>
+
+    {{-- Recent Activity --}}
+
+    <div class="row mt-4">
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+                        Recent Activity
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-4">
+
+                        {{-- Orders Activity --}}
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-bag-check me-2"></i>
+                                Orders
+                            </h6>
+
+                            @forelse($recentActivity['orders'] as $order)
+
+                            <div class="border-bottom pb-2 mb-2">
+
+                                <div class="fw-semibold">
+                                    {{ $order->order_number }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ $order->created_at?->format('d M Y H:i') }}
+                                </small>
+
+                            </div>
+
+                            @empty
+
+                            <p class="text-muted mb-0">
+                                No recent orders.
+                            </p>
+
+                            @endforelse
+
+                        </div>
+
+                        {{-- Payments Activity --}}
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-credit-card me-2"></i>
+                                Payments
+                            </h6>
+
+                            @forelse($recentActivity['payments'] as $payment)
+
+                            <div class="border-bottom pb-2 mb-2">
+
+                                <div class="fw-semibold">
+                                    {{ number_format($payment->amount, 2) }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ $payment->created_at?->format('d M Y H:i') }}
+                                </small>
+
+                            </div>
+
+                            @empty
+
+                            <p class="text-muted mb-0">
+                                No recent payments.
+                            </p>
+
+                            @endforelse
+
+                        </div>
+
+                        {{-- Reviews Activity --}}
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-star me-2"></i>
+                                Reviews
+                            </h6>
+
+                            @forelse($recentActivity['reviews'] as $review)
+
+                            <div class="border-bottom pb-2 mb-2">
+
+                                <div class="fw-semibold">
+                                    {{ $review->rating }}/5
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ $review->created_at?->format('d M Y H:i') }}
+                                </small>
+
+                            </div>
+
+                            @empty
+
+                            <p class="text-muted mb-0">
+                                No recent reviews.
+                            </p>
+
+                            @endforelse
+
+                        </div>
+
+                        {{-- Stock Activity --}}
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-box-seam me-2"></i>
+                                Stock
+                            </h6>
+
+                            @forelse($recentActivity['stock'] as $movement)
+
+                            <div class="border-bottom pb-2 mb-2">
+
+                                <div class="fw-semibold">
+                                    {{ $movement->quantity }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ $movement->created_at?->format('d M Y H:i') }}
+                                </small>
+
+                            </div>
+
+                            @empty
+
+                            <p class="text-muted mb-0">
+                                No recent stock movements.
+                            </p>
+
+                            @endforelse
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
+@endsection
 
 @push('scripts')
 
@@ -573,49 +717,30 @@
     const revenueOptions = {
 
         chart: {
-
-            type: 'line',
-
-            height: 350,
+            type: 'line'
+            , height: 350,
 
             toolbar: {
-
                 show: false
-
             }
-
         },
 
         stroke: {
-
-            curve: 'smooth',
-
-            width: 3
-
+            curve: 'smooth'
+            , width: 3
         },
 
         dataLabels: {
-
             enabled: false
-
         },
 
-        series: [
-
-            {
-
-                name: 'Revenue',
-
-                data: @json(array_values($revenueChart))
-
-            }
-
-        ],
+        series: [{
+            name: 'Revenue'
+            , data: @json(array_values($revenueChart))
+        }],
 
         xaxis: {
-
             categories: @json(array_keys($revenueChart))
-
         },
 
         yaxis: {
@@ -623,9 +748,7 @@
             labels: {
 
                 formatter: function(value) {
-
                     return value.toFixed(2);
-
                 }
 
             }
@@ -637,9 +760,7 @@
             y: {
 
                 formatter: function(value) {
-
                     return value.toFixed(2);
-
                 }
 
             }
@@ -649,77 +770,53 @@
     };
 
     new ApexCharts(
-
-        document.querySelector('#revenueChart'),
-
-        revenueOptions
-
+        document.querySelector('#revenueChart')
+        , revenueOptions
     ).render();
+
 
     const ordersOptions = {
 
         chart: {
-
-            type: 'bar',
-
-            height: 350,
+            type: 'bar'
+            , height: 350,
 
             toolbar: {
-
                 show: false
-
             }
-
         },
 
         plotOptions: {
 
             bar: {
 
-                borderRadius: 6,
-
-                columnWidth: '50%'
+                borderRadius: 6
+                , columnWidth: '50%'
 
             }
 
         },
 
         dataLabels: {
-
             enabled: false
-
         },
 
-        series: [
-
-            {
-
-                name: 'Orders',
-
-                data: @json(array_values($ordersChart))
-
-            }
-
-        ],
+        series: [{
+            name: 'Orders'
+            , data: @json(array_values($ordersChart))
+        }],
 
         xaxis: {
-
             categories: @json(array_keys($ordersChart))
-
         }
 
     };
 
     new ApexCharts(
-
-        document.querySelector('#ordersChart'),
-
-        ordersOptions
-
+        document.querySelector('#ordersChart')
+        , ordersOptions
     ).render();
 
 </script>
 
 @endpush
-
-@endsection

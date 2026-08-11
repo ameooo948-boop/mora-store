@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Schema;
 use App\Models\Setting;
 use App\Repositories\Contracts\AddressRepositoryInterface;
 use App\Repositories\Contracts\BrandRepositoryInterface;
@@ -142,16 +143,30 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (! Schema::hasTable('settings')) {
+            return;
+        }
+
         $settings = Setting::first();
 
-        View::share('settings', $settings);
+        View::share(
+            'settings',
+            $settings
+        );
 
-        View::composer('web.layouts.navbar', function ($view) {
+        View::composer(
+            'web.layouts.navbar',
+            function ($view) {
 
-            $siteLogo = app()->make(SettingService::class)
-                ->value('site_logo');
+                $siteLogo = app(
+                    SettingService::class
+                )->value('site_logo');
 
-            $view->with('siteLogo', $siteLogo);
-        });
+                $view->with(
+                    'siteLogo',
+                    $siteLogo
+                );
+            }
+        );
     }
 }

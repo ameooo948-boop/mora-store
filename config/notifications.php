@@ -12,7 +12,7 @@ return [
 
         'database',
 
-        'mail',
+        // 'mail',
 
         // 'broadcast',
 
