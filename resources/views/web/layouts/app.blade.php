@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title', config('app.name'))</title>
+    <title>@yield('title', setting('site_name'))</title>
 
     @vite([
     'resources/css/app.css',

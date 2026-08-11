@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
 use App\Repositories\Contracts\AddressRepositoryInterface;
 use App\Repositories\Contracts\BrandRepositoryInterface;
 use App\Repositories\Contracts\CartItemRepositoryInterface;
@@ -36,7 +37,9 @@ use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\SettingRepository;
 use App\Repositories\Eloquent\StockMovementRepository;
 use App\Repositories\Eloquent\WishlistRepository;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\Services\SettingService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -139,6 +142,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $settings = Setting::first();
+
+        View::share('settings', $settings);
+
+        View::composer('web.layouts.navbar', function ($view) {
+
+            $siteLogo = app()->make(SettingService::class)
+                ->value('site_logo');
+
+            $view->with('siteLogo', $siteLogo);
+        });
     }
 }

@@ -2,7 +2,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create Account | {{ setting('site_name') }}</title>
+<title>Reset Password | {{ config('app.name') }}</title>
 
 @vite([
     'resources/css/app.css',
@@ -28,7 +28,7 @@
 
                     <img
                         src="{{ asset('storage/' . $siteLogo) }}"
-                        alt="{{ setting('site_name') }}"
+                        alt="{{ config('app.name') }}"
                     >
 
                 @else
@@ -38,7 +38,7 @@
                 @endif
 
                 <span>
-                    {{ setting('site_name') }}
+                    {{ config('app.name') }}
                 </span>
 
             </div>
@@ -48,27 +48,27 @@
 
                 <span class="showcase-badge">
 
-                    <i class="bi bi-person-plus"></i>
+                    <i class="bi bi-shield-check"></i>
 
-                    Create Account
+                    Account Security
 
                 </span>
 
 
                 <h1>
 
-                    Start your
+                    Create a
 
-                    <span>shopping journey.</span>
+                    <span>new password.</span>
 
                 </h1>
 
 
                 <p>
 
-                    Create your account and discover a smarter,
+                    Choose a strong password to keep your
 
-                    easier way to shop with {{ setting('site_name') }}.
+                    {{ config('app.name') }} account secure.
 
                 </p>
 
@@ -79,7 +79,7 @@
 
                 <span>
 
-                    © {{ date('Y') }} {{ setting('site_name') }}
+                    © {{ date('Y') }} {{ config('app.name') }}
 
                 </span>
 
@@ -117,7 +117,7 @@
 
                 <strong>
 
-                    {{ setting('site_name') }}
+                    {{ config('app.name') }}
 
                 </strong>
 
@@ -133,28 +133,28 @@
 
                     <div class="login-icon">
 
-                        <i class="bi bi-person-plus"></i>
+                        <i class="bi bi-lock"></i>
 
                     </div>
 
 
                     <h2>
 
-                        Create Account
+                        Reset Password?
 
                     </h2>
 
 
                     <p>
 
-                        Sign up to get started
+                        Enter your new password below
 
                     </p>
 
                 </div>
 
 
-                {{-- Errors --}}
+                {{-- General Error --}}
 
                 @if($errors->any())
 
@@ -170,56 +170,20 @@
 
 
                 <form
-                    action="{{ route('register') }}"
+                    action="{{ route('password.update') }}"
                     method="POST"
                 >
 
                     @csrf
 
 
-                    {{-- Name --}}
+                    {{-- Token --}}
 
-                    <div class="login-field">
-
-                        <label for="name">
-
-                            Full Name
-
-                        </label>
-
-
-                        <div class="login-input">
-
-                            <i class="bi bi-person"></i>
-
-
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value="{{ old('name') }}"
-                                placeholder="Enter your name"
-                                required
-                                autofocus
-                                autocomplete="name"
-                            >
-
-                        </div>
-
-
-                        @error('name')
-
-                            <small class="login-error">
-
-                                <i class="bi bi-exclamation-circle"></i>
-
-                                {{ $message }}
-
-                            </small>
-
-                        @enderror
-
-                    </div>
+                    <input
+                        type="hidden"
+                        name="token"
+                        value="{{ $token }}"
+                    >
 
 
                     {{-- Email --}}
@@ -242,10 +206,10 @@
                                 type="email"
                                 id="email"
                                 name="email"
-                                value="{{ old('email') }}"
+                                value="{{ old('email', request('email')) }}"
                                 placeholder="Enter your email"
                                 required
-                                autocomplete="email"
+                                autofocus
                             >
 
                         </div>
@@ -266,13 +230,13 @@
                     </div>
 
 
-                    {{-- Password --}}
+                    {{-- New Password --}}
 
                     <div class="login-field">
 
                         <label for="password">
 
-                            Password
+                            New Password
 
                         </label>
 
@@ -286,7 +250,7 @@
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder="Create a password"
+                                placeholder="Enter your new password"
                                 required
                                 autocomplete="new-password"
                             >
@@ -340,7 +304,7 @@
                                 type="password"
                                 id="password_confirmation"
                                 name="password_confirmation"
-                                placeholder="Confirm your password"
+                                placeholder="Confirm your new password"
                                 required
                                 autocomplete="new-password"
                             >
@@ -374,7 +338,7 @@
                     </div>
 
 
-                    {{-- Register Button --}}
+                    {{-- Reset Button --}}
 
                     <button
                         type="submit"
@@ -383,32 +347,27 @@
 
                         <span>
 
-                            Create Account
+                            Reset Password
 
                         </span>
 
 
-                        <i class="bi bi-arrow-right"></i>
+                        <i class="bi bi-check2-circle"></i>
 
                     </button>
 
                 </form>
 
 
-                {{-- Login Link --}}
+                {{-- Back to Login --}}
 
                 <div class="register-section">
 
-                    <span>
-
-                        Already have an account?
-
-                    </span>
-
-
                     <a href="{{ route('login') }}">
 
-                        Sign in
+                        <i class="bi bi-arrow-left me-1"></i>
+
+                        Back to Login
 
                     </a>
 

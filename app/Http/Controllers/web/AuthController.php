@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers\Web;
 
+use \App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Web\LoginRequest;
 use App\Http\Requests\Web\RegisterRequest;
+use App\Services\SettingService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use \App\Models\User;
 
 class AuthController extends Controller
 {
     public function showRegistrationForm()
     {
-        return view('web.auth.register');
+        $siteLogo = app()->make(SettingService::class)
+        ->value('site_logo');
+        return view('web.auth.register', compact('siteLogo'));
     }
 
     public function register(RegisterRequest $request)
@@ -28,7 +31,9 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/home');
+         $user->sendEmailVerificationNotification();
+
+        return redirect()->route('home');
     }
 
     public function login(LoginRequest $request)
@@ -46,6 +51,19 @@ class AuthController extends Controller
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ]);
+
+      $user = Auth::user();
+
+    // Email is not verified
+    if (! $user->hasVerifiedEmail()) {
+
+    return redirect()
+        ->route('verification.notice')
+        ->with(
+            'success',
+            'Please verify your email address before continuing.'
+        );
+}
     }
 
     public function logout(Request $request)
@@ -58,6 +76,8 @@ class AuthController extends Controller
 
     public function showLoginForm()
     {
-        return view('web.auth.login');
+        $siteLogo = app()->make(SettingService::class)
+        ->value('site_logo');
+        return view('web.auth.login', compact('siteLogo'));
     }
 }

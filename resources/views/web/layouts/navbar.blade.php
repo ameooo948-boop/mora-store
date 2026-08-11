@@ -3,8 +3,26 @@
     <div class="container">
 
         <a class="navbar-brand fw-bold" href="{{ route('products.index') }}">
-            <i class="bi bi-person-circle me-2"></i>
-            {{ setting('site_name') }}
+            <div class="brand-logo">
+
+                @if($siteLogo)
+
+                    <img
+                        src="{{ asset('storage/' . $siteLogo) }}"
+                        alt="{{ setting('site_name') }}"
+                    >
+
+                @else
+
+                    <i class="bi bi-bag-check-fill"></i>
+
+                @endif
+
+                <span>
+                    {{ setting('site_name') }}
+                </span>
+
+            </div>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#accountNavbar">

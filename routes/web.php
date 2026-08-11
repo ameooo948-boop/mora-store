@@ -13,20 +13,23 @@ use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
+use App\Services\SettingService;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::get('/', [HomeController::class, 'index'])
-    ->name('home')->middleware('auth');
+    ->name('home')->middleware('auth','verified');
 
 
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth', 'verified');
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'verified')->group(function () {
 
     Route::get('/carts', [CartController::class, 'index'])
         ->name('cart.index');
@@ -133,7 +136,7 @@ Route::middleware('auth')->group(function () {
     )->name('profile.password.update');
 });
 
-Route::middleware('auth')
+Route::middleware('auth', 'verified')
     ->prefix('payments')
     ->name('payments.')
     ->group(function () {
@@ -155,7 +158,7 @@ Route::post(
 )->name('stripe.webhook');
 
 
-Route::middleware('auth')
+Route::middleware('auth', 'verified')
 
     ->prefix('notifications')
 
@@ -178,3 +181,101 @@ Route::middleware('auth')
             [NotificationController::class, 'readAll']
         )->name('read-all');
     });
+
+Route::get('/forgot-password', function () {
+    $siteLogo = app()->make(SettingService::class)
+        ->value('site_logo');
+    return view('web.auth.forgot-password', compact('siteLogo'));
+})->middleware('guest')->name('password.request');
+
+Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
+
+    $request->validate([
+        'email' => ['required', 'email'],
+    ]);
+
+    $status = \Illuminate\Support\Facades\Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT
+        ? back()->with('success', __($status))
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
+Route::get('/reset-password/{token}', function ($token) {
+
+    $siteLogo = app()->make(SettingService::class)
+        ->value('site_logo');
+
+    return view('web.auth.reset-password', compact(
+        'token',
+        'siteLogo'
+    ));
+})->middleware('guest')->name('password.reset');
+
+Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
+
+    $request->validate([
+        'token' => ['required'],
+        'email' => ['required', 'email'],
+        'password' => ['required', 'confirmed', 'min:8'],
+    ]);
+
+    $status = \Illuminate\Support\Facades\Password::reset(
+        $request->only(
+            'email',
+            'password',
+            'password_confirmation',
+            'token'
+        ),
+        function ($user, $password) {
+
+            $user->forceFill([
+                'password' => $password,
+            ])->save();
+
+            $user->setRememberToken(
+                \Illuminate\Support\Str::random(60)
+            );
+        }
+    );
+
+    return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
+        ? redirect()
+        ->route('login')
+        ->with('success', __($status))
+        : back()
+        ->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
+
+
+Route::get('/email/verify', function () {
+
+    $siteLogo = app()->make(SettingService::class)
+        ->value('site_logo');
+
+    return view(
+        'web.auth.verify-email',
+        compact('siteLogo')
+    );
+
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+
+    $request->fulfill();
+
+    return redirect()
+        ->route('home')
+        ->with('success', 'Your email has been verified successfully.');
+
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('success', 'A new verification link has been sent to your email.');
+
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
