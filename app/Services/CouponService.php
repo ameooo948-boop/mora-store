@@ -135,4 +135,10 @@ class CouponService
     {
         $coupon->increment('used_count');
     }
+
+    public function findByCodeForUpdate(string $code): ?Coupon
+    {
+        return $this->couponRepository
+            ->findByCodeForUpdate($code);
+    }
 }

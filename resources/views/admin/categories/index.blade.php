@@ -1,35 +1,47 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Categories')
-
 @section('page-title', 'Categories')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="categories-page">
 
-    {{-- Page Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
+    {{-- =====================================================
+         PAGE HEADER
+    ====================================================== --}}
 
-            <h3 class="fw-bold mb-1">
+    <div class="categories-hero">
 
-                Categories
+        <div class="categories-hero-content">
 
-            </h3>
+            <div class="categories-hero-icon">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
 
-            <p class="text-muted mb-0">
+            <div>
 
-                Manage all categories
+                <span class="categories-eyebrow">
+                    CATALOG MANAGEMENT
+                </span>
 
-            </p>
+                <h1>
+                    Categories
+                </h1>
+
+                <p>
+                    Organize and manage your product categories.
+                </p>
+
+            </div>
 
         </div>
 
-        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
 
-            <i class="bi bi-plus-lg me-2"></i>
+        <a href="{{ route('admin.categories.create') }}" class="categories-add-btn">
+
+            <i class="bi bi-plus-lg"></i>
 
             Add Category
 
@@ -37,123 +49,114 @@
 
     </div>
 
-    <div class="row mb-4">
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0 h-100">
+    {{-- =====================================================
+         STATISTICS
+    ====================================================== --}}
 
-                <div class="card-body text-center">
+    <div class="categories-stats">
 
-                    <small class="text-muted">
 
-                        Total Categories
+        <div class="category-stat-card">
 
-                    </small>
+            <div class="category-stat-icon blue">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
 
-                    <h2 class="fw-bold mt-2">
+            <div>
 
-                        {{ $statistics['total'] }}
+                <span>
+                    Total Categories
+                </span>
 
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['total'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0 h-100">
+        <div class="category-stat-card">
 
-                <div class="card-body text-center">
+            <div class="category-stat-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
+            <div>
 
-                        Active
+                <span>
+                    Active
+                </span>
 
-                    </small>
-
-                    <h2 class="fw-bold text-success mt-2">
-
-                        {{ $statistics['active'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['active'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0 h-100">
+        <div class="category-stat-card">
 
-                <div class="card-body text-center">
+            <div class="category-stat-icon red">
+                <i class="bi bi-x-circle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
+            <div>
 
-                        Inactive
+                <span>
+                    Inactive
+                </span>
 
-                    </small>
-
-                    <h2 class="fw-bold text-danger mt-2">
-
-                        {{ $statistics['inactive'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['inactive'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0 h-100">
+        <div class="category-stat-card">
 
-                <div class="card-body text-center">
+            <div class="category-stat-icon purple">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
 
-                    <small class="text-muted">
+            <div>
 
-                        With Products
+                <span>
+                    With Products
+                </span>
 
-                    </small>
-
-                    <h2 class="fw-bold text-primary mt-2">
-
-                        {{ $statistics['with_products'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['with_products'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0 h-100">
+        <div class="category-stat-card">
 
-                <div class="card-body text-center">
+            <div class="category-stat-icon orange">
+                <i class="bi bi-diagram-3-fill"></i>
+            </div>
 
-                    <small class="text-muted">
+            <div>
 
-                        Main Categories
+                <span>
+                    Main Categories
+                </span>
 
-                    </small>
-
-                    <h2 class="fw-bold text-warning mt-2">
-
-                        {{ $statistics['main'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['main'] }}
+                </strong>
 
             </div>
 
@@ -162,97 +165,208 @@
     </div>
 
 
-    {{-- Search Card --}}
-    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="card-body">
+    {{-- =====================================================
+         FILTERS
+    ====================================================== --}}
 
-            <form method="GET">
+    <div class="categories-filter-card">
 
-                <div class="row g-3">
+        <div class="categories-filter-header">
 
-                    <div class="col-md-8">
+            <div class="categories-filter-title">
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by category name...">
+                <div class="categories-filter-icon">
+                    <i class="bi bi-funnel-fill"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Search & Filter
+                    </h2>
+
+                    <span>
+                        Find categories quickly
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            @if(request()->hasAny(['search', 'status']) &&
+            (request('search') !== null || request('status') !== null))
+
+            <a href="{{ route('admin.categories.index') }}" class="categories-reset-btn">
+
+                <i class="bi bi-arrow-counterclockwise"></i>
+
+                Reset
+
+            </a>
+
+            @endif
+
+        </div>
+
+
+        <form method="GET">
+
+            <div class="categories-filter-body">
+
+
+                {{-- Search --}}
+
+                <div class="categories-search">
+
+                    <label for="category-search">
+                        Search Categories
+                    </label>
+
+                    <div class="category-search-input">
+
+                        <i class="bi bi-search"></i>
+
+                        <input id="category-search" type="text" name="search" value="{{ request('search') }}" placeholder="Search by category name...">
 
                     </div>
 
-                    <div class="col-md-2">
+                </div>
 
-                        <select name="status" class="form-select">
+
+                {{-- Status --}}
+
+                <div class="categories-status-filter">
+
+                    <label for="category-status-filter">
+                        Status
+                    </label>
+
+                    <div class="category-search-input">
+
+                        <i class="bi bi-activity"></i>
+
+                        <select id="category-status-filter" name="status">
 
                             <option value="">
-
                                 All Status
-
                             </option>
 
                             <option value="1" @selected(request('status')==='1' )>
-
                                 Active
-
                             </option>
 
                             <option value="0" @selected(request('status')==='0' )>
-
                                 Inactive
-
                             </option>
 
                         </select>
 
                     </div>
 
-                    <div class="col-md-2 d-grid">
-
-                        <button class="btn btn-primary">
-
-                            <i class="bi bi-search me-2"></i>
-
-                            Filter
-
-                        </button>
-
-                    </div>
-
                 </div>
 
-            </form>
 
-        </div>
+                {{-- Submit --}}
+
+                <button type="submit" class="categories-filter-btn">
+
+                    <i class="bi bi-search"></i>
+
+                    Apply Filters
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
-    {{-- Table --}}
-    <div class="card">
+
+
+    {{-- =====================================================
+         CATEGORIES TABLE
+    ====================================================== --}}
+
+    <div class="categories-table-card">
+
+
+        <div class="categories-table-header">
+
+            <div>
+
+                <span class="categories-table-eyebrow">
+                    CATEGORY DIRECTORY
+                </span>
+
+                <h2>
+                    All Categories
+                </h2>
+
+            </div>
+
+
+            <div class="categories-count">
+
+                <i class="bi bi-grid"></i>
+
+                {{ $categories->total() }}
+
+                <span>
+                    categories
+                </span>
+
+            </div>
+
+        </div>
+
 
         <div class="table-responsive">
 
-            <table class="table align-middle table-hover mb-0">
+            <table class="categories-table">
 
                 <thead>
 
                     <tr>
 
-                        <th>#</th>
+                        <th>
+                            #
+                        </th>
 
-                        <th>Image</th>
+                        <th>
+                            Category
+                        </th>
 
-                        <th>Name</th>
+                        <th>
+                            Parent
+                        </th>
 
-                        <th>Parent</th>
+                        <th>
+                            Products
+                        </th>
 
-                        <th>Status</th>
+                        <th>
+                            Status
+                        </th>
 
-                        <th>Order</th>
+                        <th>
+                            Order
+                        </th>
 
-                        <th>Created</th>
+                        <th>
+                            Created
+                        </th>
 
-                        <th width="80"></th>
+                        <th class="text-end">
+                            Actions
+                        </th>
 
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -260,59 +374,77 @@
 
                     <tr>
 
+
+                        {{-- ID --}}
+
                         <td>
 
-                            <span class="badge bg-light text-dark">
-
+                            <span class="category-id">
                                 #{{ $category->id }}
-
                             </span>
 
                         </td>
 
-                        <td>
 
-                            @if($category->image)
-
-                            <img src="{{ $category->image_url }}" class="rounded border" width="60" height="60" style="object-fit:cover;" alt="{{ $category->name }}">
-
-                            @else
-
-                            <div class="border rounded d-flex align-items-center justify-content-center bg-light" style="width:60px;height:60px;">
-
-                                <i class="bi bi-image text-secondary"></i>
-
-                            </div>
-
-                            @endif
-
-                        </td>
+                        {{-- Category --}}
 
                         <td>
 
-                            <div class="fw-semibold">
+                            <div class="category-product-cell">
 
-                                {{ $category->name }}
+                                <div class="category-image">
+
+                                    @if($category->image)
+
+                                    <img src="{{ $category->image_url }}" alt="{{ $category->name }}">
+
+                                    @else
+
+                                    <div class="category-image-empty">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+
+                                    @endif
+
+                                </div>
+
+
+                                <div class="category-main-info">
+
+                                    <strong>
+                                        {{ $category->name }}
+                                    </strong>
+
+                                    @if($category->description)
+
+                                    <span>
+                                        {{ \Illuminate\Support\Str::limit($category->description, 55) }}
+                                    </span>
+
+                                    @else
+
+                                    <span class="category-no-description">
+                                        No description
+                                    </span>
+
+                                    @endif
+
+                                </div>
 
                             </div>
 
-                            @if($category->description)
-
-                            <small class="text-muted">
-
-                                {{ \Illuminate\Support\Str::limit($category->description, 50) }}
-
-                            </small>
-
-                            @endif
-
                         </td>
+
+
+                        {{-- Parent --}}
 
                         <td>
 
                             @if($category->parent)
 
-                            <span class="badge bg-info">
+                            <span class="category-parent-badge">
+
+                                <i class="bi bi-diagram-3"></i>
 
                                 {{ $category->parent->name }}
 
@@ -320,7 +452,9 @@
 
                             @else
 
-                            <span class="badge bg-secondary">
+                            <span class="category-main-badge">
+
+                                <i class="bi bi-grid"></i>
 
                                 Main Category
 
@@ -330,11 +464,31 @@
 
                         </td>
 
+
+                        {{-- Products --}}
+
+                        <td>
+
+                            <span class="category-products-badge">
+
+                                <i class="bi bi-box-seam"></i>
+
+                                {{ $category->products_count ?? 0 }}
+
+                            </span>
+
+                        </td>
+
+
+                        {{-- Status --}}
+
                         <td>
 
                             @if($category->status)
 
-                            <span class="badge bg-success">
+                            <span class="category-status active">
+
+                                <i class="bi bi-check-circle-fill"></i>
 
                                 Active
 
@@ -342,7 +496,9 @@
 
                             @else
 
-                            <span class="badge bg-danger">
+                            <span class="category-status inactive">
+
+                                <i class="bi bi-x-circle-fill"></i>
 
                                 Inactive
 
@@ -352,84 +508,61 @@
 
                         </td>
 
+
+                        {{-- Sort Order --}}
+
                         <td>
 
-                            <span class="badge bg-dark">
-
-                                {{ $category->sort_order }}
-
+                            <span class="category-order">
+                                #{{ $category->sort_order }}
                             </span>
 
                         </td>
 
+
+                        {{-- Created --}}
+
                         <td>
 
-                            {{ $category->created_at->format('Y-m-d') }}
+                            <div class="category-date">
+
+                                <strong>
+                                    {{ $category->created_at->format('d M Y') }}
+                                </strong>
+
+                                <span>
+                                    {{ $category->created_at->format('h:i A') }}
+                                </span>
+
+                            </div>
 
                         </td>
 
-                        <td class="text-center">
 
-                            <div class="dropdown">
+                        {{-- Actions --}}
 
-                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                        <td>
 
-                                    <i class="bi bi-three-dots-vertical"></i>
+                            <div class="category-actions">
 
-                                </button>
+                                <a href="{{ route('admin.categories.show', $category) }}" class="category-action-show" title="View Category">
+                                    <i class="bi bi-eye"></i>
+                                </a>
 
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="category-action-edit" title="Edit Category">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
 
-                                    <li>
+                                <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="m-0 delete-form">
 
-                                        <a href="{{ route('admin.categories.show', $category) }}" class="dropdown-item">
+                                    @csrf
+                                    @method('DELETE')
 
-                                            <i class="bi bi-eye me-2"></i>
+                                    <button type="submit" class="category-action-delete" title="Delete Category">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
 
-                                            View
-
-                                        </a>
-
-                                    </li>
-
-                                    <li>
-
-                                        <a href="{{ route('admin.categories.edit', $category) }}" class="dropdown-item">
-
-                                            <i class="bi bi-pencil-square me-2"></i>
-
-                                            Edit
-
-                                        </a>
-
-                                    </li>
-
-                                    <li>
-
-                                        <hr class="dropdown-divider">
-
-                                    </li>
-
-                                    <li>
-
-                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="delete-form">
-
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="dropdown-item text-danger">
-
-                                                <i class="bi bi-trash me-2"></i>
-
-                                                Delete
-
-                                            </button>
-
-                                        </form>
-
-                                    </li>
-
-                                </ul>
+                                </form>
 
                             </div>
 
@@ -443,21 +576,29 @@
 
                         <td colspan="8">
 
-                            <div class="text-center py-5">
+                            <div class="categories-empty">
 
-                                <i class="bi bi-folder display-4 text-secondary"></i>
+                                <div class="categories-empty-icon">
 
-                                <h5 class="mt-3">
+                                    <i class="bi bi-folder2-open"></i>
 
+                                </div>
+
+                                <h3>
                                     No Categories Found
+                                </h3>
 
-                                </h5>
-
-                                <p class="text-muted mb-0">
-
-                                    There are no categories matching your search.
-
+                                <p>
+                                    There are no categories matching your current filters.
                                 </p>
+
+                                <a href="{{ route('admin.categories.create') }}" class="categories-empty-btn">
+
+                                    <i class="bi bi-plus-lg"></i>
+
+                                    Create Category
+
+                                </a>
 
                             </div>
 
@@ -471,65 +612,81 @@
 
             </table>
 
-            @if($categories->hasPages())
+        </div>
 
-            <div class="card-footer">
 
-                {{ $categories->links() }}
+        {{-- Pagination --}}
 
-            </div>
+        @if($categories->hasPages())
 
-            @endif
+        <div class="categories-pagination">
+
+            {{ $categories->links() }}
 
         </div>
 
-        @push('scripts')
-
-        <script>
-            document.querySelectorAll('.delete-form').forEach(form => {
-
-                form.addEventListener('submit', function(e) {
-
-                    e.preventDefault();
-
-                    Swal.fire({
-
-                        title: 'Delete Category?',
-
-                        text: "You won't be able to undo this action.",
-
-                        icon: 'warning',
-
-                        showCancelButton: true,
-
-                        confirmButtonColor: '#dc3545',
-
-                        cancelButtonColor: '#6c757d',
-
-                        confirmButtonText: 'Yes, Delete',
-
-                        cancelButtonText: 'Cancel'
-
-                    }).then((result) => {
-
-                        if (result.isConfirmed) {
-
-                            form.submit();
-
-                        }
-
-                    });
-
-                });
-
-            });
-
-        </script>
-
-        @endpush
+        @endif
 
     </div>
 
 </div>
+
+
+{{-- =========================================================
+     DELETE CONFIRMATION
+========================================================= --}}
+
+@push('scripts')
+
+<script>
+    document.querySelectorAll('.delete-form').forEach(form => {
+
+        form.addEventListener('submit', function(e) {
+
+            e.preventDefault();
+
+            Swal.fire({
+
+                title: 'Delete Category?',
+
+                text: "You won't be able to undo this action.",
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonColor: '#dc3545',
+
+                cancelButtonColor: '#64748b',
+
+                confirmButtonText: 'Yes, Delete',
+
+                cancelButtonText: 'Cancel',
+
+                reverseButtons: true,
+
+                customClass: {
+
+                    popup: 'premium-swal'
+
+                }
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
+
+@endpush
 
 @endsection

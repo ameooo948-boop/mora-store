@@ -46,4 +46,15 @@ class CartItemRepository implements CartItemRepositoryInterface
             ])
             ->get();
     }
+
+    public function findByUserForUpdate(int $userId): ?Cart
+    {
+        return Cart::query()
+            ->where('user_id', $userId)
+            ->with([
+                'items.product',
+            ])
+            ->lockForUpdate()
+            ->first();
+    }
 }

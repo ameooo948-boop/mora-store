@@ -4,87 +4,288 @@
 
 @section('content')
 
-<div class="container">
+<div class="wishlist-page">
 
-    <h2 class="mb-4">
-        My Wishlist
-    </h2>
+    <div class="container">
 
-    <div class="row">
+        {{-- =====================================================
+            HEADER
+        ====================================================== --}}
 
-        @forelse($wishlists as $wishlist)
+        <div class="wishlist-header">
 
-        @php
-        $product = $wishlist->product;
-        @endphp
+            <div>
 
-        <div class="col-md-4 col-lg-3 mb-4">
+                <span class="wishlist-eyebrow">
+                    <i class="bi bi-heart-fill"></i>
+                    YOUR COLLECTION
+                </span>
 
-            <div class="card h-100 shadow-sm">
+                <h1>
+                    My Wishlist
+                </h1>
 
-                <a href="{{ route('products.show', $product) }}" class="text-decoration-none text-dark">
+                <p>
+                    Save your favorite products and come back to them whenever you want.
+                </p>
 
-                    @if($product->images->isNotEmpty())
+            </div>
 
-                    <img src="{{ $product->images->first()->image_url }}" class="card-img-top product-image" alt="{{ $product->name }}">
 
-                    @else
+            @if($wishlists->count())
 
-                    <div class="bg-light d-flex justify-content-center align-items-center product-image">
-                        <i class="bi bi-image fs-1 text-secondary"></i>
-                    </div>
+            <div class="wishlist-count">
+
+                <strong>
+                    {{ $wishlists->total() }}
+                </strong>
+
+                <span>
+                    {{ Str::plural('item', $wishlists->total()) }}
+                </span>
+
+            </div>
+
+            @endif
+
+        </div>
+
+
+        {{-- =====================================================
+            PRODUCTS
+        ====================================================== --}}
+
+        @if($wishlists->count())
+
+        <div class="wishlist-grid">
+
+            @foreach($wishlists as $wishlist)
+
+            @php
+            $product = $wishlist->product;
+            $image = $product->images->first();
+            @endphp
+
+            <article class="wishlist-card">
+
+                {{-- Product Image --}}
+
+                <div class="wishlist-card-media">
+
+                    {{-- Discount --}}
+
+                    @if($product->has_discount)
+
+                    <span class="wishlist-discount">
+                        -{{ $product->discount_percentage }}%
+                    </span>
 
                     @endif
 
-                    <div class="card-body">
 
-                        <h5 class="card-title mb-2">
-                            {{ $product->name }}
-                        </h5>
+                    {{-- Remove --}}
 
-                        <h6 class="text-primary fw-bold mb-0">
-                            {{ $product->formatted_price ?? number_format($product->price, 2) }}
-                        </h6>
-
-                    </div>
-
-                </a>
-
-                <div class="card-footer bg-white border-0 pt-0">
-
-                    <form action="{{ route('wishlist.toggle', $product) }}" method="POST">
-
+                    <form action="{{ route('wishlist.toggle', $product) }}" method="POST" class="wishlist-remove-form">
                         @csrf
 
-                        <button type="submit" class="btn btn-outline-danger w-100">
-                            <i class="bi bi-heartbreak me-2"></i>
-                            Remove
+                        <button type="submit" class="wishlist-remove-btn" title="Remove from wishlist" aria-label="Remove {{ $product->name }} from wishlist">
+                            <i class="bi bi-heart-fill"></i>
                         </button>
 
                     </form>
 
+
+                    {{-- Image --}}
+
+                    <a href="{{ route('products.show', $product) }}" class="wishlist-image-link">
+
+                        @if($image)
+
+                        <img src="{{ $image->image_url }}" class="wishlist-product-image" alt="{{ $product->name }}" loading="lazy">
+
+                        @else
+
+                        <div class="wishlist-image-placeholder">
+
+                            <i class="bi bi-image"></i>
+
+                        </div>
+
+                        @endif
+
+                    </a>
+
                 </div>
 
-            </div>
+
+                {{-- Product Information --}}
+
+                <div class="wishlist-card-body">
+
+                    {{-- Category --}}
+
+                    <span class="wishlist-category">
+                        {{ $product->category->name }}
+                    </span>
+
+
+                    {{-- Name --}}
+
+                    <h2 class="wishlist-product-name">
+
+                        <a href="{{ route('products.show', $product) }}">
+                            {{ $product->name }}
+                        </a>
+
+                    </h2>
+
+
+                    {{-- Price --}}
+
+                    <div class="wishlist-price">
+
+                        @if($product->has_discount)
+
+                        <span class="wishlist-old-price">
+                            {{ number_format($product->price, 2) }}
+                            {{ setting('currency') }}
+                        </span>
+
+                        <strong class="wishlist-current-price discount">
+                            {{ number_format($product->final_price, 2) }}
+                            <small>{{ setting('currency') }}</small>
+                        </strong>
+
+                        @else
+
+                        <strong class="wishlist-current-price">
+                            {{ $product->formatted_price ?? number_format($product->price, 2) }}
+                            <small>
+                                {{ setting('currency') }}
+                            </small>
+                        </strong>
+
+                        @endif
+
+                    </div>
+
+
+                    {{-- Stock --}}
+
+                    <div class="wishlist-stock">
+
+                        @if($product->quantity == 0)
+
+                        <span class="wishlist-stock-status out">
+                            <span></span>
+                            Out of Stock
+                        </span>
+
+                        @elseif($product->quantity <= 5) <span class="wishlist-stock-status low">
+                            <span></span>
+                            Only {{ $product->quantity }} left
+                            </span>
+
+                            @else
+
+                            <span class="wishlist-stock-status available">
+                                <span></span>
+                                In Stock
+                            </span>
+
+                            @endif
+
+                    </div>
+
+
+                    {{-- Actions --}}
+
+                    <div class="wishlist-actions">
+
+                        <a href="{{ route('products.show', $product) }}" class="wishlist-view-btn">
+                            <i class="bi bi-eye"></i>
+                            View Product
+                        </a>
+
+
+                        <form action="{{ route('wishlist.toggle', $product) }}" method="POST" class="wishlist-action-remove">
+                            @csrf
+
+                            <button type="submit" title="Remove from wishlist">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            @endforeach
 
         </div>
 
-        @empty
 
-        <div class="col-12">
+        {{-- =====================================================
+                PAGINATION
+            ====================================================== --}}
 
-            <div class="alert alert-info text-center">
-                Your wishlist is empty.
-            </div>
+        @if($wishlists->hasPages())
+
+        <div class="wishlist-pagination">
+
+            {{ $wishlists->links() }}
 
         </div>
 
-        @endforelse
+        @endif
 
-    </div>
 
-    <div class="d-flex justify-content-center">
-        {{ $wishlists->links() }}
+        @else
+
+        {{-- =====================================================
+                EMPTY WISHLIST
+            ====================================================== --}}
+
+        <div class="wishlist-empty">
+
+            <div class="wishlist-empty-icon">
+
+                <i class="bi bi-heart"></i>
+
+                <span class="empty-spark spark-one">✦</span>
+                <span class="empty-spark spark-two">✦</span>
+                <span class="empty-spark spark-three">•</span>
+
+            </div>
+
+
+            <span class="wishlist-eyebrow">
+                NOTHING SAVED YET
+            </span>
+
+            <h2>
+                Your wishlist is waiting
+            </h2>
+
+            <p>
+                You haven't saved any products yet.
+                Explore our collection and save the things you love.
+            </p>
+
+
+            <a href="{{ route('products.index') }}" class="wishlist-shop-btn">
+                <i class="bi bi-bag"></i>
+                Explore Products
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </div>
+
+        @endif
+
     </div>
 
 </div>

@@ -6,69 +6,68 @@
 
 @section('content')
 
-<div class="container-fluid">
+@php
+$steps = [
+'pending' => 'Pending',
+'processing' => 'Processing',
+'shipped' => 'Shipped',
+'delivered' => 'Delivered',
+];
 
-    {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+$currentStatus = $order->status->value;
 
-        <div>
+$currentStep = array_key_exists($currentStatus, $steps)
+? array_search($currentStatus, array_keys($steps))
+: -1;
+@endphp
 
-            <h2 class="fw-bold mb-1">
 
-                Order #{{ $order->order_number }}
+<div class="order-details-page">
 
-            </h2>
+    <div class="container">
 
-            <p class="text-muted mb-0">
+        {{-- =====================================================
+            ORDER HERO
+        ====================================================== --}}
 
-                Placed on {{ $order->formatted_date }}
+        <div class="order-hero">
 
-            </p>
+            <div class="order-hero-left">
 
-        </div>
+                <div class="order-back">
 
-        <div class="d-flex gap-2">
+                    <a href="{{ route('orders.index') }}">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to Orders
+                    </a>
 
-            <span class="badge {{ $order->status_badge }} fs-6 px-3 py-2">
+                </div>
 
-                <i class="bi {{ $order->status_icon }} me-2"></i>
+                <span class="order-eyebrow">
+                    <i class="bi bi-receipt"></i>
+                    ORDER DETAILS
+                </span>
 
-                {{ $order->status_label }}
+                <h1>
+                    #{{ $order->order_number }}
+                </h1>
 
-            </span>
+                <p>
+                    Placed on {{ $order->formatted_date }}
+                </p>
 
-            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary">
+            </div>
 
-                <i class="bi bi-arrow-left me-2"></i>
 
-                Back
+            <div class="order-hero-right">
 
-            </a>
+                <div class="order-status-large {{ $order->status_badge }}">
 
-        </div>
+                    <span class="status-pulse"></span>
 
-    </div>
+                    <i class="bi {{ $order->status_icon }}"></i>
 
-    {{-- Statistics --}}
-    <div class="row mb-4">
-
-        <div class="col-lg-3 col-md-6 mb-3">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Order Number
-
-                    </small>
-
-                    <h5 class="fw-bold mt-2">
-
-                        {{ $order->order_number }}
-
-                    </h5>
+                    {{ $order->status_label }}
 
                 </div>
 
@@ -76,198 +75,200 @@
 
         </div>
 
-        <div class="col-lg-3 col-md-6 mb-3">
 
-            <div class="card border-0 shadow-sm h-100">
+        {{-- =====================================================
+            ORDER STATS
+        ====================================================== --}}
 
-                <div class="card-body">
+        <div class="order-stats">
 
-                    <small class="text-muted">
+            <div class="order-detail-stat">
 
-                        Order Date
+                <div class="order-detail-stat-icon blue">
+                    <i class="bi bi-hash"></i>
+                </div>
 
-                    </small>
+                <div>
+                    <span>Order Number</span>
+                    <strong>{{ $order->order_number }}</strong>
+                </div>
 
-                    <h5 class="fw-bold mt-2">
+            </div>
 
-                        {{ $order->formatted_date }}
 
-                    </h5>
+            <div class="order-detail-stat">
 
+                <div class="order-detail-stat-icon purple">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div>
+                    <span>Order Date</span>
+                    <strong>{{ $order->formatted_date }}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="order-detail-stat">
+
+                <div class="order-detail-stat-icon orange">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div>
+                    <span>Items</span>
+                    <strong>{{ $order->items_count }}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="order-detail-stat">
+
+                <div class="order-detail-stat-icon green">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <div>
+                    <span>Total</span>
+                    <strong>
+                        {{ $order->formatted_total }}
+                        <small>{{ setting('currency') }}</small>
+                    </strong>
                 </div>
 
             </div>
 
         </div>
 
-        <div class="col-lg-3 col-md-6 mb-3">
 
-            <div class="card border-0 shadow-sm h-100">
+        {{-- =====================================================
+            INFORMATION GRID
+        ====================================================== --}}
 
-                <div class="card-body">
+        <div class="order-info-grid">
 
-                    <small class="text-muted">
 
-                        Items
+            {{-- Customer --}}
 
-                    </small>
+            <section class="order-info-card">
 
-                    <h5 class="fw-bold mt-2">
+                <div class="order-card-heading">
 
-                        {{ $order->items_count }}
+                    <div class="order-heading-icon blue">
+                        <i class="bi bi-person"></i>
+                    </div>
 
-                    </h5>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3 col-md-6 mb-3">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Total
-
-                    </small>
-
-                    <h5 class="fw-bold text-success mt-2">
-
-                        ${{ $order->formatted_total }}
-
-                    </h5>
+                    <div>
+                        <span>ORDER CUSTOMER</span>
+                        <h2>Customer</h2>
+                    </div>
 
                 </div>
 
-            </div>
 
-        </div>
+                <div class="customer-profile">
 
-    </div>
+                    <div class="customer-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
 
-    <div class="row">
+                    <div class="customer-info">
 
-        {{-- Customer --}}
-        <div class="col-lg-4 mb-4">
+                        <strong>
+                            {{ $order->user->name }}
+                        </strong>
 
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-header bg-white">
-
-                    <h5 class="mb-0">
-
-                        Customer
-
-                    </h5>
-
-                </div>
-
-                <div class="card-body">
-
-                    <div class="d-flex align-items-center mb-4">
-
-                        <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width:60px;height:60px;">
-
-                            <i class="bi bi-person-fill fs-3"></i>
-
-                        </div>
-
-                        <div class="ms-3">
-
-                            <h6 class="mb-1">
-
-                                {{ $order->user->name }}
-
-                            </h6>
-
-                            <small class="text-muted">
-
-                                {{ $order->user->email }}
-
-                            </small>
-
-                        </div>
+                        <a href="mailto:{{ $order->user->email }}">
+                            <i class="bi bi-envelope"></i>
+                            {{ $order->user->email }}
+                        </a>
 
                     </div>
 
                 </div>
 
-            </div>
+            </section>
 
-        </div>
 
-        {{-- Shipping --}}
-        <div class="col-lg-4 mb-4">
+            {{-- Shipping --}}
 
-            <div class="card border-0 shadow-sm h-100">
+            <section class="order-info-card">
 
-                <div class="card-header bg-white">
+                <div class="order-card-heading">
 
-                    <h5 class="mb-0">
+                    <div class="order-heading-icon green">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
 
-                        Shipping Address
-
-                    </h5>
+                    <div>
+                        <span>DELIVERY INFORMATION</span>
+                        <h2>Shipping Address</h2>
+                    </div>
 
                 </div>
 
-                <div class="card-body">
 
-                    <div class="mb-3">
+                <div class="shipping-details">
 
-                        <h6 class="fw-bold mb-1">
+                    <div class="shipping-person">
 
+                        <strong>
                             {{ $order->shipping_name }}
+                        </strong>
 
-                        </h6>
-
-                        <small class="text-muted">
-
-                            <i class="bi bi-telephone me-2"></i>
-
+                        <a href="tel:{{ $order->shipping_phone }}">
+                            <i class="bi bi-telephone"></i>
                             {{ $order->shipping_phone }}
-
-                        </small>
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
-
-                        {{ $order->shipping_country }}
+                        </a>
 
                     </div>
 
-                    <div class="mb-3">
 
-                        <i class="bi bi-map-fill text-primary me-2"></i>
+                    <div class="shipping-line">
 
-                        {{ $order->shipping_state }},
-                        {{ $order->shipping_city }}
+                        <i class="bi bi-globe2"></i>
+
+                        <span>
+                            {{ $order->shipping_country }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="shipping-line">
+
+                        <i class="bi bi-map"></i>
+
+                        <span>
+                            {{ $order->shipping_state }},
+                            {{ $order->shipping_city }}
+                        </span>
 
                     </div>
 
-                    <div class="mb-3">
 
-                        <i class="bi bi-house-door-fill text-primary me-2"></i>
+                    <div class="shipping-line">
 
-                        {{ $order->shipping_address }}
+                        <i class="bi bi-house"></i>
+
+                        <span>
+                            {{ $order->shipping_address }}
+                        </span>
 
                     </div>
+
 
                     @if($order->shipping_postal_code)
 
-                    <div>
+                    <div class="shipping-line">
 
-                        <i class="bi bi-mailbox2 text-primary me-2"></i>
+                        <i class="bi bi-mailbox2"></i>
 
-                        {{ $order->shipping_postal_code }}
+                        <span>
+                            {{ $order->shipping_postal_code }}
+                        </span>
 
                     </div>
 
@@ -275,327 +276,442 @@
 
                 </div>
 
-            </div>
+            </section>
 
-        </div>
 
-        {{-- Timeline --}}
-        <div class="col-lg-4 mb-4">
+            {{-- Progress --}}
 
-            <div class="card border-0 shadow-sm h-100">
+            <section class="order-info-card order-progress-card">
 
-                <div class="card-header bg-white">
+                <div class="order-card-heading">
 
-                    <h5 class="mb-0">
+                    <div class="order-heading-icon purple">
+                        <i class="bi bi-activity"></i>
+                    </div>
 
-                        Order Progress
-
-                    </h5>
+                    <div>
+                        <span>ORDER STATUS</span>
+                        <h2>Order Progress</h2>
+                    </div>
 
                 </div>
 
-                <div class="card-body">
 
-                    @php
-
-                    $steps = [
-
-                    'pending' => 'Pending',
-
-                    'processing' => 'Processing',
-
-                    'shipped' => 'Shipped',
-
-                    'delivered' => 'Delivered',
-
-                    ];
-
-                    $current = array_search($order->status->value, array_keys($steps));
-
-                    @endphp
+                <div class="order-timeline">
 
                     @foreach($steps as $key => $label)
 
                     @php
+                    $stepIndex = $loop->index;
+                    $active = $stepIndex <= $currentStep; $current=$key===$currentStatus; @endphp <div class="timeline-step {{ $active ? 'completed' : '' }} {{ $current ? 'current' : '' }}">
 
-                    $active = $loop->index <= $current; @endphp <div class="d-flex align-items-center mb-3">
-
-                        <div class="rounded-circle {{ $active ? 'bg-success text-white' : 'bg-light text-muted' }} d-flex justify-content-center align-items-center" style="width:36px;height:36px;">
+                        <div class="timeline-marker">
 
                             @if($active)
 
-                            <i class="bi bi-check"></i>
+                            <i class="bi bi-check-lg"></i>
 
                             @else
 
-                            {{ $loop->iteration }}
+                            <span>
+                                {{ $loop->iteration }}
+                            </span>
 
                             @endif
 
                         </div>
 
-                        <div class="ms-3">
+                        <div class="timeline-label">
 
                             <strong>
-
                                 {{ $label }}
-
                             </strong>
 
-                        </div>
+                            @if($current)
 
-                </div>
-
-                @endforeach
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-{{-- Order Items --}}
-<div class="card border-0 shadow-sm mb-4">
-
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-
-        <h5 class="mb-0">
-
-            Order Items
-
-        </h5>
-
-        <span class="badge bg-primary">
-
-            {{ $order->items_count }} Items
-
-        </span>
-
-    </div>
-
-    <div class="table-responsive">
-
-        <table class="table align-middle mb-0">
-
-            <thead class="table-light">
-
-                <tr>
-
-                    <th width="80">Image</th>
-
-                    <th>Product</th>
-
-                    <th class="text-center">Price</th>
-
-                    <th class="text-center">Qty</th>
-
-                    <th class="text-end">Total</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @foreach($order->items as $item)
-
-                <tr>
-
-                    <td>
-
-                        @if($item->product?->images->isNotEmpty())
-
-                        <img src="{{ $item->product->images->first()->image_url }}" class="rounded border" width="60" height="60" style="object-fit: cover;">
-
-                        @else
-
-                        <div class="bg-light rounded border d-flex justify-content-center align-items-center" style="width:60px;height:60px;">
-
-                            <i class="bi bi-image text-secondary"></i>
-
-                        </div>
-
-                        @endif
-
-                    </td>
-
-                    <td>
-
-                        @if($item->product)
-
-                        {{-- <a href="{{ route('products.show', $item->product) }}" class="text-decoration-none fw-semibold">
-
-                        {{ $item->product->name }}
-
-                        </a> --}}
-
-                        <div>
-
-                            <small class="text-muted">
-
-                                SKU:
-                                {{ $item->product->sku }}
-
+                            <small>
+                                Current status
                             </small>
 
+                            @endif
+
                         </div>
 
-                        @else
-
-                        <span class="text-danger">
-
-                            Product Deleted
-
-                        </span>
-
-                        @endif
-
-                    </td>
-
-                    <td class="text-center">
-
-                        ${{ number_format($item->price,2) }}
-
-                    </td>
-
-                    <td class="text-center">
-
-                        <span class="badge bg-secondary">
-
-                            {{ $item->quantity }}
-
-                        </span>
-
-                    </td>
-
-                    <td class="text-end fw-bold">
-
-                        ${{ number_format($item->total,2) }}
-
-                    </td>
-
-                </tr>
+                </div>
 
                 @endforeach
 
-            </tbody>
+        </div>
 
-        </table>
+        </section>
 
     </div>
 
-</div>
 
-{{-- Summary --}}
-<div class="row justify-content-end">
+    {{-- =====================================================
+            ORDER ITEMS
+        ====================================================== --}}
 
-    <div class="col-lg-5">
+    <section class="order-items-card">
 
-        <div class="card border-0 shadow-sm">
+        <div class="order-section-header">
 
-            <div class="card-header bg-white">
+            <div>
 
-                <h5 class="mb-0">
+                <span class="order-section-eyebrow">
+                    PURCHASED PRODUCTS
+                </span>
 
-                    Order Summary
-
-                </h5>
+                <h2>
+                    Order Items
+                </h2>
 
             </div>
 
-            <div class="card-body">
+            <div class="items-count-badge">
 
-                <div class="d-flex justify-content-between mb-3">
+                <i class="bi bi-box-seam"></i>
 
-                    <span>
+                {{ $order->items_count }}
+                {{ Str::plural('Item', $order->items_count) }}
 
-                        Subtotal
+            </div>
 
-                    </span>
+        </div>
+
+
+        <div class="order-items-table-wrapper">
+
+            <table class="order-items-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            SKU
+                        </th>
+
+                        <th class="text-center">
+                            Price
+                        </th>
+
+                        <th class="text-center">
+                            Qty
+                        </th>
+
+                        <th class="text-end">
+                            Total
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @foreach($order->items as $item)
+
+                    <tr>
+
+                        <td>
+
+                            <div class="ordered-product">
+
+                                <div class="ordered-product-image">
+
+                                    @if($item->product?->images->isNotEmpty())
+
+                                    <img src="{{ $item->product->images->first()->image_url }}" alt="{{ $item->product->name }}">
+
+                                    @else
+
+                                    <div class="product-no-image">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+
+                                    @endif
+
+                                </div>
+
+
+                                <div class="ordered-product-info">
+
+                                    @if($item->product)
+
+                                    <strong>
+                                        {{ $item->product->name }}
+                                    </strong>
+
+                                    @else
+
+                                    <strong class="deleted-product">
+                                        Product Deleted
+                                    </strong>
+
+                                    @endif
+
+                                    <span>
+                                        Product item
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            @if($item->product)
+
+                            <span class="sku-badge">
+                                {{ $item->product->sku }}
+                            </span>
+
+                            @else
+
+                            <span class="sku-badge muted">
+                                N/A
+                            </span>
+
+                            @endif
+
+                        </td>
+
+
+                        <td class="text-center">
+
+                            <span class="item-price">
+                                {{ number_format($item->price, 2) }}
+                                <small>{{ setting('currency') }}</small>
+                            </span>
+
+                        </td>
+
+
+                        <td class="text-center">
+
+                            <span class="quantity-badge">
+                                ×{{ $item->quantity }}
+                            </span>
+
+                        </td>
+
+
+                        <td class="text-end">
+
+                            <strong class="item-total">
+                                {{ number_format($item->total, 2) }}
+                                <small>{{ setting('currency') }}</small>
+                            </strong>
+
+                        </td>
+
+                    </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- Mobile items --}}
+
+        <div class="order-items-mobile">
+
+            @foreach($order->items as $item)
+
+            <article class="mobile-order-item">
+
+                <div class="mobile-item-image">
+
+                    @if($item->product?->images->isNotEmpty())
+
+                    <img src="{{ $item->product->images->first()->image_url }}" alt="{{ $item->product->name }}">
+
+                    @else
+
+                    <i class="bi bi-image"></i>
+
+                    @endif
+
+                </div>
+
+
+                <div class="mobile-item-info">
 
                     <strong>
-
-                        ${{ $order->formatted_subtotal }}
-
+                        {{ $item->product?->name ?? 'Product Deleted' }}
                     </strong>
-
-                </div>
-
-                <div class="d-flex justify-content-between mb-3">
 
                     <span>
-
-                        Shipping
-
+                        {{ $item->product?->sku ?? 'N/A' }}
                     </span>
 
-                    <strong>
+                    <div>
 
-                        ${{ $order->formatted_shipping }}
+                        <b>
+                            ×{{ $item->quantity }}
+                        </b>
 
-                    </strong>
+                        <strong>
+                            {{ number_format($item->total, 2) }}
+                            {{ setting('currency') }}
+                        </strong>
+
+                    </div>
 
                 </div>
 
-                <div class="d-flex justify-content-between mb-3">
+            </article>
+
+            @endforeach
+
+        </div>
+
+    </section>
+
+
+    {{-- =====================================================
+            SUMMARY
+        ====================================================== --}}
+
+    <div class="order-bottom-grid">
+
+
+        <div class="order-note-card">
+
+            <div class="order-note-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Order secured
+                </strong>
+
+                <p>
+                    Your order information and payment details are securely protected.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <section class="order-summary-card">
+
+            <div class="order-section-header compact">
+
+                <div>
+
+                    <span class="order-section-eyebrow">
+                        PAYMENT BREAKDOWN
+                    </span>
+
+                    <h2>
+                        Order Summary
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <strong>
+                    {{ $order->formatted_subtotal }}
+                    {{ setting('currency') }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Shipping
+                </span>
+
+                <strong>
+                    {{ $order->formatted_shipping }}
+                    {{ setting('currency') }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Discount
+                </span>
+
+                <strong class="discount">
+                    -{{ $order->formatted_discount }}
+                    {{ setting('currency') }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-divider"></div>
+
+
+            <div class="summary-total">
+
+                <div>
 
                     <span>
-
-                        Discount
-
-                    </span>
-
-                    <strong class="text-danger">
-
-                        -${{ $order->formatted_discount }}
-
-                    </strong>
-
-                </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between">
-
-                    <h4 class="mb-0">
-
                         Grand Total
+                    </span>
 
-                    </h4>
-
-                    <h3 class="text-success mb-0">
-
-                        ${{ $order->formatted_total }}
-
-                    </h3>
+                    <small>
+                        Including all charges
+                    </small>
 
                 </div>
 
+                <strong>
+                    {{ $order->formatted_total }}
+                    <small>{{ setting('currency') }}</small>
+                </strong>
+
             </div>
 
-        </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-3">
+            <div class="summary-actions">
 
-            <a href="{{ route('products.index') }}" class="btn btn-outline-primary">
+                <a href="{{ route('products.index') }}" class="continue-shopping-btn">
+                    <i class="bi bi-bag"></i>
+                    Continue Shopping
+                </a>
 
-                <i class="bi bi-shop me-2"></i>
 
-                Continue Shopping
+                <button type="button" onclick="window.print()" class="print-order-btn">
+                    <i class="bi bi-printer"></i>
+                    Print
+                </button>
 
-            </a>
+            </div>
 
-            <button onclick="window.print()" class="btn btn-dark">
-
-                <i class="bi bi-printer me-2"></i>
-
-                Print
-
-            </button>
-
-        </div>
+        </section>
 
     </div>
 

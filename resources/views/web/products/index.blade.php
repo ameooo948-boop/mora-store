@@ -4,62 +4,138 @@
 
 @section('content')
 
-<div class="container py-5">
+<div class="products-page">
 
-    <div class="card filter-card border-0 shadow-sm mb-4">
+    <div class="container">
 
-        <div class="card-header filter-header">
+        {{-- =====================================================
+            PAGE HEADER
+        ====================================================== --}}
 
-            <h5 class="mb-0">
+        <div class="products-header">
 
-                <i class="bi bi-funnel me-2"></i>
+            <div>
 
-                Filters
+                <span class="products-eyebrow">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    OUR COLLECTION
+                </span>
 
-            </h5>
+                <h1>
+                    Explore Products
+                </h1>
+
+                <p>
+                    Discover products you'll love, all in one place.
+                </p>
+
+            </div>
+
+
+            @if($products->total())
+
+            <div class="products-count">
+
+                <strong>
+                    {{ $products->total() }}
+                </strong>
+
+                <span>
+                    {{ Str::plural('Product', $products->total()) }}
+                </span>
+
+            </div>
+
+            @endif
 
         </div>
 
-        <div class="card-body">
 
-            <form method="GET">
+        {{-- =====================================================
+            FILTER PANEL
+        ====================================================== --}}
 
-                <div class="row g-3 align-items-end">
+        <section class="products-filter">
 
-                    <div class="col-lg-4">
+            <div class="filter-top">
 
-                        <label class="form-label">
+                <div class="filter-title">
 
-                            Search
+                    <div class="filter-icon">
+                        <i class="bi bi-sliders2"></i>
+                    </div>
 
-                        </label>
+                    <div>
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by product name">
+                        <span>
+                            REFINE RESULTS
+                        </span>
+
+                        <h2>
+                            Find what you're looking for
+                        </h2>
 
                     </div>
 
-                    <div class="col-lg-3">
+                </div>
 
-                        <label class="form-label">
 
-                            Category
+                @if(request()->hasAny(['search', 'category', 'brand', 'sort']))
 
-                        </label>
+                <a href="{{ route('products.index') }}" class="filter-clear">
+                    <i class="bi bi-x-circle"></i>
+                    Clear All
+                </a>
 
-                        <select name="category" class="form-select">
+                @endif
+
+            </div>
+
+
+            <form method="GET" action="{{ route('products.index') }}" class="products-filter-form">
+
+                {{-- Search --}}
+
+                <div class="filter-field search-field">
+
+                    <label for="product-search">
+                        Search Products
+                    </label>
+
+                    <div class="filter-input">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" id="product-search" name="search" value="{{ request('search') }}" placeholder="Search by product name..." autocomplete="off">
+
+                    </div>
+
+                </div>
+
+
+                {{-- Category --}}
+
+                <div class="filter-field">
+
+                    <label for="product-category">
+                        Category
+                    </label>
+
+                    <div class="filter-select">
+
+                        <i class="bi bi-grid"></i>
+
+                        <select id="product-category" name="category">
 
                             <option value="">
-
                                 All Categories
-
                             </option>
 
                             @foreach($categories as $category)
 
-                            <option value="{{ $category->id }}" @selected(request('category')==$category->id)>
-
+                            <option value="{{ $category->id }}" @selected(request('category')==$category->id)
+                                >
                                 {{ $category->name }}
-
                             </option>
 
                             @endforeach
@@ -68,28 +144,32 @@
 
                     </div>
 
-                    <div class="col-lg-3">
+                </div>
 
-                        <label class="form-label">
 
-                            Brand
+                {{-- Brand --}}
 
-                        </label>
+                <div class="filter-field">
 
-                        <select name="brand" class="form-select">
+                    <label for="product-brand">
+                        Brand
+                    </label>
+
+                    <div class="filter-select">
+
+                        <i class="bi bi-tags"></i>
+
+                        <select id="product-brand" name="brand">
 
                             <option value="">
-
                                 All Brands
-
                             </option>
 
                             @foreach($brands as $brand)
 
-                            <option value="{{ $brand->id }}" @selected(request('brand')==$brand->id)>
-
+                            <option value="{{ $brand->id }}" @selected(request('brand')==$brand->id)
+                                >
                                 {{ $brand->name }}
-
                             </option>
 
                             @endforeach
@@ -98,135 +178,270 @@
 
                     </div>
 
-                    <div class="col-lg-2">
+                </div>
 
-                        <label class="form-label">
 
-                            Sort
+                {{-- Sort --}}
 
-                        </label>
+                <div class="filter-field">
 
-                        <select name="sort" class="form-select">
+                    <label for="product-sort">
+                        Sort By
+                    </label>
+
+                    <div class="filter-select">
+
+                        <i class="bi bi-sort-down"></i>
+
+                        <select id="product-sort" name="sort">
 
                             <option value="">
-
                                 Newest
-
                             </option>
 
                             <option value="price_low" @selected(request('sort')=='price_low' )>
-
-                                Price ↑
-
+                                Price: Low to High
                             </option>
 
                             <option value="price_high" @selected(request('sort')=='price_high' )>
-
-                                Price ↓
-
+                                Price: High to Low
                             </option>
 
                             <option value="oldest" @selected(request('sort')=='oldest' )>
-
                                 Oldest
-
                             </option>
 
                         </select>
 
                     </div>
 
-                    <div class="col-12">
+                </div>
 
-                        <div class="d-flex gap-2">
 
-                            <button type="submit" class="btn btn-primary">
+                {{-- Actions --}}
 
-                                <i class="bi bi-search me-2"></i>
+                <div class="filter-actions">
 
-                                Apply Filters
-
-                            </button>
-
-                            <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
-
-                                <i class="bi bi-arrow-clockwise me-2"></i>
-
-                                Reset
-
-                            </a>
-
-                        </div>
-
-                    </div>
+                    <button type="submit" class="filter-apply-btn">
+                        <i class="bi bi-search"></i>
+                        Apply Filters
+                    </button>
 
                 </div>
 
             </form>
 
-        </div>
 
-    </div>
+            {{-- Active Filters --}}
 
-    <div class="row g-4">
+            @if(request()->hasAny(['search', 'category', 'brand', 'sort']))
 
-        @forelse($products as $product)
+            <div class="active-filters">
 
-        <div class="col-xl-3 col-lg-4 col-md-6">
+                <span class="active-label">
+                    Active:
+                </span>
 
-            @include('web.partials.product-card', [
-            'product' => $product,
-            ])
 
-        </div>
+                @if(request('search'))
 
-        @empty
+                <span class="active-filter">
 
-        <div class="col-12">
+                    <i class="bi bi-search"></i>
 
-            <div class="card border-0 shadow-sm">
+                    "{{ request('search') }}"
 
-                <div class="card-body text-center py-5">
+                </span>
 
-                    <i class="bi bi-box-seam display-3 text-secondary"></i>
+                @endif
 
-                    <h4 class="mt-3">
 
-                        No Products Found
+                @if(request('category'))
 
-                    </h4>
+                @php
+                $selectedCategory = $categories->firstWhere('id', request('category'));
+                @endphp
 
-                    <p class="text-muted">
+                @if($selectedCategory)
 
-                        Try changing your search or filters.
+                <span class="active-filter">
 
-                    </p>
+                    <i class="bi bi-grid"></i>
 
-                    <a href="{{ route('products.index') }}" class="btn btn-primary">
+                    {{ $selectedCategory->name }}
 
-                        View All Products
+                </span>
 
-                    </a>
+                @endif
 
-                </div>
+                @endif
+
+
+                @if(request('brand'))
+
+                @php
+                $selectedBrand = $brands->firstWhere('id', request('brand'));
+                @endphp
+
+                @if($selectedBrand)
+
+                <span class="active-filter">
+
+                    <i class="bi bi-tag"></i>
+
+                    {{ $selectedBrand->name }}
+
+                </span>
+
+                @endif
+
+                @endif
+
+
+                @if(request('sort'))
+
+                <span class="active-filter">
+
+                    <i class="bi bi-sort-down"></i>
+
+                    @switch(request('sort'))
+
+                    @case('price_low')
+                    Price: Low to High
+                    @break
+
+                    @case('price_high')
+                    Price: High to Low
+                    @break
+
+                    @case('oldest')
+                    Oldest
+                    @break
+
+                    @endswitch
+
+                </span>
+
+                @endif
+
+            </div>
+
+            @endif
+
+        </section>
+
+
+        {{-- =====================================================
+            RESULTS BAR
+        ====================================================== --}}
+
+        @if($products->count())
+
+        <div class="products-results-bar">
+
+            <div>
+
+                <span>
+                    Showing
+                </span>
+
+                <strong>
+                    {{ $products->firstItem() }}–{{ $products->lastItem() }}
+                </strong>
+
+                <span>
+                    of
+                </span>
+
+                <strong>
+                    {{ $products->total() }}
+                </strong>
+
+                <span>
+                    products
+                </span>
 
             </div>
 
         </div>
 
-        @endforelse
+        @endif
+
+
+        {{-- =====================================================
+            PRODUCTS GRID
+        ====================================================== --}}
+
+        <div class="products-grid">
+
+            @forelse($products as $product)
+
+            <div class="product-grid-item">
+
+                @include('web.partials.product-card', [
+                'product' => $product,
+                ])
+
+            </div>
+
+            @empty
+
+            {{-- =================================================
+                    EMPTY STATE
+                ================================================== --}}
+
+            <div class="products-empty">
+
+                <div class="products-empty-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </div>
+
+                <span class="products-eyebrow">
+                    NOTHING FOUND
+                </span>
+
+                <h2>
+                    No products found
+                </h2>
+
+                <p>
+                    We couldn't find anything matching your search.
+                    Try changing your filters or explore the full collection.
+                </p>
+
+                <a href="{{ route('products.index') }}" class="products-empty-btn">
+                    <i class="bi bi-grid"></i>
+
+                    View All Products
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+            @endforelse
+
+        </div>
+
+
+        {{-- =====================================================
+            PAGINATION
+        ====================================================== --}}
+
+        @if($products->hasPages())
+
+        <div class="products-pagination">
+
+            {{ $products->withQueryString()->links() }}
+
+        </div>
+
+        @endif
 
     </div>
-
-    @if($products->hasPages())
-
-    <div class="d-flex justify-content-center mt-5">
-
-        {{ $products->links() }}
-
-    </div>
-
-    @endif
 
 </div>
 

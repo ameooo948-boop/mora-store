@@ -46,11 +46,9 @@ class NotificationService
         int $limit = 10,
     ) {
         return $user->notifications()
-
-            ->latest()
-
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->take($limit)
-
             ->get();
     }
 

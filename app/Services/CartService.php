@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Repositories\Contracts\CartItemRepositoryInterface;
 use App\Repositories\Contracts\CartRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use DomainException;
 
 class CartService
 {
@@ -140,5 +141,20 @@ class CartService
             ->getOrCreate($userId)
             ->items()
             ->sum('quantity');
+    }
+
+    public function getCartForUpdate(int $userId): Cart
+    {
+        $cart = $this->cartItemRepository
+            ->findByUserForUpdate($userId);
+
+        if (! $cart) {
+            throw new DomainException('Cart not found.');
+        }
+
+        return $cart->load([
+            'items.product',
+            'items.product.images',
+        ]);
     }
 }

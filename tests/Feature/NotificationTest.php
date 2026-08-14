@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -488,6 +489,13 @@ class NotificationTest extends TestCase
             'shipping_postal_code' => '35511',
         ]);
 
+        $user->notify(
+            new \App\Notifications\OrderProcessingNotification($order1)
+        );
+
+        // Ensure the second notification has a later timestamp.
+        Carbon::setTestNow(now()->addSecond());
+
         $order2 = Order::create([
             'user_id' => $user->id,
             'order_number' => 'TEST-' . uniqid(),
@@ -506,12 +514,10 @@ class NotificationTest extends TestCase
         ]);
 
         $user->notify(
-            new \App\Notifications\OrderProcessingNotification($order1)
-        );
-
-        $user->notify(
             new \App\Notifications\OrderShippedNotification($order2)
         );
+
+        Carbon::setTestNow();
 
         $latest = app(NotificationService::class)
             ->latest($user, 1);

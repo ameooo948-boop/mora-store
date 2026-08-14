@@ -13,4 +13,12 @@ class CartRepository implements CartRepositoryInterface
             'user_id' => $userId,
         ]);
     }
+
+    public function findByUserForUpdate(int $userId): ?Cart
+    {
+        return Cart::query()
+            ->where('user_id', $userId)
+            ->lockForUpdate()
+            ->first();
+    }
 }

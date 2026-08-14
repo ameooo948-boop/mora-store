@@ -12,12 +12,9 @@ class PaymentPolicy
         return $user->can('view payments');
     }
 
-    public function view(
-        User $user,
-        Payment $payment,
-    ): bool {
-
-        return $user->can('view payments');
-
+    public function view(User $user, Payment $payment): bool
+    {
+        return $payment->order->user_id === $user->id
+            || $user->can('view payments');
     }
 }

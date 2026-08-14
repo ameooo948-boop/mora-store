@@ -1,284 +1,649 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Review Details')
-
 @section('page-title', 'Review Details')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="review-details-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- =====================================================
+         HERO
+    ====================================================== --}}
 
-        <div>
+    <div class="review-details-hero">
 
-            <h3 class="fw-bold mb-1">
+        <div class="review-details-hero-left">
 
-                Review #{{ $review->id }}
+            <a
+                href="{{ route('admin.reviews.index') }}"
+                class="review-details-back"
+                title="Back to Reviews"
+            >
+                <i class="bi bi-arrow-left"></i>
+            </a>
 
-            </h3>
+            <div>
 
-            <small class="text-muted">
+                <span class="review-details-eyebrow">
+                    CUSTOMER REVIEWS
+                </span>
 
-                {{ $review->created_at->format('M d, Y h:i A') }}
+                <h1>
+                    Review #{{ $review->id }}
+                </h1>
 
-            </small>
+                <p>
+                    Customer feedback, rating and review information.
+                </p>
+
+            </div>
 
         </div>
 
-        <span class="badge bg-{{ $review->status->badge() }} fs-6">
 
-            {{ $review->status->label() }}
+        <div class="review-details-actions">
 
-        </span>
+            @if($review->status === \App\Enums\ReviewStatus::Pending)
+
+                <form
+                    action="{{ route('admin.reviews.approve', $review) }}"
+                    method="POST"
+                >
+                    @csrf
+                    @method('PATCH')
+
+                    <button type="submit" class="review-action approve">
+                        <i class="bi bi-check-circle"></i>
+                        Approve Review
+                    </button>
+
+                </form>
+
+                <form
+                    action="{{ route('admin.reviews.reject', $review) }}"
+                    method="POST"
+                >
+                    @csrf
+                    @method('PATCH')
+
+                    <button type="submit" class="review-action reject">
+                        <i class="bi bi-x-circle"></i>
+                        Reject Review
+                    </button>
+
+                </form>
+
+            @elseif($review->status === \App\Enums\ReviewStatus::Approved)
+
+                <form
+                    action="{{ route('admin.reviews.reject', $review) }}"
+                    method="POST"
+                >
+                    @csrf
+                    @method('PATCH')
+
+                    <button type="submit" class="review-action reject-outline">
+                        <i class="bi bi-x-circle"></i>
+                        Reject Review
+                    </button>
+
+                </form>
+
+            @elseif($review->status === \App\Enums\ReviewStatus::Rejected)
+
+                <form
+                    action="{{ route('admin.reviews.approve', $review) }}"
+                    method="POST"
+                >
+                    @csrf
+                    @method('PATCH')
+
+                    <button type="submit" class="review-action approve-outline">
+                        <i class="bi bi-check-circle"></i>
+                        Approve Review
+                    </button>
+
+                </form>
+
+            @endif
+
+            <a
+                href="{{ route('admin.reviews.index') }}"
+                class="review-details-all"
+            >
+                <i class="bi bi-chat-square-text"></i>
+                All Reviews
+            </a>
+
+        </div>
 
     </div>
 
-    <div class="row">
 
-        <div class="col-lg-8">
+    {{-- =====================================================
+         MAIN OVERVIEW
+    ====================================================== --}}
 
-            {{-- Review --}}
-            <div class="card border-0 shadow-sm mb-4">
+    <div class="review-details-grid">
 
-                <div class="card-header bg-white">
+        {{-- =================================================
+             REVIEW
+        ================================================== --}}
 
-                    <h5 class="mb-0">
+        <div class="review-main-card">
 
-                        Review
+            <div class="review-card-header">
 
-                    </h5>
+                <div class="review-card-title">
 
-                </div>
-
-                <div class="card-body">
-
-                    <div class="mb-3">
-
-                        @for($i = 1; $i <= 5; $i++) @if($i <=$review->rating)
-
-                            <i class="bi bi-star-fill fs-5 text-warning"></i>
-
-                            @else
-
-                            <i class="bi bi-star fs-5 text-secondary"></i>
-
-                            @endif
-
-                            @endfor
-
+                    <div class="review-card-icon blue">
+                        <i class="bi bi-chat-square-quote-fill"></i>
                     </div>
 
-                    <p class="mb-0">
+                    <div>
 
-                        {{ $review->comment }}
+                        <h2>
+                            Customer Review
+                        </h2>
 
-                    </p>
-
-                </div>
-
-            </div>
-
-            {{-- Product --}}
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-header bg-white">
-
-                    Product
-
-                </div>
-
-                <div class="card-body">
-
-                    <h5>
-
-                        {{ $review->product->name }}
-
-                    </h5>
-
-                    @if(!empty($review->product->sku))
-
-                    <small class="text-muted">
-
-                        SKU:
-                        {{ $review->product->sku }}
-
-                    </small>
-
-                    @endif
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-4">
-
-            {{-- Customer --}}
-            <div class="card border-0 shadow-sm mb-4">
-
-                <div class="card-header bg-white">
-
-                    Customer
-
-                </div>
-
-                <div class="card-body">
-
-                    <strong>
-
-                        {{ $review->user->name }}
-
-                    </strong>
-
-                    <br>
-
-                    {{ $review->user->email }}
-
-                </div>
-
-            </div>
-
-            {{-- Status --}}
-            <div class="card border-0 shadow-sm mb-4">
-
-                <div class="card-header bg-white">
-
-                    Review Status
-
-                </div>
-
-                <div class="card-body">
-
-                    <div class="mb-3">
-
-                        <span class="badge bg-{{ $review->status->badge() }} fs-6">
-
-                            {{ $review->status->label() }}
-
+                        <span>
+                            Customer rating and feedback
                         </span>
 
                     </div>
 
-                    @if($review->approvedBy)
+                </div>
 
-                    <div class="mb-2">
+                <span class="review-status {{ $review->status->value }}">
+                    <i class="bi bi-circle-fill"></i>
+                    {{ $review->status->label() }}
+                </span>
 
-                        <strong>
+            </div>
 
-                            Approved By
 
-                        </strong>
+            <div class="review-main-body">
 
-                        <br>
+                {{-- Rating --}}
 
-                        {{ $review->approvedBy->name }}
-
-                    </div>
-
-                    @endif
-
-                    @if($review->approved_at)
+                <div class="review-rating-section">
 
                     <div>
 
-                        <strong>
+                        <span class="review-section-label">
+                            CUSTOMER RATING
+                        </span>
 
-                            Approved At
+                        <div class="review-stars">
 
-                        </strong>
+                            @for($i = 1; $i <= 5; $i++)
 
-                        <br>
+                                @if($i <= $review->rating)
 
-                        {{ $review->approved_at->format('M d, Y h:i A') }}
+                                    <i class="bi bi-star-fill active"></i>
+
+                                @else
+
+                                    <i class="bi bi-star"></i>
+
+                                @endif
+
+                            @endfor
+
+                        </div>
 
                     </div>
 
-                    @endif
+                    <div class="review-rating-number">
+
+                        <strong>
+                            {{ $review->rating }}
+                        </strong>
+
+                        <span>
+                            / 5
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Comment --}}
+
+                <div class="review-comment-section">
+
+                    <span class="review-section-label">
+                        CUSTOMER COMMENT
+                    </span>
+
+                    <div class="review-comment">
+
+                        <i class="bi bi-quote"></i>
+
+                        <p>
+                            {{ $review->comment ?: 'No comment provided for this review.' }}
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
-            {{-- Actions --}}
-            <div class="card border-0 shadow-sm">
+        </div>
 
-                <div class="card-header bg-white">
 
-                    Actions
+        {{-- =================================================
+             CUSTOMER
+        ================================================== --}}
 
-                </div>
+        <div class="review-customer-card">
 
-                <div class="card-body">
+            <div class="review-card-header">
 
-                    @if($review->status === \App\Enums\ReviewStatus::Pending)
+                <div class="review-card-title">
 
-                    <form action="{{ route('admin.reviews.approve', $review) }}" method="POST" class="mb-3">
+                    <div class="review-card-icon purple">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
 
-                        @csrf
-                        @method('PATCH')
+                    <div>
 
-                        <button class="btn btn-success w-100">
+                        <h2>
+                            Customer
+                        </h2>
 
-                            <i class="bi bi-check-circle me-2"></i>
+                        <span>
+                            Reviewer information
+                        </span>
 
-                            Approve Review
-
-                        </button>
-
-                    </form>
-
-                    <form action="{{ route('admin.reviews.reject', $review) }}" method="POST">
-
-                        @csrf
-                        @method('PATCH')
-
-                        <button class="btn btn-danger w-100">
-
-                            <i class="bi bi-x-circle me-2"></i>
-
-                            Reject Review
-
-                        </button>
-
-                    </form>
-
-                    @elseif($review->status === \App\Enums\ReviewStatus::Approved)
-
-                    <form action="{{ route('admin.reviews.reject', $review) }}" method="POST">
-
-                        @csrf
-                        @method('PATCH')
-
-                        <button class="btn btn-outline-danger w-100">
-
-                            Reject Review
-
-                        </button>
-
-                    </form>
-
-                    @elseif($review->status === \App\Enums\ReviewStatus::Rejected)
-
-                    <form action="{{ route('admin.reviews.approve', $review) }}" method="POST">
-
-                        @csrf
-                        @method('PATCH')
-
-                        <button class="btn btn-outline-success w-100">
-
-                            Approve Review
-
-                        </button>
-
-                    </form>
-
-                    @endif
+                    </div>
 
                 </div>
 
             </div>
+
+
+            <div class="review-customer-body">
+
+                <div class="review-avatar">
+
+                    {{ strtoupper(substr($review->user->name, 0, 1)) }}
+
+                </div>
+
+                <div class="review-customer-info">
+
+                    <strong>
+                        {{ $review->user->name }}
+                    </strong>
+
+                    <span>
+                        {{ $review->user->email }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         METRICS
+    ====================================================== --}}
+
+    <div class="review-metrics">
+
+        {{-- Rating --}}
+
+        <div class="review-metric-card rating">
+
+            <div class="review-metric-icon yellow">
+                <i class="bi bi-star-fill"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Rating
+                </span>
+
+                <strong>
+                    {{ $review->rating }} / 5
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        {{-- Status --}}
+
+        <div class="review-metric-card status">
+
+            <div class="review-metric-icon blue">
+                <i class="bi bi-activity"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Status
+                </span>
+
+                <strong>
+                    {{ $review->status->label() }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        {{-- Product --}}
+
+        <div class="review-metric-card product">
+
+            <div class="review-metric-icon purple">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Product
+                </span>
+
+                <strong>
+                    {{ $review->product->name }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        {{-- Date --}}
+
+        <div class="review-metric-card date">
+
+            <div class="review-metric-icon green">
+                <i class="bi bi-calendar3"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Submitted
+                </span>
+
+                <strong>
+                    {{ $review->created_at->format('d M Y') }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         PRODUCT
+    ====================================================== --}}
+
+    <div class="review-product-card">
+
+        <div class="review-card-header">
+
+            <div class="review-card-title">
+
+                <div class="review-card-icon green">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Reviewed Product
+                    </h2>
+
+                    <span>
+                        Product associated with this review
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="review-product-body">
+
+            <div class="review-product-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div class="review-product-info">
+
+                <span>
+                    PRODUCT
+                </span>
+
+                <h3>
+                    {{ $review->product->name }}
+                </h3>
+
+                @if($review->product->sku)
+
+                    <div class="review-product-sku">
+
+                        <i class="bi bi-upc-scan"></i>
+
+                        SKU:
+                        {{ $review->product->sku }}
+
+                    </div>
+
+                @endif
+
+            </div>
+
+            <a
+                href="{{ route('admin.products.show', $review->product) }}"
+                class="review-product-view"
+            >
+                <i class="bi bi-arrow-up-right"></i>
+                View Product
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         REVIEW STATUS
+    ====================================================== --}}
+
+    <div class="review-status-card">
+
+        <div class="review-card-header">
+
+            <div class="review-card-title">
+
+                <div class="review-card-icon blue">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Review Status
+                    </h2>
+
+                    <span>
+                        Moderation and approval information
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="review-status-body">
+
+            <div class="review-status-main">
+
+                <span class="review-section-label">
+                    CURRENT STATUS
+                </span>
+
+                <span class="review-status {{ $review->status->value }}">
+                    <i class="bi bi-circle-fill"></i>
+                    {{ $review->status->label() }}
+                </span>
+
+            </div>
+
+
+            @if($review->approvedBy)
+
+                <div class="review-status-info">
+
+                    <span>
+                        <i class="bi bi-person-check"></i>
+                        Approved By
+                    </span>
+
+                    <strong>
+                        {{ $review->approvedBy->name }}
+                    </strong>
+
+                </div>
+
+            @endif
+
+
+            @if($review->approved_at)
+
+                <div class="review-status-info">
+
+                    <span>
+                        <i class="bi bi-clock"></i>
+                        Approved At
+                    </span>
+
+                    <strong>
+                        {{ $review->approved_at->format('d M Y, h:i A') }}
+                    </strong>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         TIMELINE
+    ====================================================== --}}
+
+    <div class="review-timeline-card">
+
+        <div class="review-card-header">
+
+            <div class="review-card-title">
+
+                <div class="review-card-icon green">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Review Timeline
+                    </h2>
+
+                    <span>
+                        Review creation and moderation activity
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="review-timeline">
+
+            {{-- Created --}}
+
+            <div class="review-timeline-item">
+
+                <div class="review-timeline-icon blue">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Review Submitted
+                    </span>
+
+                    <strong>
+                        {{ $review->created_at->format('d M Y') }}
+                    </strong>
+
+                    <small>
+                        {{ $review->created_at->format('h:i A') }}
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            @if($review->approved_at)
+
+                <div class="review-timeline-line"></div>
+
+                <div class="review-timeline-item">
+
+                    <div class="review-timeline-icon green">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Review Approved
+                        </span>
+
+                        <strong>
+                            {{ $review->approved_at->format('d M Y') }}
+                        </strong>
+
+                        <small>
+                            {{ $review->approved_at->format('h:i A') }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+            @endif
 
         </div>
 

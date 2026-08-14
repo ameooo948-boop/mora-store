@@ -36,20 +36,18 @@
 
             <div class="showcase-content">
 
-                <div class="brand-logo">
-                    @if($siteLogo)
+                <div class="brand">
+                    <div class="brand-logo">
 
-                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ setting('site_name') }}" class="site-logo">
-
-                    @else
-
-                    <div class="brand-logo-icon">
+                        @if($siteLogo)
+                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ setting('site_name') }}">
+                        @else
                         <i class="bi bi-bag-check-fill"></i>
+                        @endif
+
                     </div>
 
-                    @endif
-
-                    <span>
+                    <span class="brand-name">
                         {{ setting('site_name') }}
                     </span>
                 </div>

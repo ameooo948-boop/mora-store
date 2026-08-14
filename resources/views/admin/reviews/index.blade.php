@@ -1,239 +1,224 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Reviews')
-
 @section('page-title', 'Reviews')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="reviews-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- Header --}}
+    <div class="reviews-hero">
 
-        <div>
+        <div class="reviews-hero-content">
 
-            <h3 class="fw-bold mb-1">
-
-                Reviews
-
-            </h3>
-
-            <p class="text-muted mb-0">
-
-                Manage customer reviews
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="row mb-4">
-
-        <div class="col">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Total Reviews
-
-                    </small>
-
-                    <h2 class="fw-bold mt-2">
-
-                        {{ $statistics['total'] }}
-
-                    </h2>
-
-                </div>
-
+            <div class="reviews-hero-icon">
+                <i class="bi bi-chat-square-heart-fill"></i>
             </div>
 
-        </div>
+            <div>
+                <span class="reviews-eyebrow">
+                    CUSTOMER MANAGEMENT
+                </span>
 
-        <div class="col">
+                <h1>
+                    Reviews
+                </h1>
 
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Pending
-
-                    </small>
-
-                    <h2 class="fw-bold text-warning mt-2">
-
-                        {{ $statistics['pending'] }}
-
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Approved
-
-                    </small>
-
-                    <h2 class="fw-bold text-success mt-2">
-
-                        {{ $statistics['approved'] }}
-
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Rejected
-
-                    </small>
-
-                    <h2 class="fw-bold text-danger mt-2">
-
-                        {{ $statistics['rejected'] }}
-
-                    </h2>
-
-                </div>
-
+                <p>
+                    Manage customer feedback, ratings and review moderation.
+                </p>
             </div>
 
         </div>
 
     </div>
 
-    <div class="card border-0 shadow-sm mb-4">
 
-        <div class="card-body">
+    {{-- Statistics --}}
+    <div class="reviews-statistics">
 
-            <form method="GET">
+        <div class="reviews-stat-card">
 
-                <div class="row g-3">
+            <div class="reviews-stat-icon blue">
+                <i class="bi bi-chat-square-text-fill"></i>
+            </div>
 
-                    <div class="col-md-6">
+            <div>
+                <span>Total Reviews</span>
+                <strong>{{ $statistics['total'] }}</strong>
+            </div>
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by customer or product...">
+        </div>
 
-                    </div>
 
-                    <div class="col-md-3">
+        <div class="reviews-stat-card">
 
-                        <select name="status" class="form-select">
+            <div class="reviews-stat-icon yellow">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
 
-                            <option value="">
+            <div>
+                <span>Pending</span>
+                <strong>{{ $statistics['pending'] }}</strong>
+            </div>
 
-                                All Statuses
+        </div>
 
-                            </option>
 
-                            @foreach($statuses as $status)
+        <div class="reviews-stat-card">
 
-                            <option value="{{ $status->value }}" @selected(request('status')==$status->value)
-                                >
+            <div class="reviews-stat-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
 
-                                {{ $status->label() }}
+            <div>
+                <span>Approved</span>
+                <strong>{{ $statistics['approved'] }}</strong>
+            </div>
 
-                            </option>
+        </div>
 
-                            @endforeach
 
-                        </select>
+        <div class="reviews-stat-card">
 
-                    </div>
+            <div class="reviews-stat-icon red">
+                <i class="bi bi-x-circle-fill"></i>
+            </div>
 
-                    <div class="col-md-3 d-grid">
-
-                        <button class="btn btn-primary">
-
-                            <i class="bi bi-search me-2"></i>
-
-                            Search
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </form>
+            <div>
+                <span>Rejected</span>
+                <strong>{{ $statistics['rejected'] }}</strong>
+            </div>
 
         </div>
 
     </div>
 
-    <div class="card border-0 shadow-sm">
 
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    {{-- Filters --}}
+    <div class="reviews-filter-card">
 
-            <h5 class="mb-0">
+        <div class="reviews-filter-header">
 
-                Reviews
+            <div class="reviews-filter-title">
 
-            </h5>
+                <div class="reviews-filter-icon">
+                    <i class="bi bi-funnel-fill"></i>
+                </div>
 
-            <small class="text-muted">
+                <div>
+                    <h3>Review Filters</h3>
+                    <span>Search and filter customer reviews</span>
+                </div>
 
-                Showing {{ $reviews->total() }} Reviews
-
-            </small>
+            </div>
 
         </div>
+
+
+        <form method="GET">
+
+            <div class="reviews-filter-body">
+
+                <div class="reviews-search">
+
+                    <label>Search</label>
+
+                    <div class="reviews-input-wrapper">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by customer or product...">
+
+                    </div>
+
+                </div>
+
+
+                <div class="reviews-status-filter">
+
+                    <label>Status</label>
+
+                    <select name="status" class="reviews-select">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        @foreach($statuses as $status)
+
+                        <option value="{{ $status->value }}" @selected(request('status')==$status->value)
+                            >
+                            {{ $status->label() }}
+                        </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                <div class="reviews-filter-button">
+
+                    <button type="submit">
+                        <i class="bi bi-search"></i>
+                        Search Reviews
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- Reviews Table --}}
+    <div class="reviews-table-card">
+
+        <div class="reviews-table-header">
+
+            <div>
+
+                <span class="reviews-table-eyebrow">
+                    REVIEW MANAGEMENT
+                </span>
+
+                <h2>
+                    Customer Reviews
+                </h2>
+
+            </div>
+
+            <div class="reviews-count">
+                <i class="bi bi-chat-left-text"></i>
+                {{ $reviews->total() }} Reviews
+            </div>
+
+        </div>
+
 
         <div class="table-responsive">
 
-            <table class="table align-middle mb-0">
+            <table class="reviews-table">
 
-                <thead class="table-light">
+                <thead>
 
                     <tr>
-
                         <th>ID</th>
-
                         <th>Customer</th>
-
                         <th>Product</th>
-
                         <th>Rating</th>
-
                         <th>Status</th>
-
                         <th>Date</th>
-
-                        <th width="80" class="text-center">
-
-                            Actions
-
-                        </th>
-
+                        <th class="text-center">Actions</th>
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -241,57 +226,96 @@
 
                     <tr>
 
+                        {{-- ID --}}
                         <td>
 
-                            <span class="badge bg-light text-dark">
-
+                            <span class="review-id">
                                 #{{ $review->id }}
-
                             </span>
 
                         </td>
 
+
+                        {{-- Customer --}}
                         <td>
 
-                            <div class="fw-semibold">
+                            <div class="review-customer">
 
-                                {{ $review->user->name }}
+                                <div class="review-customer-avatar">
+                                    {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                </div>
+
+                                <div class="review-customer-info">
+
+                                    <strong>
+                                        {{ $review->user->name }}
+                                    </strong>
+
+                                    <span>
+                                        {{ $review->user->email }}
+                                    </span>
+
+                                </div>
 
                             </div>
 
-                            <small class="text-muted">
+                        </td>
 
-                                {{ $review->user->email }}
 
-                            </small>
+                        {{-- Product --}}
+                        <td>
+
+                            <div class="review-product">
+
+                                <div class="review-product-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+
+                                <span>
+                                    {{ $review->product->name }}
+                                </span>
+
+                            </div>
 
                         </td>
 
+
+                        {{-- Rating --}}
                         <td>
 
-                            {{ $review->product->name }}
+                            <div class="review-rating">
+
+                                <div class="review-stars">
+
+                                    @for($i = 1; $i <= 5; $i++) @if($i <=$review->rating)
+
+                                        <i class="bi bi-star-fill"></i>
+
+                                        @else
+
+                                        <i class="bi bi-star"></i>
+
+                                        @endif
+
+                                        @endfor
+
+                                </div>
+
+                                <span>
+                                    {{ $review->rating }}/5
+                                </span>
+
+                            </div>
 
                         </td>
 
+
+                        {{-- Status --}}
                         <td>
 
-                            @for($i = 1; $i <= 5; $i++) @if($i <=$review->rating)
+                            <span class="review-status {{ $review->status->value }}">
 
-                                <i class="bi bi-star-fill text-warning"></i>
-
-                                @else
-
-                                <i class="bi bi-star text-secondary"></i>
-
-                                @endif
-
-                                @endfor
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge bg-{{ $review->status->badge() }}">
+                                <i class="bi bi-circle-fill"></i>
 
                                 {{ $review->status->label() }}
 
@@ -299,79 +323,86 @@
 
                         </td>
 
+
+                        {{-- Date --}}
                         <td>
 
-                            {{ $review->created_at->format('M d, Y') }}
+                            <div class="review-date">
+
+                                <strong>
+                                    {{ $review->created_at->format('M d, Y') }}
+                                </strong>
+
+                                <span>
+                                    {{ $review->created_at->format('h:i A') }}
+                                </span>
+
+                            </div>
 
                         </td>
 
-                        <td class="text-center">
 
-                            <div class="dropdown">
+                        {{-- Actions --}}
+                        <td>
 
-                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                            <div class="review-actions">
 
-                                    <i class="bi bi-three-dots-vertical"></i>
+                                {{-- View --}}
+                                <a href="{{ route('admin.reviews.show', $review) }}" class="review-action-btn view" title="View Review">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
 
-                                </button>
 
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                @if($review->status === \App\Enums\ReviewStatus::Pending)
 
-                                    <li>
+                                {{-- Approve --}}
+                                <form action="{{ route('admin.reviews.approve', $review) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
 
-                                        <a href="{{ route('admin.reviews.show', $review) }}" class="dropdown-item">
+                                    <button type="submit" class="review-action-btn approve" title="Approve Review">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
 
-                                            <i class="bi bi-eye me-2"></i>
+                                </form>
 
-                                            View
 
-                                        </a>
+                                {{-- Reject --}}
+                                <form action="{{ route('admin.reviews.reject', $review) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
 
-                                    </li>
+                                    <button type="submit" class="review-action-btn reject" title="Reject Review">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
 
-                                    @if($review->status === \App\Enums\ReviewStatus::Pending)
+                                </form>
 
-                                    <li>
+                                @elseif($review->status === \App\Enums\ReviewStatus::Approved)
 
-                                        <form action="{{ route('admin.reviews.approve', $review) }}" method="POST">
+                                <form action="{{ route('admin.reviews.reject', $review) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
 
-                                            @csrf
-                                            @method('PATCH')
+                                    <button type="submit" class="review-action-btn reject" title="Reject Review">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
 
-                                            <button class="dropdown-item text-success">
+                                </form>
 
-                                                <i class="bi bi-check-circle me-2"></i>
+                                @elseif($review->status === \App\Enums\ReviewStatus::Rejected)
 
-                                                Approve
+                                <form action="{{ route('admin.reviews.approve', $review) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
 
-                                            </button>
+                                    <button type="submit" class="review-action-btn approve" title="Approve Review">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
 
-                                        </form>
+                                </form>
 
-                                    </li>
-
-                                    <li>
-
-                                        <form action="{{ route('admin.reviews.reject', $review) }}" method="POST">
-
-                                            @csrf
-                                            @method('PATCH')
-
-                                            <button class="dropdown-item text-danger">
-
-                                                <i class="bi bi-x-circle me-2"></i>
-
-                                                Reject
-
-                                            </button>
-
-                                        </form>
-
-                                    </li>
-
-                                    @endif
-
-                                </ul>
+                                @endif
 
                             </div>
 
@@ -379,26 +410,25 @@
 
                     </tr>
 
+
                     @empty
 
                     <tr>
 
                         <td colspan="7">
 
-                            <div class="text-center py-5">
+                            <div class="reviews-empty">
 
-                                <i class="bi bi-chat-square-text display-4 text-secondary"></i>
+                                <div class="reviews-empty-icon">
+                                    <i class="bi bi-chat-square-text"></i>
+                                </div>
 
-                                <h5 class="mt-3">
-
+                                <h3>
                                     No Reviews Found
+                                </h3>
 
-                                </h5>
-
-                                <p class="text-muted mb-0">
-
+                                <p>
                                     There are no reviews matching your search.
-
                                 </p>
 
                             </div>
@@ -415,12 +445,11 @@
 
         </div>
 
+
         @if($reviews->hasPages())
 
-        <div class="card-footer">
-
+        <div class="reviews-pagination">
             {{ $reviews->links() }}
-
         </div>
 
         @endif

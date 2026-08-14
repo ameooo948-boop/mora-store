@@ -1,699 +1,223 @@
-blade
 @extends('admin.layouts.app')
 
 @section('title', 'Dashboard')
-
 @section('page-title', 'Dashboard')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="admin-dashboard">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
+    {{-- =====================================================
+         HERO
+    ====================================================== --}}
 
-            <h3 class="fw-bold mb-1">
-                Dashboard
-            </h3>
+    <section class="dashboard-hero">
 
-            <p class="text-muted mb-0">
-                Welcome back 👋
-            </p>
+        <div class="dashboard-hero-content">
 
-        </div>
+            <div class="dashboard-hero-icon">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </div>
 
-    </div>
+            <div>
 
-    {{-- Statistics --}}
+                <span class="dashboard-eyebrow">
+                    ADMINISTRATION
+                </span>
 
-    <div class="row g-4 mb-4">
+                <h1>
+                    Dashboard
+                </h1>
 
-        <div class="col-xl-3 col-md-6">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-                        Revenue
-                    </small>
-
-                    <h3 class="fw-bold mt-2">
-                        {{ number_format($statistics['revenue'], 2) }}
-                    </h3>
-
-                </div>
+                <p>
+                    Welcome back 👋
+                    Here's what's happening with your store today.
+                </p>
 
             </div>
 
         </div>
 
-        <div class="col-xl-3 col-md-6">
 
-            <div class="card border-0 shadow-sm">
+        <div class="dashboard-date">
 
-                <div class="card-body">
+            <i class="bi bi-calendar3"></i>
 
-                    <small class="text-muted">
-                        Orders
-                    </small>
-
-                    <h3 class="fw-bold mt-2">
-                        {{ $statistics['orders'] }}
-                    </h3>
-
-                </div>
-
-            </div>
+            <span>
+                {{ now()->format('l, d M Y') }}
+            </span>
 
         </div>
 
-        <div class="col-xl-3 col-md-6">
+    </section>
 
-            <div class="card border-0 shadow-sm">
 
-                <div class="card-body">
 
-                    <small class="text-muted">
-                        Customers
-                    </small>
+    {{-- =====================================================
+         STATISTICS
+    ====================================================== --}}
 
-                    <h3 class="fw-bold mt-2">
-                        {{ $statistics['customers'] }}
-                    </h3>
+    <section class="dashboard-stats">
 
+        {{-- Revenue --}}
+
+        <div class="dashboard-stat-card revenue">
+
+            <div class="stat-card-top">
+
+                <div class="stat-icon">
+                    <i class="bi bi-wallet2"></i>
                 </div>
 
-            </div>
-
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-                        Products
-                    </small>
-
-                    <h3 class="fw-bold mt-2">
-                        {{ $statistics['products'] }}
-                    </h3>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {{-- Charts --}}
-
-    <div class="row">
-
-        <div class="col-lg-8">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-header bg-white">
-
+                <span class="stat-label">
                     Revenue
+                </span>
 
-                </div>
+            </div>
 
-                <div class="card-body">
+            <div class="stat-value">
+                {{ number_format($statistics['revenue'], 2) }}
+            </div>
 
-                    <div id="revenueChart"></div>
+            <div class="stat-footer">
 
-                </div>
+                <span>
+                    <i class="bi bi-graph-up-arrow"></i>
+                    Total revenue
+                </span>
 
             </div>
 
         </div>
 
-        <div class="col-lg-4">
 
-            <div class="card border-0 shadow-sm">
+        {{-- Orders --}}
 
-                <div class="card-header bg-white">
+        <div class="dashboard-stat-card orders">
 
+            <div class="stat-card-top">
+
+                <div class="stat-icon">
+                    <i class="bi bi-bag-check-fill"></i>
+                </div>
+
+                <span class="stat-label">
                     Orders
+                </span>
 
-                </div>
+            </div>
 
-                <div class="card-body">
+            <div class="stat-value">
+                {{ $statistics['orders'] }}
+            </div>
 
-                    <div id="ordersChart"></div>
+            <div class="stat-footer">
 
-                </div>
+                <span>
+                    <i class="bi bi-cart-check"></i>
+                    Total orders
+                </span>
 
             </div>
 
         </div>
 
-    </div>
 
-    {{-- Quick Actions --}}
+        {{-- Customers --}}
 
-    <div class="row mb-4">
+        <div class="dashboard-stat-card customers">
 
-        <div class="col">
+            <div class="stat-card-top">
 
-            <a href="{{ route('admin.products.create') }}" class="btn btn-primary w-100">
-
-                <i class="bi bi-plus-circle me-2"></i>
-
-                Add Product
-
-            </a>
-
-        </div>
-
-        <div class="col">
-
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary w-100">
-
-                Orders
-
-            </a>
-
-        </div>
-
-        <div class="col">
-
-            <a href="{{ route('admin.coupons.index') }}" class="btn btn-outline-primary w-100">
-
-                Coupons
-
-            </a>
-
-        </div>
-
-        <div class="col">
-
-            <a href="{{ route('admin.brands.index') }}" class="btn btn-outline-primary w-100">
-
-                Brands
-
-            </a>
-
-        </div>
-
-    </div>
-
-    {{-- Top Selling Products & Low Stock --}}
-
-    <div class="row mt-4">
-
-        {{-- Top Selling Products --}}
-
-        <div class="col-lg-6">
-
-            <div class="card border-0 shadow-sm h-100">
-
-                <div class="card-header bg-white">
-
-                    <h5 class="mb-0">
-                        Top Selling Products
-                    </h5>
-
+                <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
                 </div>
 
-                <div class="table-responsive">
+                <span class="stat-label">
+                    Customers
+                </span>
 
-                    <table class="table align-middle mb-0">
+            </div>
 
-                        <thead>
+            <div class="stat-value">
+                {{ $statistics['customers'] }}
+            </div>
 
-                            <tr>
+            <div class="stat-footer">
 
-                                <th>
-                                    Product
-                                </th>
-
-                                <th class="text-end">
-                                    Sold
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($topSellingProducts as $item)
-
-                            <tr>
-
-                                <td>
-                                    {{ $item->product?->name }}
-                                </td>
-
-                                <td class="text-end fw-bold">
-                                    {{ $item->sold }}
-                                </td>
-
-                            </tr>
-
-                            @empty
-
-                            <tr>
-
-                                <td colspan="2" class="text-center py-4">
-
-                                    No Data
-
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                <span>
+                    <i class="bi bi-person-check"></i>
+                    Registered customers
+                </span>
 
             </div>
 
         </div>
 
-        {{-- Low Stock --}}
 
-        <div class="col-lg-6">
+        {{-- Products --}}
 
-            <div class="card border-0 shadow-sm h-100">
+        <div class="dashboard-stat-card products">
 
-                <div class="card-header bg-white">
+            <div class="stat-card-top">
 
-                    <h5 class="mb-0">
-                        Low Stock Products
-                    </h5>
-
+                <div class="stat-icon">
+                    <i class="bi bi-box-seam-fill"></i>
                 </div>
 
-                <div class="table-responsive">
+                <span class="stat-label">
+                    Products
+                </span>
 
-                    <table class="table align-middle mb-0">
+            </div>
 
-                        <thead>
+            <div class="stat-value">
+                {{ $statistics['products'] }}
+            </div>
 
-                            <tr>
+            <div class="stat-footer">
 
-                                <th>
-                                    Product
-                                </th>
-
-                                <th class="text-end">
-                                    Quantity
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($lowStockProducts as $product)
-
-                            <tr>
-
-                                <td>
-                                    {{ $product->name }}
-                                </td>
-
-                                <td class="text-end">
-
-                                    @if($product->quantity <= 5) <span class="badge bg-danger">
-                                        {{ $product->quantity }}
-                                        </span>
-
-                                        @else
-
-                                        {{ $product->quantity }}
-
-                                        @endif
-
-                                </td>
-
-                            </tr>
-
-                            @empty
-
-                            <tr>
-
-                                <td colspan="2" class="text-center py-4">
-
-                                    No Data
-
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                <span>
+                    <i class="bi bi-boxes"></i>
+                    Products in catalog
+                </span>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
-    {{-- Latest Orders & Payments --}}
 
-    <div class="row mt-4">
 
-        {{-- Latest Orders --}}
+    {{-- =====================================================
+         ANALYTICS
+    ====================================================== --}}
 
-        <div class="col-lg-6">
+    <section class="dashboard-analytics">
 
-            <div class="card border-0 shadow-sm">
+        {{-- Revenue Chart --}}
 
-                <div class="card-header bg-white">
+        <div class="dashboard-panel revenue-panel">
 
-                    <h5 class="mb-0">
-                        Latest Orders
-                    </h5>
+            <div class="dashboard-panel-header">
 
-                </div>
+                <div class="panel-title">
 
-                <div class="table-responsive">
+                    <div class="panel-icon blue">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
 
-                    <table class="table align-middle mb-0">
+                    <div>
 
-                        <thead>
+                        <h3>
+                            Revenue Overview
+                        </h3>
 
-                            <tr>
-
-                                <th>
-                                    Order
-                                </th>
-
-                                <th>
-                                    Customer
-                                </th>
-
-                                <th>
-                                    Total
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($latestOrders as $order)
-
-                            <tr>
-
-                                <td>
-                                    {{ $order->order_number }}
-                                </td>
-
-                                <td>
-                                    {{ $order->user->name }}
-                                </td>
-
-                                <td>
-                                    {{ number_format($order->total, 2) }}
-                                </td>
-
-                            </tr>
-
-                            @empty
-
-                            <tr>
-
-                                <td colspan="3" class="text-center py-4">
-
-                                    No Orders
-
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {{-- Latest Payments --}}
-
-        <div class="col-lg-6">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-header bg-white">
-
-                    <h5 class="mb-0">
-                        Latest Payments
-                    </h5>
-
-                </div>
-
-                <div class="table-responsive">
-
-                    <table class="table align-middle mb-0">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Order
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    Amount
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($latestPayments as $payment)
-
-                            <tr>
-
-                                <td>
-                                    {{ $payment->order->order_number }}
-                                </td>
-
-                                <td>
-
-                                    <span class="badge bg-{{ $payment->status->badge() }}">
-                                        {{ $payment->status->label() }}
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    {{ number_format($payment->amount, 2) }}
-                                </td>
-
-                            </tr>
-
-                            @empty
-
-                            <tr>
-
-                                <td colspan="3" class="text-center py-4">
-
-                                    No Payments
-
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {{-- Recent Activity --}}
-
-    <div class="row mt-4">
-
-        <div class="col-12">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-header bg-white">
-
-                    <h5 class="mb-0">
-                        Recent Activity
-                    </h5>
-
-                </div>
-
-                <div class="card-body">
-
-                    <div class="row g-4">
-
-                        {{-- Orders Activity --}}
-
-                        <div class="col-lg-3 col-md-6">
-
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-bag-check me-2"></i>
-                                Orders
-                            </h6>
-
-                            @forelse($recentActivity['orders'] as $order)
-
-                            <div class="border-bottom pb-2 mb-2">
-
-                                <div class="fw-semibold">
-                                    {{ $order->order_number }}
-                                </div>
-
-                                <small class="text-muted">
-                                    {{ $order->created_at?->format('d M Y H:i') }}
-                                </small>
-
-                            </div>
-
-                            @empty
-
-                            <p class="text-muted mb-0">
-                                No recent orders.
-                            </p>
-
-                            @endforelse
-
-                        </div>
-
-                        {{-- Payments Activity --}}
-
-                        <div class="col-lg-3 col-md-6">
-
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-credit-card me-2"></i>
-                                Payments
-                            </h6>
-
-                            @forelse($recentActivity['payments'] as $payment)
-
-                            <div class="border-bottom pb-2 mb-2">
-
-                                <div class="fw-semibold">
-                                    {{ number_format($payment->amount, 2) }}
-                                </div>
-
-                                <small class="text-muted">
-                                    {{ $payment->created_at?->format('d M Y H:i') }}
-                                </small>
-
-                            </div>
-
-                            @empty
-
-                            <p class="text-muted mb-0">
-                                No recent payments.
-                            </p>
-
-                            @endforelse
-
-                        </div>
-
-                        {{-- Reviews Activity --}}
-
-                        <div class="col-lg-3 col-md-6">
-
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-star me-2"></i>
-                                Reviews
-                            </h6>
-
-                            @forelse($recentActivity['reviews'] as $review)
-
-                            <div class="border-bottom pb-2 mb-2">
-
-                                <div class="fw-semibold">
-                                    {{ $review->rating }}/5
-                                </div>
-
-                                <small class="text-muted">
-                                    {{ $review->created_at?->format('d M Y H:i') }}
-                                </small>
-
-                            </div>
-
-                            @empty
-
-                            <p class="text-muted mb-0">
-                                No recent reviews.
-                            </p>
-
-                            @endforelse
-
-                        </div>
-
-                        {{-- Stock Activity --}}
-
-                        <div class="col-lg-3 col-md-6">
-
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-box-seam me-2"></i>
-                                Stock
-                            </h6>
-
-                            @forelse($recentActivity['stock'] as $movement)
-
-                            <div class="border-bottom pb-2 mb-2">
-
-                                <div class="fw-semibold">
-                                    {{ $movement->quantity }}
-                                </div>
-
-                                <small class="text-muted">
-                                    {{ $movement->created_at?->format('d M Y H:i') }}
-                                </small>
-
-                            </div>
-
-                            @empty
-
-                            <p class="text-muted mb-0">
-                                No recent stock movements.
-                            </p>
-
-                            @endforelse
-
-                        </div>
+                        <p>
+                            Revenue performance over time
+                        </p>
 
                     </div>
 
@@ -701,121 +225,1094 @@ blade
 
             </div>
 
+            <div class="dashboard-chart">
+
+                <div id="revenueChart"></div>
+
+            </div>
+
         </div>
 
-    </div>
+
+        {{-- Orders Chart --}}
+
+        <div class="dashboard-panel orders-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div class="panel-title">
+
+                    <div class="panel-icon purple">
+                        <i class="bi bi-bar-chart-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Orders Overview
+                        </h3>
+
+                        <p>
+                            Orders performance
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="dashboard-chart">
+
+                <div id="ordersChart"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    {{-- =====================================================
+         QUICK ACTIONS
+    ====================================================== --}}
+
+    <section class="quick-actions">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span>
+                    SHORTCUTS
+                </span>
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="quick-actions-grid">
+
+            <a href="{{ route('admin.products.create') }}" class="quick-action primary">
+
+                <span class="quick-action-icon">
+                    <i class="bi bi-plus-lg"></i>
+                </span>
+
+                <span class="quick-action-content">
+
+                    <strong>
+                        Add Product
+                    </strong>
+
+                    <small>
+                        Create a new product
+                    </small>
+
+                </span>
+
+                <i class="bi bi-arrow-up-right quick-action-arrow"></i>
+
+            </a>
+
+
+            <a href="{{ route('admin.orders.index') }}" class="quick-action">
+
+                <span class="quick-action-icon">
+                    <i class="bi bi-bag-check"></i>
+                </span>
+
+                <span class="quick-action-content">
+
+                    <strong>
+                        Orders
+                    </strong>
+
+                    <small>
+                        Manage customer orders
+                    </small>
+
+                </span>
+
+                <i class="bi bi-arrow-up-right quick-action-arrow"></i>
+
+            </a>
+
+
+            <a href="{{ route('admin.coupons.index') }}" class="quick-action">
+
+                <span class="quick-action-icon">
+                    <i class="bi bi-ticket-perforated"></i>
+                </span>
+
+                <span class="quick-action-content">
+
+                    <strong>
+                        Coupons
+                    </strong>
+
+                    <small>
+                        Manage discounts
+                    </small>
+
+                </span>
+
+                <i class="bi bi-arrow-up-right quick-action-arrow"></i>
+
+            </a>
+
+
+            <a href="{{ route('admin.brands.index') }}" class="quick-action">
+
+                <span class="quick-action-icon">
+                    <i class="bi bi-tags"></i>
+                </span>
+
+                <span class="quick-action-content">
+
+                    <strong>
+                        Brands
+                    </strong>
+
+                    <small>
+                        Manage product brands
+                    </small>
+
+                </span>
+
+                <i class="bi bi-arrow-up-right quick-action-arrow"></i>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    {{-- =====================================================
+         TOP SELLING + LOW STOCK
+    ====================================================== --}}
+
+    <section class="dashboard-grid-two">
+
+
+        {{-- Top Selling --}}
+
+        <div class="dashboard-panel table-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div class="panel-title">
+
+                    <div class="panel-icon orange">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Top Selling Products
+                        </h3>
+
+                        <p>
+                            Best performing products
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="panel-badge">
+                    TOP SELLERS
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-table-wrapper">
+
+                <table class="dashboard-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th class="text-end">
+                                Sold
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($topSellingProducts as $item)
+
+                        <tr>
+
+                            <td>
+
+                                <div class="table-product">
+
+                                    <div class="table-product-icon">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+
+                                    <span>
+                                        {{ $item->product?->name }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td class="text-end">
+
+                                <span class="quantity-badge success">
+                                    {{ $item->sold }}
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="2">
+
+                                <div class="empty-table">
+                                    <i class="bi bi-inbox"></i>
+                                    <span>No data available</span>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        {{-- Low Stock --}}
+
+        <div class="dashboard-panel table-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div class="panel-title">
+
+                    <div class="panel-icon red">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Low Stock Products
+                        </h3>
+
+                        <p>
+                            Products that need attention
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="panel-badge danger">
+                    STOCK ALERT
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-table-wrapper">
+
+                <table class="dashboard-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th class="text-end">
+                                Quantity
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($lowStockProducts as $product)
+
+                        <tr>
+
+                            <td>
+
+                                <div class="table-product">
+
+                                    <div class="table-product-icon warning">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+
+                                    <span>
+                                        {{ $product->name }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td class="text-end">
+
+                                @if($product->quantity <= 5) <span class="quantity-badge danger">
+                                    {{ $product->quantity }}
+                                    </span>
+
+                                    @else
+
+                                    <span class="quantity-badge">
+                                        {{ $product->quantity }}
+                                    </span>
+
+                                    @endif
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="2">
+
+                                <div class="empty-table">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span>No low stock products</span>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    {{-- =====================================================
+         ORDERS + PAYMENTS
+    ====================================================== --}}
+
+    <section class="dashboard-grid-two">
+
+
+        {{-- Latest Orders --}}
+
+        <div class="dashboard-panel table-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div class="panel-title">
+
+                    <div class="panel-icon blue">
+                        <i class="bi bi-bag-check-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Latest Orders
+                        </h3>
+
+                        <p>
+                            Most recent customer orders
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-table-wrapper">
+
+                <table class="dashboard-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th class="text-end">
+                                Total
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($latestOrders as $order)
+
+                        <tr>
+
+                            <td>
+
+                                <span class="order-number">
+                                    {{ $order->order_number }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <div class="customer-name">
+
+                                    <span class="customer-avatar">
+                                        {{ strtoupper(substr($order->user->name, 0, 1)) }}
+                                    </span>
+
+                                    <span>
+                                        {{ $order->user->name }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td class="text-end">
+
+                                <strong class="table-amount">
+                                    {{ number_format($order->total, 2) }}
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="3">
+
+                                <div class="empty-table">
+                                    <i class="bi bi-bag-x"></i>
+                                    <span>No orders found</span>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        {{-- Latest Payments --}}
+
+        <div class="dashboard-panel table-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div class="panel-title">
+
+                    <div class="panel-icon green">
+                        <i class="bi bi-credit-card-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Latest Payments
+                        </h3>
+
+                        <p>
+                            Recent payment activity
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-table-wrapper">
+
+                <table class="dashboard-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end">
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($latestPayments as $payment)
+
+                        <tr>
+
+                            <td>
+
+                                <span class="order-number">
+                                    {{ $payment->order->order_number }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="payment-status bg-{{ $payment->status->badge() }}">
+                                    {{ $payment->status->label() }}
+                                </span>
+
+                            </td>
+
+                            <td class="text-end">
+
+                                <strong class="table-amount">
+                                    {{ number_format($payment->amount, 2) }}
+                                </strong>
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="3">
+
+                                <div class="empty-table">
+                                    <i class="bi bi-credit-card"></i>
+                                    <span>No payments found</span>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    {{-- =====================================================
+         RECENT ACTIVITY
+    ====================================================== --}}
+
+    <section class="dashboard-panel activity-panel">
+
+        <div class="dashboard-panel-header">
+
+            <div class="panel-title">
+
+                <div class="panel-icon purple">
+                    <i class="bi bi-activity"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Recent Activity
+                    </h3>
+
+                    <p>
+                        Latest activity across your store
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="activity-grid">
+
+
+            {{-- Orders --}}
+
+            <div class="activity-column">
+
+                <div class="activity-heading">
+
+                    <div class="activity-heading-icon blue">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+
+                    <span>
+                        Orders
+                    </span>
+
+                </div>
+
+
+                @forelse($recentActivity['orders'] as $order)
+
+                <div class="activity-item">
+
+                    <div class="activity-dot blue"></div>
+
+                    <div>
+
+                        <strong>
+                            {{ $order->order_number }}
+                        </strong>
+
+                        <small>
+                            {{ $order->created_at?->format('d M Y H:i') }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <div class="activity-empty">
+                    No recent orders.
+                </div>
+
+                @endforelse
+
+            </div>
+
+
+
+            {{-- Payments --}}
+
+            <div class="activity-column">
+
+                <div class="activity-heading">
+
+                    <div class="activity-heading-icon green">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+
+                    <span>
+                        Payments
+                    </span>
+
+                </div>
+
+
+                @forelse($recentActivity['payments'] as $payment)
+
+                <div class="activity-item">
+
+                    <div class="activity-dot green"></div>
+
+                    <div>
+
+                        <strong>
+                            {{ number_format($payment->amount, 2) }}
+                        </strong>
+
+                        <small>
+                            {{ $payment->created_at?->format('d M Y H:i') }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <div class="activity-empty">
+                    No recent payments.
+                </div>
+
+                @endforelse
+
+            </div>
+
+
+
+            {{-- Reviews --}}
+
+            <div class="activity-column">
+
+                <div class="activity-heading">
+
+                    <div class="activity-heading-icon orange">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+
+                    <span>
+                        Reviews
+                    </span>
+
+                </div>
+
+
+                @forelse($recentActivity['reviews'] as $review)
+
+                <div class="activity-item">
+
+                    <div class="activity-dot orange"></div>
+
+                    <div>
+
+                        <strong>
+                            {{ $review->rating }}/5
+                        </strong>
+
+                        <small>
+                            {{ $review->created_at?->format('d M Y H:i') }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <div class="activity-empty">
+                    No recent reviews.
+                </div>
+
+                @endforelse
+
+            </div>
+
+
+
+            {{-- Stock --}}
+
+            <div class="activity-column">
+
+                <div class="activity-heading">
+
+                    <div class="activity-heading-icon red">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+
+                    <span>
+                        Stock
+                    </span>
+
+                </div>
+
+
+                @forelse($recentActivity['stock'] as $movement)
+
+                <div class="activity-item">
+
+                    <div class="activity-dot red"></div>
+
+                    <div>
+
+                        <strong>
+                            {{ $movement->quantity }}
+                        </strong>
+
+                        <small>
+                            {{ $movement->created_at?->format('d M Y H:i') }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <div class="activity-empty">
+                    No recent stock movements.
+                </div>
+
+                @endforelse
+
+            </div>
+
+        </div>
+
+    </section>
+
 
 </div>
 
 @endsection
+
+
 
 @push('scripts')
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
-    const revenueOptions = {
+    document.addEventListener('DOMContentLoaded', function() {
 
-        chart: {
-            type: 'line'
-            , height: 350,
+        /* =====================================================
+           REVENUE CHART
+        ====================================================== */
 
-            toolbar: {
-                show: false
-            }
-        },
+        const revenueElement =
+            document.querySelector('#revenueChart');
 
-        stroke: {
-            curve: 'smooth'
-            , width: 3
-        },
+        if (revenueElement) {
 
-        dataLabels: {
-            enabled: false
-        },
+            const revenueOptions = {
 
-        series: [{
-            name: 'Revenue'
-            , data: @json(array_values($revenueChart))
-        }],
+                chart: {
+                    type: 'area'
+                    , height: 330
+                    , toolbar: {
+                        show: false
+                    }
+                    , fontFamily: 'Inter, sans-serif'
+                },
 
-        xaxis: {
-            categories: @json(array_keys($revenueChart))
-        },
+                series: [{
+                    name: 'Revenue'
+                    , data: @json(array_values($revenueChart))
+                }],
 
-        yaxis: {
+                xaxis: {
+                    categories: @json(array_keys($revenueChart))
+                    , labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                    , axisBorder: {
+                        show: false
+                    }
+                    , axisTicks: {
+                        show: false
+                    }
+                },
 
-            labels: {
+                yaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                        , formatter: function(value) {
+                            return value.toFixed(0);
+                        }
+                    }
+                },
 
-                formatter: function(value) {
-                    return value.toFixed(2);
+                stroke: {
+                    curve: 'smooth'
+                    , width: 3
+                },
+
+                fill: {
+                    type: 'gradient'
+                    , gradient: {
+                        shadeIntensity: 1
+                        , opacityFrom: .25
+                        , opacityTo: .02
+                        , stops: [0, 90, 100]
+                    }
+                },
+
+                dataLabels: {
+                    enabled: false
+                },
+
+                grid: {
+                    borderColor: '#eef2f7'
+                    , strokeDashArray: 4
+                    , xaxis: {
+                        lines: {
+                            show: false
+                        }
+                    }
+                },
+
+                tooltip: {
+                    y: {
+                        formatter: function(value) {
+                            return value.toFixed(2);
+                        }
+                    }
+                },
+
+                markers: {
+                    size: 0
+                    , hover: {
+                        size: 5
+                    }
                 }
 
-            }
+            };
 
-        },
-
-        tooltip: {
-
-            y: {
-
-                formatter: function(value) {
-                    return value.toFixed(2);
-                }
-
-            }
+            new ApexCharts(
+                revenueElement
+                , revenueOptions
+            ).render();
 
         }
 
-    };
-
-    new ApexCharts(
-        document.querySelector('#revenueChart')
-        , revenueOptions
-    ).render();
 
 
-    const ordersOptions = {
+        /* =====================================================
+           ORDERS CHART
+        ====================================================== */
 
-        chart: {
-            type: 'bar'
-            , height: 350,
+        const ordersElement =
+            document.querySelector('#ordersChart');
 
-            toolbar: {
-                show: false
-            }
-        },
+        if (ordersElement) {
 
-        plotOptions: {
+            const ordersOptions = {
 
-            bar: {
+                chart: {
+                    type: 'bar'
+                    , height: 330
+                    , toolbar: {
+                        show: false
+                    }
+                    , fontFamily: 'Inter, sans-serif'
+                },
 
-                borderRadius: 6
-                , columnWidth: '50%'
+                series: [{
+                    name: 'Orders'
+                    , data: @json(array_values($ordersChart))
+                }],
 
-            }
+                xaxis: {
+                    categories: @json(array_keys($ordersChart))
+                    , labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                    , axisBorder: {
+                        show: false
+                    }
+                    , axisTicks: {
+                        show: false
+                    }
+                },
 
-        },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 7
+                        , columnWidth: '45%'
+                    }
+                },
 
-        dataLabels: {
-            enabled: false
-        },
+                dataLabels: {
+                    enabled: false
+                },
 
-        series: [{
-            name: 'Orders'
-            , data: @json(array_values($ordersChart))
-        }],
+                grid: {
+                    borderColor: '#eef2f7'
+                    , strokeDashArray: 4
+                    , xaxis: {
+                        lines: {
+                            show: false
+                        }
+                    }
+                },
 
-        xaxis: {
-            categories: @json(array_keys($ordersChart))
+                yaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                },
+
+                tooltip: {
+                    theme: 'light'
+                }
+
+            };
+
+            new ApexCharts(
+                ordersElement
+                , ordersOptions
+            ).render();
+
         }
 
-    };
-
-    new ApexCharts(
-        document.querySelector('#ordersChart')
-        , ordersOptions
-    ).render();
+    });
 
 </script>
 

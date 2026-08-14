@@ -1,129 +1,194 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Stock Movement Details')
-
 @section('page-title', 'Stock Movement Details')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="stock-details-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- =====================================================
+         HEADER
+    ====================================================== --}}
 
-        <div>
+    <div class="stock-details-header">
 
-            <h3 class="fw-bold mb-1">
+        <div class="stock-details-title">
 
-                Stock Movement #{{ $movement->id }}
+            <div class="stock-details-icon">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
 
-            </h3>
+            <div>
 
-            <small class="text-muted">
+                <span class="stock-details-eyebrow">
+                    INVENTORY MOVEMENT
+                </span>
 
-                {{ $movement->created_at->format('M d, Y h:i A') }}
+                <h1>
+                    Movement #{{ $movement->id }}
+                </h1>
 
-            </small>
+                <p>
+                    {{ $movement->created_at->format('M d, Y') }}
+                    <span>•</span>
+                    {{ $movement->created_at->format('h:i A') }}
+                </p>
+
+            </div>
 
         </div>
 
-        <span class="badge bg-{{ $movement->type->badge() }} fs-6">
 
-            <i class="bi {{ $movement->type->icon() }} me-1"></i>
+        <div class="stock-details-status
+            {{ $movement->type === \App\Enums\StockMovementType::Decrease ? 'decrease' : 'increase' }}">
+
+            <i class="bi {{ $movement->type->icon() }}"></i>
 
             {{ $movement->type->label() }}
 
-        </span>
+        </div>
 
     </div>
 
-    <div class="row">
 
-        <div class="col-lg-8">
+    {{-- =====================================================
+         MAIN CONTENT
+    ====================================================== --}}
 
-            {{-- Movement Information --}}
-            <div class="card border-0 shadow-sm mb-4">
+    <div class="stock-details-grid">
 
-                <div class="card-header bg-white">
 
-                    <h5 class="mb-0">
+        {{-- =================================================
+             LEFT
+        ================================================== --}}
 
-                        Movement Information
+        <div class="stock-details-main">
 
-                    </h5>
+
+            {{-- MOVEMENT INFORMATION --}}
+
+            <div class="stock-details-card">
+
+                <div class="stock-details-card-header">
+
+                    <div class="stock-card-title">
+
+                        <div class="stock-card-icon blue">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Movement Information
+                            </strong>
+
+                            <span>
+                                Inventory quantity changes
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="card-body">
 
-                    <div class="d-flex justify-content-between mb-3">
+                <div class="stock-details-card-body">
 
-                        <span class="text-muted">
 
-                            Quantity
+                    {{-- Quantity --}}
 
-                        </span>
+                    <div class="stock-info-row">
+
+                        <div class="stock-info-label">
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+
+                            <span>
+                                Quantity
+                            </span>
+
+                        </div>
 
                         @if($movement->type === \App\Enums\StockMovementType::Decrease)
 
-                        <strong class="text-danger">
-
+                        <strong class="stock-value decrease">
                             -{{ $movement->quantity }}
-
                         </strong>
 
                         @else
 
-                        <strong class="text-success">
-
+                        <strong class="stock-value increase">
                             +{{ $movement->quantity }}
-
                         </strong>
 
                         @endif
 
                     </div>
 
-                    <div class="d-flex justify-content-between mb-3">
 
-                        <span class="text-muted">
+                    {{-- Before --}}
 
-                            Before Quantity
+                    <div class="stock-info-row">
 
-                        </span>
+                        <div class="stock-info-label">
 
-                        <strong>
+                            <i class="bi bi-box"></i>
 
+                            <span>
+                                Before Quantity
+                            </span>
+
+                        </div>
+
+                        <strong class="stock-value">
                             {{ $movement->before_quantity }}
-
                         </strong>
 
                     </div>
 
-                    <div class="d-flex justify-content-between mb-3">
 
-                        <span class="text-muted">
+                    {{-- After --}}
 
-                            After Quantity
+                    <div class="stock-info-row">
 
-                        </span>
+                        <div class="stock-info-label">
 
-                        <strong>
+                            <i class="bi bi-box-seam"></i>
 
+                            <span>
+                                After Quantity
+                            </span>
+
+                        </div>
+
+                        <strong class="stock-value after">
                             {{ $movement->after_quantity }}
-
                         </strong>
 
                     </div>
 
-                    <div class="d-flex justify-content-between">
 
-                        <span class="text-muted">
+                    {{-- Type --}}
 
-                            Type
+                    <div class="stock-info-row">
 
-                        </span>
+                        <div class="stock-info-label">
 
-                        <span class="badge bg-{{ $movement->type->badge() }}">
+                            <i class="bi {{ $movement->type->icon() }}"></i>
+
+                            <span>
+                                Movement Type
+                            </span>
+
+                        </div>
+
+                        <span class="stock-mini-badge
+                            {{ $movement->type === \App\Enums\StockMovementType::Decrease ? 'decrease' : 'increase' }}">
+
+                            <i class="bi {{ $movement->type->icon() }}"></i>
 
                             {{ $movement->type->label() }}
 
@@ -131,57 +196,72 @@
 
                     </div>
 
+
                 </div>
 
             </div>
 
-        </div>
 
-        <div class="col-lg-4">
+            {{-- QUANTITY FLOW --}}
 
-            {{-- Product --}}
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="stock-details-card">
 
-                <div class="card-header bg-white">
+                <div class="stock-details-card-header">
 
-                    Product
+                    <div class="stock-card-title">
+
+                        <div class="stock-card-icon purple">
+                            <i class="bi bi-bar-chart-steps"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Stock Flow
+                            </strong>
+
+                            <span>
+                                Quantity before and after movement
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="card-body">
 
-                    <strong>
+                <div class="stock-flow">
 
-                        {{ $movement->product->name }}
-
-                    </strong>
-
-                    @if(!empty($movement->product->sku))
-
-                    <br>
-
-                    <small class="text-muted">
-
-                        SKU: {{ $movement->product->sku }}
-
-                    </small>
-
-                    @endif
-
-                    <hr>
-
-                    <div class="d-flex justify-content-between">
+                    <div class="stock-flow-item">
 
                         <span>
-
-                            Current Stock
-
+                            BEFORE
                         </span>
 
                         <strong>
+                            {{ $movement->before_quantity }}
+                        </strong>
 
-                            {{ $movement->product->quantity }}
+                    </div>
 
+
+                    <div class="stock-flow-arrow
+                        {{ $movement->type === \App\Enums\StockMovementType::Decrease ? 'decrease' : 'increase' }}">
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </div>
+
+
+                    <div class="stock-flow-item">
+
+                        <span>
+                            AFTER
+                        </span>
+
+                        <strong>
+                            {{ $movement->after_quantity }}
                         </strong>
 
                     </div>
@@ -190,36 +270,158 @@
 
             </div>
 
-            {{-- Performed By --}}
-            <div class="card border-0 shadow-sm mb-4">
 
-                <div class="card-header bg-white">
+        </div>
 
-                    Performed By
+
+        {{-- =================================================
+             RIGHT SIDEBAR
+        ================================================== --}}
+
+        <div class="stock-details-sidebar">
+
+
+            {{-- PRODUCT --}}
+
+            <div class="stock-details-card">
+
+                <div class="stock-details-card-header">
+
+                    <div class="stock-card-title">
+
+                        <div class="stock-card-icon blue">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Product
+                            </strong>
+
+                            <span>
+                                Related product
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="card-body">
+
+                <div class="stock-sidebar-body">
+
+                    <div class="stock-product-large">
+
+                        <div class="stock-product-large-icon">
+                            <i class="bi bi-box-seam-fill"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                {{ $movement->product->name }}
+                            </strong>
+
+                            @if(!empty($movement->product->sku))
+
+                            <span>
+                                SKU: {{ $movement->product->sku }}
+                            </span>
+
+                            @endif
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stock-current-stock">
+
+                        <span>
+                            Current Stock
+                        </span>
+
+                        <strong>
+                            {{ $movement->product->quantity }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- PERFORMED BY --}}
+
+            <div class="stock-details-card">
+
+                <div class="stock-details-card-header">
+
+                    <div class="stock-card-title">
+
+                        <div class="stock-card-icon purple">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Performed By
+                            </strong>
+
+                            <span>
+                                Movement creator
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stock-sidebar-body">
 
                     @if($movement->user)
 
-                    <strong>
+                    <div class="stock-user-large">
 
-                        {{ $movement->user->name }}
+                        <div class="stock-user-large-avatar">
 
-                    </strong>
+                            {{ strtoupper(substr($movement->user->name, 0, 1)) }}
 
-                    <br>
+                        </div>
 
-                    {{ $movement->user->email }}
+                        <div>
+
+                            <strong>
+                                {{ $movement->user->name }}
+                            </strong>
+
+                            <span>
+                                {{ $movement->user->email }}
+                            </span>
+
+                        </div>
+
+                    </div>
 
                     @else
 
-                    <span class="text-muted">
+                    <div class="stock-system-user">
 
-                        System
+                        <div>
+                            <i class="bi bi-cpu"></i>
+                        </div>
 
-                    </span>
+                        <span>
+                            System
+                        </span>
+
+                    </div>
 
                     @endif
 
@@ -227,38 +429,66 @@
 
             </div>
 
-            {{-- Reference --}}
-            <div class="card border-0 shadow-sm mb-4">
 
-                <div class="card-header bg-white">
+            {{-- REFERENCE --}}
 
-                    Reference
+            <div class="stock-details-card">
+
+                <div class="stock-details-card-header">
+
+                    <div class="stock-card-title">
+
+                        <div class="stock-card-icon green">
+                            <i class="bi bi-link-45deg"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Reference
+                            </strong>
+
+                            <span>
+                                Related transaction
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="card-body">
+
+                <div class="stock-sidebar-body">
 
                     @if($movement->reference)
 
                     @if($movement->reference instanceof \App\Models\Order)
 
-                    <div class="mb-3">
+                    <div class="stock-reference-box">
 
-                        <strong>
+                        <div class="stock-reference-icon">
+                            <i class="bi bi-receipt"></i>
+                        </div>
 
-                            Order
+                        <div>
 
-                        </strong>
+                            <span>
+                                ORDER
+                            </span>
 
-                        <br>
+                            <strong>
+                                #{{ $movement->reference->order_number }}
+                            </strong>
 
-                        #{{ $movement->reference->order_number }}
+                        </div>
 
                     </div>
 
-                    <a href="{{ route('admin.orders.show', $movement->reference) }}" class="btn btn-primary w-100">
 
-                        <i class="bi bi-box me-2"></i>
+                    <a href="{{ route('admin.orders.show', $movement->reference) }}" class="stock-reference-btn">
+
+                        <i class="bi bi-eye"></i>
 
                         View Order
 
@@ -266,25 +496,39 @@
 
                     @else
 
-                    <strong>
+                    <div class="stock-reference-box">
 
-                        {{ class_basename($movement->reference_type) }}
+                        <div class="stock-reference-icon">
+                            <i class="bi bi-link"></i>
+                        </div>
 
-                    </strong>
+                        <div>
 
-                    <br>
+                            <span>
+                                {{ class_basename($movement->reference_type) }}
+                            </span>
 
-                    #{{ $movement->reference->id }}
+                            <strong>
+                                #{{ $movement->reference->id }}
+                            </strong>
+
+                        </div>
+
+                    </div>
 
                     @endif
 
                     @else
 
-                    <span class="text-muted">
+                    <div class="stock-no-reference">
 
-                        No Reference
+                        <i class="bi bi-dash-circle"></i>
 
-                    </span>
+                        <span>
+                            No Reference
+                        </span>
+
+                    </div>
 
                     @endif
 
@@ -292,34 +536,62 @@
 
             </div>
 
-            {{-- Notes --}}
-            <div class="card border-0 shadow-sm">
 
-                <div class="card-header bg-white">
+            {{-- NOTES --}}
 
-                    Notes
+            <div class="stock-details-card">
+
+                <div class="stock-details-card-header">
+
+                    <div class="stock-card-title">
+
+                        <div class="stock-card-icon orange">
+                            <i class="bi bi-sticky"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Notes
+                            </strong>
+
+                            <span>
+                                Additional information
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="card-body">
+
+                <div class="stock-sidebar-body">
 
                     @if($movement->notes)
 
-                    {{ $movement->notes }}
+                    <div class="stock-notes">
+                        {{ $movement->notes }}
+                    </div>
 
                     @else
 
-                    <span class="text-muted">
+                    <div class="stock-no-reference">
 
-                        No notes available.
+                        <i class="bi bi-chat-square-text"></i>
 
-                    </span>
+                        <span>
+                            No notes available.
+                        </span>
+
+                    </div>
 
                     @endif
 
                 </div>
 
             </div>
+
 
         </div>
 

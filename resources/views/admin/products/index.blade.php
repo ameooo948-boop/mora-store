@@ -1,31 +1,47 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Products')
-
 @section('page-title', 'Products')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="products-page">
 
-    {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
+    {{-- =====================================================
+         PAGE HEADER
+    ====================================================== --}}
 
-            <h3 class="fw-bold mb-1">
-                Products
-            </h3>
+    <div class="products-hero">
 
-            <p class="text-muted mb-0">
-                Manage all products
-            </p>
+        <div class="products-hero-content">
+
+            <div class="products-hero-icon">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
+
+            <div>
+
+                <span class="products-eyebrow">
+                    CATALOG MANAGEMENT
+                </span>
+
+                <h1>
+                    Products
+                </h1>
+
+                <p>
+                    Manage your products, inventory and catalog information.
+                </p>
+
+            </div>
 
         </div>
 
-        <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
 
-            <i class="bi bi-plus-lg me-2"></i>
+        <a href="{{ route('admin.products.create') }}" class="products-add-btn">
+
+            <i class="bi bi-plus-lg"></i>
 
             Add Product
 
@@ -33,94 +49,93 @@
 
     </div>
 
-    {{-- Statistics --}}
-    <div class="row mb-4">
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+    {{-- =====================================================
+         STATISTICS
+    ====================================================== --}}
 
-                <div class="card-body">
+    <div class="products-stats">
 
-                    <small class="text-muted">
-                        Total Products
-                    </small>
 
-                    <h2 class="fw-bold mt-2">
+        <div class="product-stat-card">
 
-                        {{ $statistics['total'] }}
+            <div class="product-stat-icon blue">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
 
-                    </h2>
+            <div>
 
-                </div>
+                <span>
+                    Total Products
+                </span>
+
+                <strong>
+                    {{ $statistics['total'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <div class="product-stat-card">
 
-                <div class="card-body">
+            <div class="product-stat-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
-                        Active
-                    </small>
+            <div>
 
-                    <h2 class="fw-bold text-success mt-2">
+                <span>
+                    Active
+                </span>
 
-                        {{ $statistics['active'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['active'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <div class="product-stat-card">
 
-                <div class="card-body">
+            <div class="product-stat-icon red">
+                <i class="bi bi-x-circle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
-                        Inactive
-                    </small>
+            <div>
 
-                    <h2 class="fw-bold text-danger mt-2">
+                <span>
+                    Inactive
+                </span>
 
-                        {{ $statistics['inactive'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['inactive'] }}
+                </strong>
 
             </div>
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        <div class="product-stat-card">
 
-                <div class="card-body">
+            <div class="product-stat-icon orange">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
+            <div>
 
-                        Out Of Stock
+                <span>
+                    Out Of Stock
+                </span>
 
-                    </small>
-
-                    <h2 class="fw-bold text-warning mt-2">
-
-                        {{ $statistics['out_of_stock'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['out_of_stock'] }}
+                </strong>
 
             </div>
 
@@ -128,160 +143,276 @@
 
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <div>
 
-            <strong>
+    {{-- =====================================================
+         FILTERS
+    ====================================================== --}}
 
-                Showing
+    <div class="products-filter-card">
 
-                {{ $products->total() }}
+        <div class="products-filter-header">
 
-                Products
+            <div class="products-filter-title">
 
-            </strong>
+                <div class="products-filter-icon">
+                    <i class="bi bi-funnel-fill"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Search & Filter
+                    </h2>
+
+                    <span>
+                        Find products quickly
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            @if(request()->hasAny(['search', 'category', 'brand', 'status']))
+
+            <a href="{{ route('admin.products.index') }}" class="products-reset-btn">
+
+                <i class="bi bi-arrow-counterclockwise"></i>
+
+                Reset
+
+            </a>
+
+            @endif
 
         </div>
 
-    </div>
 
-    {{-- Search & Filters --}}
-    <div class="card shadow-sm border-0 mb-4">
+        <form method="GET">
 
-        <div class="card-body">
+            <div class="products-filter-body">
 
-            <form method="GET">
 
-                <div class="row g-2">
+                {{-- Search --}}
 
-                    <div class="col">
+                <div>
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by name or SKU...">
+                    <label>
+                        Search
+                    </label>
+
+                    <div class="product-input">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or SKU...">
 
                     </div>
 
-                    <div class="col">
+                </div>
 
-                        <select name="category" class="form-select">
+
+                {{-- Category --}}
+
+                <div>
+
+                    <label>
+                        Category
+                    </label>
+
+                    <div class="product-input">
+
+                        <i class="bi bi-grid"></i>
+
+                        <select name="category">
 
                             <option value="">
-
                                 All Categories
-
                             </option>
 
                             @foreach($categories as $category)
 
-                            <option value="{{ $category->id }}" @selected(request('category')==$category->id)>
-
+                            <option value="{{ $category->id }}" @selected(request('category')==$category->id)
+                                >
                                 {{ $category->name }}
-
                             </option>
 
                             @endforeach
 
                         </select>
-
-                    </div>
-
-                    <div class="col">
-
-                        <select name="brand" class="form-select">
-
-                            <option value="">
-
-                                All Brands
-
-                            </option>
-
-                            @foreach($brands as $brand)
-
-                            <option value="{{ $brand->id }}" @selected(request('brand')==$brand->id)>
-
-                                {{ $brand->name }}
-
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <div class="col">
-
-                        <select name="status" class="form-select">
-
-                            <option value="">
-
-                                All Status
-
-                            </option>
-
-                            <option value="1" @selected(request('status')==='1' )>
-
-                                Active
-
-                            </option>
-
-                            <option value="0" @selected(request('status')==='0' )>
-
-                                Inactive
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-2 d-grid">
-
-                        <button class="btn btn-primary">
-
-                            <i class="bi bi-search me-2"></i>
-
-                            Filter
-
-                        </button>
 
                     </div>
 
                 </div>
 
-            </form>
 
-        </div>
+                {{-- Brand --}}
+
+                <div>
+
+                    <label>
+                        Brand
+                    </label>
+
+                    <div class="product-input">
+
+                        <i class="bi bi-tags"></i>
+
+                        <select name="brand">
+
+                            <option value="">
+                                All Brands
+                            </option>
+
+                            @foreach($brands as $brand)
+
+                            <option value="{{ $brand->id }}" @selected(request('brand')==$brand->id)
+                                >
+                                {{ $brand->name }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Status --}}
+
+                <div>
+
+                    <label>
+                        Status
+                    </label>
+
+                    <div class="product-input">
+
+                        <i class="bi bi-activity"></i>
+
+                        <select name="status">
+
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option value="1" @selected(request('status')==='1' )>
+                                Active
+                            </option>
+
+                            <option value="0" @selected(request('status')==='0' )>
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Filter --}}
+
+                <button type="submit" class="products-filter-btn">
+
+                    <i class="bi bi-search"></i>
+
+                    Filter
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
-    {{-- Table --}}
-    <div class="card shadow-sm border-0">
+
+
+    {{-- =====================================================
+         TABLE
+    ====================================================== --}}
+
+    <div class="products-table-card">
+
+
+        <div class="products-table-header">
+
+            <div>
+
+                <span class="products-table-eyebrow">
+                    PRODUCT DIRECTORY
+                </span>
+
+                <h2>
+                    All Products
+                </h2>
+
+            </div>
+
+
+            <div class="products-count">
+
+                <i class="bi bi-box-seam"></i>
+
+                {{ $products->total() }}
+
+                <span>
+                    products
+                </span>
+
+            </div>
+
+        </div>
+
 
         <div class="table-responsive">
 
-            <table class="table align-middle mb-0">
+            <table class="products-table">
 
-                <thead class="table-light">
+                <thead>
 
                     <tr>
 
-                        <th>ID</th>
-                        <th>Product</th>
-                        <th>Category</th>
-                        <th>Brand</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Status</th>
-                        <th class="text-center" width="80">
+                        <th>
+                            ID
+                        </th>
 
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Brand
+                        </th>
+
+                        <th>
+                            Price
+                        </th>
+
+                        <th>
+                            Stock
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th class="text-center">
                             Actions
-
                         </th>
 
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -289,47 +420,50 @@
 
                     <tr>
 
+
+                        {{-- ID --}}
+
                         <td>
 
-                            <span class="badge bg-light text-dark">
-
+                            <span class="product-id">
                                 #{{ $product->id }}
-
                             </span>
 
                         </td>
 
+
+                        {{-- Product --}}
+
                         <td>
 
-                            <div class="d-flex align-items-center">
+                            <div class="product-main-cell">
 
-                                @if($product->images->isNotEmpty())
+                                <div class="product-image">
 
-                                <img src="{{ $product->images->first()->image_url }}" class="rounded border me-3" width="60" height="60" style="object-fit:cover;" alt="{{ $product->name }}">
+                                    @if($product->images->isNotEmpty())
 
-                                @else
+                                    <img src="{{ $product->images->first()->image_url }}" alt="{{ $product->name }}">
 
-                                <div class="border rounded d-flex align-items-center justify-content-center me-3 bg-light" style="width:60px;height:60px;">
+                                    @else
 
-                                    <i class="bi bi-image text-secondary"></i>
+                                    <div class="product-image-empty">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+
+                                    @endif
 
                                 </div>
 
-                                @endif
 
-                                <div>
+                                <div class="product-main-info">
 
-                                    <div class="fw-semibold">
-
+                                    <strong>
                                         {{ $product->name }}
+                                    </strong>
 
-                                    </div>
-
-                                    <small class="text-muted">
-
+                                    <span>
                                         SKU: {{ $product->sku }}
-
-                                    </small>
+                                    </span>
 
                                 </div>
 
@@ -337,9 +471,14 @@
 
                         </td>
 
+
+                        {{-- Category --}}
+
                         <td>
 
-                            <span class="badge bg-info">
+                            <span class="product-category-badge">
+
+                                <i class="bi bi-grid"></i>
 
                                 {{ $product->category->name }}
 
@@ -347,9 +486,14 @@
 
                         </td>
 
+
+                        {{-- Brand --}}
+
                         <td>
 
-                            <span class="badge bg-dark">
+                            <span class="product-brand-badge">
+
+                                <i class="bi bi-tags"></i>
 
                                 {{ $product->brand->name }}
 
@@ -357,17 +501,20 @@
 
                         </td>
 
+
+                        {{-- Price --}}
+
                         <td>
 
                             @if($product->sale_price)
 
-                            <div class="small text-decoration-line-through text-muted">
+                            <div class="product-old-price">
 
                                 ${{ number_format($product->price, 2) }}
 
                             </div>
 
-                            <div class="fw-bold text-danger">
+                            <div class="product-final-price">
 
                                 ${{ number_format($product->final_price, 2) }}
 
@@ -375,7 +522,7 @@
 
                             @else
 
-                            <span class="fw-bold">
+                            <span class="product-price">
 
                                 ${{ number_format($product->price, 2) }}
 
@@ -385,11 +532,16 @@
 
                         </td>
 
+
+                        {{-- Stock --}}
+
                         <td>
 
                             @if($product->quantity > 20)
 
-                            <span class="badge bg-success">
+                            <span class="product-stock high">
+
+                                <i class="bi bi-box-seam"></i>
 
                                 {{ $product->quantity }}
 
@@ -397,7 +549,9 @@
 
                             @elseif($product->quantity > 0)
 
-                            <span class="badge bg-warning text-dark">
+                            <span class="product-stock low">
+
+                                <i class="bi bi-exclamation-circle"></i>
 
                                 {{ $product->quantity }}
 
@@ -405,7 +559,9 @@
 
                             @else
 
-                            <span class="badge bg-danger">
+                            <span class="product-stock out">
+
+                                <i class="bi bi-x-circle"></i>
 
                                 Out
 
@@ -415,11 +571,16 @@
 
                         </td>
 
+
+                        {{-- Status --}}
+
                         <td>
 
                             @if($product->status)
 
-                            <span class="badge bg-success">
+                            <span class="product-status active">
+
+                                <i class="bi bi-check-circle-fill"></i>
 
                                 Active
 
@@ -427,7 +588,9 @@
 
                             @else
 
-                            <span class="badge bg-danger">
+                            <span class="product-status inactive">
+
+                                <i class="bi bi-x-circle-fill"></i>
 
                                 Inactive
 
@@ -437,68 +600,45 @@
 
                         </td>
 
+
+                        {{-- Actions --}}
+
                         <td class="text-center">
 
-                            <div class="dropdown">
+                            <div class="product-actions">
 
-                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                                {{-- Show --}}
 
-                                    <i class="bi bi-three-dots-vertical"></i>
+                                <a href="{{ route('admin.products.show', $product) }}" class="product-action product-action-show" title="View Product">
 
-                                </button>
+                                    <i class="bi bi-eye"></i>
 
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                </a>
 
-                                    <li>
 
-                                        <a href="{{ route('admin.products.show', $product) }}" class="dropdown-item">
+                                {{-- Edit --}}
 
-                                            <i class="bi bi-eye me-2"></i>
+                                <a href="{{ route('admin.products.edit', $product) }}" class="product-action product-action-edit" title="Edit Product">
 
-                                            View
+                                    <i class="bi bi-pencil-square"></i>
 
-                                        </a>
+                                </a>
 
-                                    </li>
 
-                                    <li>
+                                {{-- Delete --}}
 
-                                        <a href="{{ route('admin.products.edit', $product) }}" class="dropdown-item">
+                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="delete-form m-0">
 
-                                            <i class="bi bi-pencil-square me-2"></i>
+                                    @csrf
+                                    @method('DELETE')
 
-                                            Edit
+                                    <button type="submit" class="product-action product-action-delete" title="Delete Product">
 
-                                        </a>
+                                        <i class="bi bi-trash3"></i>
 
-                                    </li>
+                                    </button>
 
-                                    <li>
-
-                                        <hr class="dropdown-divider">
-
-                                    </li>
-
-                                    <li>
-
-                                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="delete-form">
-
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="dropdown-item text-danger">
-
-                                                <i class="bi bi-trash me-2"></i>
-
-                                                Delete
-
-                                            </button>
-
-                                        </form>
-
-                                    </li>
-
-                                </ul>
+                                </form>
 
                             </div>
 
@@ -512,21 +652,29 @@
 
                         <td colspan="8">
 
-                            <div class="text-center py-5">
+                            <div class="products-empty">
 
-                                <i class="bi bi-box display-4 text-secondary"></i>
+                                <div class="products-empty-icon">
 
-                                <h5 class="mt-3">
+                                    <i class="bi bi-box-seam"></i>
 
+                                </div>
+
+                                <h3>
                                     No Products Found
+                                </h3>
 
-                                </h5>
-
-                                <p class="text-muted mb-0">
-
-                                    There are no products matching your search.
-
+                                <p>
+                                    There are no products matching your current filters.
                                 </p>
+
+                                <a href="{{ route('admin.products.create') }}" class="products-empty-btn">
+
+                                    <i class="bi bi-plus-lg"></i>
+
+                                    Add Product
+
+                                </a>
 
                             </div>
 
@@ -542,9 +690,12 @@
 
         </div>
 
+
+        {{-- Pagination --}}
+
         @if($products->hasPages())
 
-        <div class="card-footer">
+        <div class="products-pagination">
 
             {{ $products->links() }}
 
@@ -553,6 +704,55 @@
         @endif
 
     </div>
+
 </div>
+
+
+@push('scripts')
+
+<script>
+    document.querySelectorAll('.delete-form').forEach(form => {
+
+        form.addEventListener('submit', function(e) {
+
+            e.preventDefault();
+
+            Swal.fire({
+
+                title: 'Delete Product?',
+
+                text: "You won't be able to undo this action.",
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonColor: '#dc3545',
+
+                cancelButtonColor: '#64748b',
+
+                confirmButtonText: 'Yes, Delete',
+
+                cancelButtonText: 'Cancel',
+
+                reverseButtons: true
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
+
+@endpush
 
 @endsection

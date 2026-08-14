@@ -126,7 +126,7 @@ class StoreProductRequest extends FormRequest
             'images.array'         => 'Images must be sent as an array.',
             'images.*.image'       => 'Each file must be an image.',
             'images.*.mimes'       => 'Allowed image formats: jpg, jpeg, png, webp.',
-            'images.*.max'         => 'Each image must not exceed 2MB.',
+            'images.*.max'         => 'Each image must not exceed 5MB.',
 
             'status.required'      => 'The status field is required.',
 

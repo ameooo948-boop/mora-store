@@ -1,124 +1,143 @@
 @php
 $inWishlist = auth()->check()
-? auth()->user()->wishlists()->where('product_id', $product->id)->exists()
+? auth()->user()->wishlists()
+->where('product_id', $product->id)
+->exists()
 : false;
 @endphp
 
-<div class="card product-card h-100 border-0 shadow-sm">
+<div class="product-card h-100">
 
-    <div class="position-relative overflow-hidden">
+    {{-- Product Image --}}
+    <div class="product-card-media">
 
         {{-- Wishlist --}}
-        <form action="{{ route('wishlist.toggle', $product) }}" method="POST" class="position-absolute top-0 end-0 m-3 wishlist-form" style="z-index: 10;">
+        <form action="{{ route('wishlist.toggle', $product) }}" method="POST" class="wishlist-form">
             @csrf
 
-            <button type="submit" class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" title="{{ $inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
-
+            <button type="submit" class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" title="{{ $inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' }}" aria-label="{{ $inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
                 <i class="bi {{ $inWishlist ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-
             </button>
         </form>
 
-        {{-- Discount Badge --}}
+        {{-- Discount --}}
         @if($product->has_discount)
-        <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-3 py-2">
+        <span class="product-discount">
             -{{ $product->discount_percentage }}%
         </span>
         @endif
 
-        <a href="{{ route('products.show', $product) }}">
-
+        <a href="{{ route('products.show', $product) }}" class="product-image-link">
             @if($product->images->isNotEmpty())
 
-            <img src="{{ $product->images->first()->image_url }}" class="card-img-top product-image" alt="{{ $product->name }}">
+            <img src="{{ $product->images->first()->image_url }}" class="product-image" alt="{{ $product->name }}" loading="lazy">
 
             @else
 
-            <div class="bg-light d-flex justify-content-center align-items-center product-image">
-                <i class="bi bi-image fs-1 text-secondary"></i>
+            <div class="product-image-placeholder">
+                <i class="bi bi-image"></i>
             </div>
 
             @endif
-
         </a>
 
     </div>
 
-    <div class="card-body d-flex flex-column">
 
-        <small class="text-muted mb-1">
+    {{-- Product Content --}}
+    <div class="product-card-body">
+
+        {{-- Category --}}
+        <div class="product-category">
             {{ $product->category->name }}
-        </small>
-
-        <h5 class="card-title fw-semibold mb-2">
-            <a href="{{ route('products.show', $product) }}" class="text-decoration-none text-dark stretched-link">
-
-                {{ $product->name }}
-
-            </a>
-        </h5>
-
-        @if($product->has_discount)
-
-        <div class="mb-2">
-
-            <span class="text-muted text-decoration-line-through small">
-                {{ number_format($product->price,2) }} {{ setting('currency') }}
-            </span>
-
-            <h5 class="fw-bold text-danger mt-1 mb-0">
-                {{ number_format($product->final_price,2) }} {{ setting('currency') }}
-            </h5>
-
         </div>
 
-        @else
 
-        <h5 class="fw-bold mb-2">
-            {{ number_format($product->price,2) }} {{ setting('currency') }}
-        </h5>
+        {{-- Product Name --}}
+        <h3 class="product-title">
+            <a href="{{ route('products.show', $product) }}">
+                {{ $product->name }}
+            </a>
+        </h3>
 
-        @endif
 
-        @if($product->quantity == 0)
+        {{-- Price --}}
+        <div class="product-price">
 
-        <small class="text-danger fw-semibold mb-3">
-            <i class="bi bi-x-circle"></i>
-            Out of Stock
-        </small>
+            @if($product->has_discount)
 
-        @elseif($product->quantity <= 5) <small class="text-warning fw-semibold mb-3">
-            <i class="bi bi-exclamation-circle"></i>
-            Only {{ $product->quantity }} left
-            </small>
+            <span class="product-old-price">
+                {{ number_format($product->price, 2) }}
+                {{ setting('currency') }}
+            </span>
+
+            <div class="product-current-price discount">
+                {{ number_format($product->final_price, 2) }}
+                <span>{{ setting('currency') }}</span>
+            </div>
 
             @else
 
-            <small class="text-success fw-semibold mb-3">
-                <i class="bi bi-check-circle"></i>
-                In Stock
-            </small>
+            <div class="product-current-price">
+                {{ number_format($product->price, 2) }}
+                <span>{{ setting('currency') }}</span>
+            </div>
 
             @endif
 
-            <div class="mt-auto">
+        </div>
 
-                <form id="addToCartForm" action="{{ route('cart.store', $product) }}" method="POST">
 
-                    @csrf
+        {{-- Stock Status --}}
+        <div class="product-stock">
 
-                    <input type="hidden" name="quantity" value="1">
+            @if($product->quantity == 0)
 
-                    <button class="btn btn-primary w-100" {{ $product->quantity == 0 ? 'disabled' : '' }}>
+            <span class="stock-badge out">
+                <span class="stock-dot"></span>
+                Out of Stock
+            </span>
 
-                        <i class="bi bi-cart-plus me-2"></i>
+            @elseif($product->quantity <= 5) <span class="stock-badge low">
+                <span class="stock-dot"></span>
+                Only {{ $product->quantity }} left
+                </span>
+
+                @else
+
+                <span class="stock-badge available">
+                    <span class="stock-dot"></span>
+                    In Stock
+                </span>
+
+                @endif
+
+        </div>
+
+
+        {{-- Add To Cart --}}
+        <div class="product-card-footer">
+
+            <form action="{{ route('cart.store', $product) }}" method="POST" class="add-to-cart-form">
+                @csrf
+
+                <input type="hidden" name="quantity" value="1">
+
+                <button type="submit" class="add-to-cart-btn" {{ $product->quantity == 0 ? 'disabled' : '' }}>
+                    <span class="cart-icon">
+                        <i class="bi bi-cart-plus"></i>
+                    </span>
+
+                    <span class="cart-text">
                         Add To Cart
+                    </span>
 
-                    </button>
+                    <i class="bi bi-arrow-right cart-arrow"></i>
+                </button>
 
-                </form>
+            </form>
 
-            </div>
+        </div>
 
     </div>
 

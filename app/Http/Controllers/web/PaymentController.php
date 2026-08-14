@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Services\PaymentService;
 
 class PaymentController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(
         protected PaymentService $paymentService
     ) {}
@@ -15,6 +18,8 @@ class PaymentController extends Controller
     public function success(
         Payment $payment,
     ) {
+        $this->authorize('view', $payment);
+
         return redirect()
             ->route(
                 'orders.show',
@@ -29,12 +34,11 @@ class PaymentController extends Controller
     public function cancel(
         Payment $payment,
     ) {
-        if ($payment->status->isPending()) {
+        $this->authorize('view', $payment);
 
+        if ($payment->status->isPending()) {
             $this->paymentService
-                ->markAsFailed(
-                    $payment
-                );
+                ->markAsFailed($payment);
         }
 
         return redirect()

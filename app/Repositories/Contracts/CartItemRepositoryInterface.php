@@ -20,4 +20,6 @@ interface CartItemRepositoryInterface
     public function clear(Cart $cart): bool;
 
     public function getItems(Cart $cart): Collection;
+
+    public function findByUserForUpdate(int $userId): ?Cart;
 }

@@ -6,257 +6,466 @@
 
 @section('content')
 
-<div class="card border-0 shadow-sm rounded-4">
+<div class="orders-page">
 
-    <div class="card-body p-4">
+    <div class="container">
 
-        <div class="container-fluid">
+        {{-- =====================================================
+            PAGE HEADER
+        ====================================================== --}}
 
-            {{-- Header --}}
-            <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="orders-header">
+
+            <div>
+
+                <span class="orders-eyebrow">
+                    <i class="bi bi-bag-check-fill"></i>
+                    ORDER CENTER
+                </span>
+
+                <h1>
+                    My Orders
+                </h1>
+
+                <p>
+                    View your purchases, track their status, and manage your orders.
+                </p>
+
+            </div>
+
+
+            <a href="{{ route('products.index') }}" class="orders-shop-btn">
+                <i class="bi bi-bag"></i>
+
+                Continue Shopping
+
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        {{-- =====================================================
+            STATISTICS
+        ====================================================== --}}
+
+        <div class="orders-statistics">
+
+            {{-- Total --}}
+
+            <div class="order-stat-card total">
+
+                <div class="order-stat-icon">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+
+                <div class="order-stat-content">
+
+                    <span>
+                        Total Orders
+                    </span>
+
+                    <strong>
+                        {{ $statistics['total'] }}
+                    </strong>
+
+                    <small>
+                        All your orders
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            {{-- Pending --}}
+
+            <div class="order-stat-card pending">
+
+                <div class="order-stat-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div class="order-stat-content">
+
+                    <span>
+                        Pending
+                    </span>
+
+                    <strong>
+                        {{ $statistics['pending'] }}
+                    </strong>
+
+                    <small>
+                        Being processed
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            {{-- Delivered --}}
+
+            <div class="order-stat-card delivered">
+
+                <div class="order-stat-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <div class="order-stat-content">
+
+                    <span>
+                        Delivered
+                    </span>
+
+                    <strong>
+                        {{ $statistics['delivered'] }}
+                    </strong>
+
+                    <small>
+                        Successfully delivered
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+            ORDERS
+        ====================================================== --}}
+
+        <div class="orders-panel">
+
+            <div class="orders-panel-header">
 
                 <div>
 
-                    <h3 class="fw-bold mb-1">
-                        My Orders
-                    </h3>
+                    <span class="orders-panel-eyebrow">
+                        PURCHASE HISTORY
+                    </span>
 
-                    <p class="text-muted mb-0">
-                        View and track your orders
-                    </p>
-
-                </div>
-
-                <a href="{{ route('admin.products.index') }}" class="btn btn-primary">
-
-                    <i class="bi bi-shop me-2"></i>
-
-                    Continue Shopping
-
-                </a>
-
-            </div>
-
-            {{-- Statistics --}}
-            <div class="row mb-4">
-
-                <div class="col-md-4">
-
-                    <div class="card shadow-sm border-0">
-
-                        <div class="card-body">
-
-                            <small class="text-muted">
-                                Total Orders
-                            </small>
-
-                            <h2 class="fw-bold mt-2">
-                                {{ $statistics['total'] }}
-                            </h2>
-
-                        </div>
-
-                    </div>
+                    <h2>
+                        Recent Orders
+                    </h2>
 
                 </div>
 
-                <div class="col-md-4">
-
-                    <div class="card shadow-sm border-0">
-
-                        <div class="card-body">
-
-                            <small class="text-muted">
-                                Pending
-                            </small>
-
-                            <h2 class="fw-bold text-warning mt-2">
-
-                                {{ $statistics['pending'] }}
-
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="col-md-4">
-
-                    <div class="card shadow-sm border-0">
-
-                        <div class="card-body">
-
-                            <small class="text-muted">
-                                Delivered
-                            </small>
-
-                            <h2 class="fw-bold text-success mt-2">
-
-                                {{ $statistics['delivered'] }}
-
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {{-- Orders Table --}}
-            <div class="card">
-
-                <div class="table-responsive">
-
-                    <table class="table align-middle mb-0">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>#</th>
-
-                                <th>Order Number</th>
-
-                                <th>Items</th>
-
-                                <th>Total</th>
-
-                                <th>Status</th>
-
-                                <th>Date</th>
-
-                                <th width="80"></th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($orders as $order)
-
-                            <tr>
-
-                                <td>{{ $order->id }}</td>
-
-                                <td>
-
-                                    <span class="badge bg-secondary">
-
-                                        {{ $order->order_number }}
-
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    {{ $order->items->count() }}
-
-                                </td>
-
-                                <td>
-
-                                    <strong>
-
-                                        ${{ number_format($order->total,2) }}
-
-                                    </strong>
-
-                                </td>
-
-                                <td>
-
-                                    <span class="badge {{ $order->status_badge }}">
-                                        <i class="bi {{ $order->status_icon }} me-1"></i>
-                                        {{ $order->status_label }}
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    {{ $order->created_at->format('d M Y') }}
-
-                                </td>
-
-                                <td>
-
-                                    <div class="dropdown">
-
-                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-
-                                            <i class="bi bi-three-dots-vertical"></i>
-
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-menu-end">
-
-                                            <li>
-
-                                                <a href="{{ route('orders.show',$order) }}" class="dropdown-item">
-
-                                                    <i class="bi bi-eye me-2"></i>
-
-                                                    View
-
-                                                </a>
-
-                                            </li>
-
-                                        </ul>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                            @empty
-
-                            <tr>
-
-                                <td colspan="7">
-
-                                    <div class="text-center py-5">
-
-                                        <i class="bi bi-bag-x display-3 text-secondary"></i>
-
-                                        <h5 class="mt-3">
-
-                                            No Orders Found
-
-                                        </h5>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-                @if($orders->hasPages())
-
-                <div class="card-footer">
-
-                    {{ $orders->links() }}
-
-                </div>
+                @if($orders->total())
+
+                <span class="orders-total-count">
+                    {{ $orders->total() }}
+                    {{ Str::plural('order', $orders->total()) }}
+                </span>
 
                 @endif
 
             </div>
+
+
+            @if($orders->count())
+
+            {{-- Desktop Table --}}
+
+            <div class="orders-table-wrapper">
+
+                <table class="orders-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order
+                            </th>
+
+                            <th>
+                                Items
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach($orders as $order)
+
+                        <tr>
+
+                            {{-- Order --}}
+
+                            <td>
+
+                                <div class="order-number">
+
+                                    <div class="order-icon">
+                                        <i class="bi bi-receipt"></i>
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ $order->order_number }}
+                                        </strong>
+
+                                        <span>
+                                            Order #{{ $order->id }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            {{-- Items --}}
+
+                            <td>
+
+                                <span class="order-items">
+
+                                    <i class="bi bi-box-seam"></i>
+
+                                    {{ $order->items->count() }}
+
+                                    {{ Str::plural('item', $order->items->count()) }}
+
+                                </span>
+
+                            </td>
+
+
+                            {{-- Total --}}
+
+                            <td>
+
+                                <div class="order-total">
+
+                                    <strong>
+                                        {{ number_format($order->total, 2) }}
+                                    </strong>
+
+                                    <span>
+                                        {{ setting('currency') }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            {{-- Status --}}
+
+                            <td>
+
+                                <span class="order-status {{ $order->status_badge }}">
+
+                                    <i class="bi {{ $order->status_icon }}"></i>
+
+                                    {{ $order->status_label }}
+
+                                </span>
+
+                            </td>
+
+
+                            {{-- Date --}}
+
+                            <td>
+
+                                <div class="order-date">
+
+                                    <strong>
+                                        {{ $order->created_at->format('d M Y') }}
+                                    </strong>
+
+                                    <span>
+                                        {{ $order->created_at->format('h:i A') }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            {{-- Action --}}
+
+                            <td>
+
+                                <a href="{{ route('orders.show', $order) }}" class="order-view-btn" title="View Order">
+                                    <i class="bi bi-arrow-up-right"></i>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {{-- Mobile Orders --}}
+
+            <div class="orders-mobile-list">
+
+                @foreach($orders as $order)
+
+                <article class="mobile-order-card">
+
+                    <div class="mobile-order-top">
+
+                        <div class="order-number">
+
+                            <div class="order-icon">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ $order->order_number }}
+                                </strong>
+
+                                <span>
+                                    {{ $order->created_at->format('d M Y') }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="order-status {{ $order->status_badge }}">
+
+                            <i class="bi {{ $order->status_icon }}"></i>
+
+                            {{ $order->status_label }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="mobile-order-details">
+
+                        <div>
+
+                            <span>
+                                Items
+                            </span>
+
+                            <strong>
+                                {{ $order->items->count() }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong>
+                                {{ number_format($order->total, 2) }}
+                                {{ setting('currency') }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <a href="{{ route('orders.show', $order) }}" class="mobile-order-view">
+                        View Order
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </article>
+
+                @endforeach
+
+            </div>
+
+
+            {{-- Pagination --}}
+
+            @if($orders->hasPages())
+
+            <div class="orders-pagination">
+
+                {{ $orders->links() }}
+
+            </div>
+
+            @endif
+
+
+            @else
+
+            {{-- =====================================================
+                    EMPTY STATE
+                ====================================================== --}}
+
+            <div class="orders-empty">
+
+                <div class="orders-empty-icon">
+
+                    <i class="bi bi-bag-x"></i>
+
+                </div>
+
+                <span class="orders-eyebrow">
+                    NO PURCHASES YET
+                </span>
+
+                <h3>
+                    Your order history is empty
+                </h3>
+
+                <p>
+                    You haven't placed any orders yet.
+                    Discover something you love and start shopping today.
+                </p>
+
+                <a href="{{ route('products.index') }}" class="orders-empty-btn">
+                    <i class="bi bi-bag"></i>
+
+                    Start Shopping
+
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            </div>
+
+            @endif
 
         </div>
 

@@ -1,323 +1,587 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Product Details')
+@section('page-title', 'Product Details')
 
 @section('content')
 
-<div class="card shadow-sm border-0">
+<div class="product-details-page">
 
-    <div class="card-header d-flex justify-content-between align-items-center">
 
-        <h3 class="card-title mb-0">
+    {{-- =====================================================
+         HERO
+    ====================================================== --}}
 
-            Product Details
+    <div class="product-details-hero">
 
-        </h3>
+        <div class="product-details-hero-left">
 
-        <div>
-
-            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-warning">
-
-                <i class="bi bi-pencil-square"></i>
-
-                Edit
-
+            <a href="{{ route('admin.products.index') }}" class="product-details-back" title="Back to Products">
+                <i class="bi bi-arrow-left"></i>
             </a>
 
-            <a href="{{ route('admin.products.index') }}" class="btn btn-light">
+            <div>
 
-                Back
+                <span class="product-details-eyebrow">
+                    PRODUCT MANAGEMENT
+                </span>
 
+                <h1>
+                    {{ $product->name }}
+                </h1>
+
+                <p>
+                    Product details, inventory and catalog information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="product-details-actions">
+
+            <a href="{{ route('admin.products.edit', $product) }}" class="product-details-edit">
+                <i class="bi bi-pencil-square"></i>
+                Edit Product
+            </a>
+
+            <a href="{{ route('admin.products.index') }}" class="product-details-all">
+                <i class="bi bi-box-seam"></i>
+                All Products
             </a>
 
         </div>
 
     </div>
 
-    <div class="card-body">
 
-        <div class="row">
 
-            {{-- Product Images --}}
-            <div class="col-md-4">
+    {{-- =====================================================
+         MAIN OVERVIEW
+    ====================================================== --}}
 
-                @if($product->images->isNotEmpty())
+    <div class="product-details-grid">
 
-                <div class="border rounded p-2 text-center bg-white">
 
-                    <img id="main-image" src="{{ Storage::url($product->images->first()->image) }}" class="img-fluid rounded" alt="{{ $product->name }}" style="height:350px; width:100%; object-fit:contain;">
+        {{-- =================================================
+             GALLERY
+        ================================================== --}}
 
-                </div>
+        <div class="product-gallery-card">
 
-                <div class="d-flex flex-wrap gap-2 mt-3">
+            <div class="product-gallery-header">
 
-                    @foreach($product->images as $image)
+                <div>
 
-                    <img src="{{ Storage::url($image->image) }}" class="img-thumbnail product-thumbnail" style="width:70px; height:70px; object-fit:cover; cursor:pointer;" onclick="changeImage(this)">
-
-                    @endforeach
-
-                </div>
-
-                @else
-
-                <div class="border rounded d-flex align-items-center justify-content-center bg-light" style="height:350px;">
-
-                    <span class="text-muted">
-
-                        No Image Available
-
+                    <span>
+                        PRODUCT GALLERY
                     </span>
 
+                    <h3>
+                        Images
+                    </h3>
+
                 </div>
+
+
+                @if($product->images->count())
+
+                <span class="product-image-count">
+
+                    <i class="bi bi-images"></i>
+
+                    {{ $product->images->count() }}
+
+                </span>
 
                 @endif
 
             </div>
 
-            <div class="col-md-8">
 
-                <div class="row">
+            @if($product->images->isNotEmpty())
 
-                    <div class="col-md-6 mb-3">
+            <div class="product-main-image">
 
-                        <label class="fw-semibold">
+                <img id="main-image" src="{{ Storage::url($product->images->first()->image) }}" alt="{{ $product->name }}">
 
-                            Name
+            </div>
 
-                        </label>
 
-                        <div class="form-control bg-light">
+            <div class="product-thumbnails">
 
-                            {{ $product->name }}
+                @foreach($product->images as $image)
 
-                        </div>
+                <button type="button" class="product-thumbnail {{ $loop->first ? 'active' : '' }}" onclick="changeProductImage(this)">
+
+                    <img src="{{ Storage::url($image->image) }}" alt="{{ $product->name }}">
+
+                </button>
+
+                @endforeach
+
+            </div>
+
+            @else
+
+            <div class="product-no-image">
+
+                <div class="product-no-image-icon">
+                    <i class="bi bi-image"></i>
+                </div>
+
+                <strong>
+                    No Image Available
+                </strong>
+
+                <span>
+                    This product doesn't have any images yet.
+                </span>
+
+            </div>
+
+            @endif
+
+        </div>
+
+
+
+        {{-- =================================================
+             PRODUCT INFORMATION
+        ================================================== --}}
+
+        <div class="product-information-card">
+
+            <div class="product-details-card-header">
+
+                <div class="product-details-card-title">
+
+                    <div class="product-details-card-icon blue">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Product Information
+                        </h2>
+
+                        <span>
+                            General product information
+                        </span>
 
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                </div>
 
-                        <label class="fw-semibold">
+            </div>
 
-                            SKU
 
-                        </label>
+            <div class="product-info-list">
 
-                        <div class="form-control bg-light">
 
-                            {{ $product->sku }}
+                {{-- Name --}}
 
-                        </div>
+                <div class="product-info-row">
 
-                    </div>
+                    <span>
+                        <i class="bi bi-tag"></i>
+                        Product Name
+                    </span>
 
-                    <div class="col-md-6 mb-3">
+                    <strong>
+                        {{ $product->name }}
+                    </strong>
 
-                        <label class="fw-semibold">
+                </div>
 
-                            Category
 
-                        </label>
+                {{-- SKU --}}
 
-                        <div class="form-control bg-light">
+                <div class="product-info-row">
 
-                            {{ $product->category->name }}
+                    <span>
+                        <i class="bi bi-upc-scan"></i>
+                        SKU
+                    </span>
 
-                        </div>
+                    <strong class="product-sku">
+                        {{ $product->sku }}
+                    </strong>
 
-                    </div>
+                </div>
 
-                    <div class="col-md-6 mb-3">
 
-                        <label class="fw-semibold">
+                {{-- Category --}}
 
-                            Brand
+                <div class="product-info-row">
 
-                        </label>
+                    <span>
+                        <i class="bi bi-grid"></i>
+                        Category
+                    </span>
 
-                        <div class="form-control bg-light">
+                    <span class="product-category-pill">
+                        <i class="bi bi-grid-fill"></i>
+                        {{ $product->category->name }}
+                    </span>
 
-                            {{ $product->brand->name }}
+                </div>
 
-                        </div>
 
-                    </div>
+                {{-- Brand --}}
 
-                    <div class="col-md-4 mb-3">
+                <div class="product-info-row">
 
-                        <label class="fw-semibold">
+                    <span>
+                        <i class="bi bi-tags"></i>
+                        Brand
+                    </span>
 
-                            Price
+                    <span class="product-brand-pill">
+                        <i class="bi bi-tag-fill"></i>
+                        {{ $product->brand->name }}
+                    </span>
 
-                        </label>
+                </div>
 
-                        <div class="form-control bg-light">
 
-                            {{ number_format($product->price, 2) }}
+                {{-- Status --}}
 
-                        </div>
+                <div class="product-info-row">
 
-                    </div>
+                    <span>
+                        <i class="bi bi-activity"></i>
+                        Status
+                    </span>
 
-                    <div class="col-md-4 mb-3">
+                    @if($product->status)
 
-                        <label class="fw-semibold">
+                    <span class="product-detail-status active">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Active
+                    </span>
 
-                            Sale Price
+                    @else
 
-                        </label>
+                    <span class="product-detail-status inactive">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Inactive
+                    </span>
 
-                        <div class="form-control bg-light">
+                    @endif
 
-                            {{ $product->sale_price ? number_format($product->sale_price, 2) : '-' }}
+                </div>
 
-                        </div>
 
-                    </div>
+                {{-- Featured --}}
 
-                    <div class="col-md-4 mb-3">
+                <div class="product-info-row">
 
-                        <label class="fw-semibold">
+                    <span>
+                        <i class="bi bi-star"></i>
+                        Featured
+                    </span>
 
-                            Stock
+                    @if($product->is_featured)
 
-                        </label>
+                    <span class="product-featured yes">
+                        <i class="bi bi-star-fill"></i>
+                        Featured
+                    </span>
 
-                        <div class="form-control bg-light">
+                    @else
 
-                            {{ $product->quantity }}
+                    <span class="product-featured no">
+                        <i class="bi bi-dash-circle"></i>
+                        Standard
+                    </span>
 
-                        </div>
+                    @endif
 
-                    </div>
+                </div>
 
-                    <div class="col-md-4 mb-3">
 
-                        <label class="fw-semibold">
+                {{-- Sort --}}
 
-                            Status
+                <div class="product-info-row">
 
-                        </label>
+                    <span>
+                        <i class="bi bi-sort-numeric-down"></i>
+                        Sort Order
+                    </span>
 
-                        <div>
+                    <strong>
+                        #{{ $product->sort_order }}
+                    </strong>
 
-                            @if($product->status)
+                </div>
 
-                            <span class="badge bg-success">
+            </div>
 
-                                Active
+        </div>
 
-                            </span>
+    </div>
 
-                            @else
 
-                            <span class="badge bg-danger">
 
-                                Inactive
+    {{-- =====================================================
+         PRICE / STOCK
+    ====================================================== --}}
 
-                            </span>
+    <div class="product-metrics">
 
-                            @endif
 
-                        </div>
+        {{-- Price --}}
 
-                    </div>
+        <div class="product-metric-card price">
 
-                    <div class="col-md-4 mb-3">
+            <div class="product-metric-icon blue">
+                <i class="bi bi-currency-dollar"></i>
+            </div>
 
-                        <label class="fw-semibold">
+            <div>
 
-                            Featured
+                <span>
+                    Regular Price
+                </span>
 
-                        </label>
+                <strong>
+                    {{ number_format($product->price, 2) }}
+                </strong>
 
-                        <div>
+            </div>
 
-                            @if($product->is_featured)
+        </div>
 
-                            <span class="badge bg-primary">
 
-                                Yes
+        {{-- Sale --}}
 
-                            </span>
+        <div class="product-metric-card sale">
 
-                            @else
+            <div class="product-metric-icon red">
+                <i class="bi bi-percent"></i>
+            </div>
 
-                            <span class="badge bg-secondary">
+            <div>
 
-                                No
+                <span>
+                    Sale Price
+                </span>
 
-                            </span>
+                @if($product->sale_price)
 
-                            @endif
+                <strong>
+                    {{ number_format($product->sale_price, 2) }}
+                </strong>
 
-                        </div>
+                @else
 
-                    </div>
+                <strong class="muted">
+                    No Sale
+                </strong>
 
-                    <div class="col-md-4 mb-3">
+                @endif
 
-                        <label class="fw-semibold">
+            </div>
 
-                            Sort Order
+        </div>
 
-                        </label>
 
-                        <div class="form-control bg-light">
+        {{-- Stock --}}
 
-                            {{ $product->sort_order }}
+        <div class="product-metric-card stock">
 
-                        </div>
+            <div class="product-metric-icon green">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
 
-                    </div>
+            <div>
 
-                    <div class="col-12 mb-3">
+                <span>
+                    Current Stock
+                </span>
 
-                        <label class="fw-semibold">
+                <strong>
+                    {{ $product->quantity }}
+                </strong>
 
-                            Description
+            </div>
 
-                        </label>
+        </div>
 
-                        <div class="form-control bg-light" style="min-height:120px">
 
-                            {!! nl2br(e($product->description)) !!}
+        {{-- Images --}}
 
-                        </div>
+        <div class="product-metric-card images">
 
-                    </div>
+            <div class="product-metric-icon purple">
+                <i class="bi bi-images"></i>
+            </div>
 
-                    <div class="col-md-6">
+            <div>
 
-                        <label class="fw-semibold">
+                <span>
+                    Total Images
+                </span>
 
-                            Created At
+                <strong>
+                    {{ $product->images->count() }}
+                </strong>
 
-                        </label>
+            </div>
 
-                        <div class="form-control bg-light">
+        </div>
 
-                            {{ $product->created_at->format('Y-m-d h:i A') }}
+    </div>
 
-                        </div>
 
-                    </div>
 
-                    <div class="col-md-6">
+    {{-- =====================================================
+         DESCRIPTION
+    ====================================================== --}}
 
-                        <label class="fw-semibold">
+    <div class="product-description-card">
 
-                            Updated At
+        <div class="product-details-card-header">
 
-                        </label>
+            <div class="product-details-card-title">
 
-                        <div class="form-control bg-light">
+                <div class="product-details-card-icon purple">
+                    <i class="bi bi-text-paragraph"></i>
+                </div>
 
-                            {{ $product->updated_at->format('Y-m-d h:i A') }}
+                <div>
 
-                        </div>
+                    <h2>
+                        Description
+                    </h2>
 
-                    </div>
+                    <span>
+                        Product description and additional information
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="product-description-body">
+
+            @if($product->description)
+
+            <div class="product-description-content">
+
+                {!! nl2br(e($product->description)) !!}
+
+            </div>
+
+            @else
+
+            <div class="product-empty-description">
+
+                <div>
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+
+                <span>
+                    No description available for this product.
+                </span>
+
+            </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
+
+
+    {{-- =====================================================
+         TIMELINE
+    ====================================================== --}}
+
+    <div class="product-timeline-card">
+
+        <div class="product-details-card-header">
+
+            <div class="product-details-card-title">
+
+                <div class="product-details-card-icon green">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Product Timeline
+                    </h2>
+
+                    <span>
+                        Creation and latest update information
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="product-timeline">
+
+
+            <div class="product-timeline-item">
+
+                <div class="product-timeline-icon blue">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Created
+                    </span>
+
+                    <strong>
+                        {{ $product->created_at->format('d M Y') }}
+                    </strong>
+
+                    <small>
+                        {{ $product->created_at->format('h:i A') }}
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-timeline-line"></div>
+
+
+            <div class="product-timeline-item">
+
+                <div class="product-timeline-icon green">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Last Updated
+                    </span>
+
+                    <strong>
+                        {{ $product->updated_at->format('d M Y') }}
+                    </strong>
+
+                    <small>
+                        {{ $product->updated_at->format('h:i A') }}
+                    </small>
 
                 </div>
 
@@ -329,13 +593,41 @@
 
 </div>
 
+
+
 @push('scripts')
 
 <script>
-    function changeImage(image) {
+    function changeProductImage(button) {
+
+        const mainImage = document.getElementById('main-image');
+
+        if (!mainImage) return;
+
+        const image = button.querySelector('img');
+
+        if (!image) return;
+
+        mainImage.style.opacity = '0';
+
+        setTimeout(() => {
+
+            mainImage.src = image.src;
+
+            mainImage.style.opacity = '1';
+
+        }, 120);
+
+
         document
-            .getElementById('main-image')
-            .src = image.src;
+            .querySelectorAll('.product-thumbnail')
+            .forEach(item => {
+
+                item.classList.remove('active');
+
+            });
+
+        button.classList.add('active');
     }
 
 </script>

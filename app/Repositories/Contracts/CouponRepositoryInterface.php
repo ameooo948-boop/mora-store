@@ -20,4 +20,6 @@ interface CouponRepositoryInterface
     public function update(Coupon $coupon, array $data): bool;
 
     public function delete(Coupon $coupon): bool;
+
+    public function findByCodeForUpdate(string $code): ?Coupon;
 }

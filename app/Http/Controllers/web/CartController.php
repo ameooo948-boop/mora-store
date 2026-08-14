@@ -97,9 +97,11 @@ class CartController extends Controller
                     'message' => 'Cart updated successfully.',
 
                     'itemTotal' => number_format(
-                        $item->price * $item->quantity,
+                        $item->product->final_price * $item->quantity,
                         2
                     ),
+
+                    'currency' => setting('currency'),
 
                     'summary' => [
                         'items' => $cart->items->count(),

@@ -1,150 +1,159 @@
-<div class="card border-0 shadow-sm h-100">
+<div class="address-card {{ $address->is_default ? 'is-default' : '' }}">
+
+    {{-- =====================================================
+        DEFAULT BADGE
+    ====================================================== --}}
 
     @if($address->is_default)
 
-    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+    <div class="address-default-badge">
+
+        <i class="bi bi-house-check-fill"></i>
 
         <span>
-
-            <i class="bi bi-house-check-fill me-2"></i>
-
             Default Address
-
         </span>
 
-        <i class="bi bi-check-circle-fill"></i>
+        <i class="bi bi-check-circle-fill ms-auto"></i>
 
     </div>
 
     @endif
 
-    <div class="card-body">
 
-        <div class="mb-3">
+    {{-- =====================================================
+        CARD BODY
+    ====================================================== --}}
 
-            <h5 class="fw-bold mb-1">
+    <div class="address-card-body">
 
-                {{ $address->full_name }}
+        {{-- Header --}}
 
-            </h5>
+        <div class="address-header">
 
-            <small class="text-muted">
+            <div class="address-person">
 
-                <i class="bi bi-telephone me-1"></i>
+                <div class="address-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
 
-                {{ $address->phone }}
+                <div>
 
-            </small>
+                    <h3>
+                        {{ $address->full_name }}
+                    </h3>
 
-        </div>
-
-        <div class="mb-3">
-
-            <i class="bi bi-geo-alt text-primary me-2"></i>
-
-            {{ $address->country }},
-            {{ $address->state }},
-            {{ $address->city }}
-
-        </div>
-
-        <div class="mb-3">
-
-            <i class="bi bi-house-door text-primary me-2"></i>
-
-            {{ $address->address_line }}
-
-        </div>
-
-        @if($address->postal_code)
-
-        <div>
-
-            <i class="bi bi-mailbox text-primary me-2"></i>
-
-            {{ $address->postal_code }}
-
-        </div>
-
-        @endif
-
-    </div>
-
-    <div class="card-footer bg-white">
-
-        <div class="dropdown">
-
-            <button class="btn btn-light w-100" data-bs-toggle="dropdown">
-
-                <i class="bi bi-three-dots"></i>
-
-                Actions
-
-            </button>
-
-            <ul class="dropdown-menu dropdown-menu-end">
-
-                <li>
-
-                    <a href="{{ route('addresses.edit', $address) }}" class="dropdown-item">
-
-                        <i class="bi bi-pencil-square me-2"></i>
-
-                        Edit
-
+                    <a href="tel:{{ $address->phone }}" class="address-phone">
+                        <i class="bi bi-telephone-fill"></i>
+                        {{ $address->phone }}
                     </a>
 
-                </li>
+                </div>
 
-                @unless($address->is_default)
+            </div>
 
-                <li>
+        </div>
 
-                    <form action="{{ route('addresses.default', $address) }}" method="POST">
 
-                        @csrf
-                        @method('PATCH')
+        {{-- =================================================
+            LOCATION
+        ================================================== --}}
 
-                        <button class="dropdown-item">
+        <div class="address-info">
 
-                            <i class="bi bi-check2-circle me-2"></i>
+            <div class="address-info-icon location">
+                <i class="bi bi-geo-alt-fill"></i>
+            </div>
 
-                            Make Default
+            <div class="address-info-content">
 
-                        </button>
+                <span>
+                    Location
+                </span>
 
-                    </form>
+                <strong>
+                    {{ $address->city }}, {{ $address->state }}
+                </strong>
 
-                </li>
+                <small>
+                    {{ $address->country }}
+                </small>
 
-                @endunless
+            </div>
 
-                <li>
+        </div>
 
-                    <hr class="dropdown-divider">
 
-                </li>
+        {{-- =================================================
+            ADDRESS
+        ================================================== --}}
 
-                <li>
+        <div class="address-info">
 
-                    <form action="{{ route('addresses.destroy', $address) }}" method="POST" onsubmit="return confirm('Delete this address?')">
+            <div class="address-info-icon home">
+                <i class="bi bi-house-door-fill"></i>
+            </div>
 
-                        @csrf
-                        @method('DELETE')
+            <div class="address-info-content">
 
-                        <button class="dropdown-item text-danger">
+                <span>
+                    Address
+                </span>
 
-                            <i class="bi bi-trash me-2"></i>
+                <strong>
+                    {{ $address->address_line }}
+                </strong>
 
-                            Delete
+                @if($address->postal_code)
 
-                        </button>
+                <small>
+                    Postal Code: {{ $address->postal_code }}
+                </small>
 
-                    </form>
+                @endif
 
-                </li>
+            </div>
 
-            </ul>
+        </div>
+
+
+        {{-- =================================================
+            ACTIONS
+        ================================================== --}}
+
+        <div class="address-actions">
+
+            <a href="{{ route('addresses.edit', $address) }}" class="address-edit-btn">
+                <i class="bi bi-pencil-square"></i>
+                Edit
+            </a>
+
+
+            @unless($address->is_default)
+
+            <form action="{{ route('addresses.default', $address) }}" method="POST" class="address-action-form">
+                @csrf
+                @method('PATCH')
+
+                <button type="submit" class="address-default-btn">
+                    <i class="bi bi-check2-circle"></i>
+                    Make Default
+                </button>
+
+            </form>
+
+            @endunless
+
+
+            <form action="{{ route('addresses.destroy', $address) }}" method="POST" class="address-action-form" onsubmit="return confirm('Delete this address?')">
+                @csrf
+                @method('DELETE')
+
+                <button type="submit" class="address-delete-btn" title="Delete address" aria-label="Delete address">
+                    <i class="bi bi-trash3"></i>
+                </button>
+
+            </form>
 
         </div>
 

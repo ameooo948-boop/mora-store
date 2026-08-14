@@ -1,207 +1,338 @@
-<nav class="navbar navbar-expand-lg navbar-dark account-navbar">
+<nav class="navbar navbar-expand-lg account-navbar">
 
-    <div class="container">
+    <div class="container-fluid px-4 px-xl-5">
 
-        <a class="navbar-brand fw-bold" href="{{ route('products.index') }}">
+        {{-- Brand --}}
+        <a class="navbar-brand account-brand" href="{{ route('products.index') }}">
+
             <div class="brand-logo">
 
                 @if($siteLogo)
 
-                    <img
-                        src="{{ asset('storage/' . $siteLogo) }}"
-                        alt="{{ setting('site_name') }}"
-                    >
+                <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ setting('site_name') }}">
 
                 @else
 
-                    <i class="bi bi-bag-check-fill"></i>
+                <i class="bi bi-bag-check-fill"></i>
 
                 @endif
 
-                <span>
-                    {{ setting('site_name') }}
-                </span>
-
             </div>
+
+            <span class="brand-name">
+                {{ setting('site_name') }}
+            </span>
+
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#accountNavbar">
-            <span class="navbar-toggler-icon"></span>
+
+        {{-- Mobile --}}
+        <button class="navbar-toggler account-navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#accountNavbar" aria-controls="accountNavbar" aria-expanded="false" aria-label="Toggle navigation">
+
+            <i class="bi bi-list"></i>
+
         </button>
 
-        <div class="navbar-collapse d-flex justify-content-between align-items-center">
 
-            <ul class="navbar-nav me-auto">
+        {{-- Navbar Content --}}
+        <div class="collapse navbar-collapse account-navbar-collapse" id="accountNavbar">
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}" href="{{ route('orders.index') }}">
-                        <i class="bi bi-bag-check me-1"></i>
-                        Orders
-                    </a>
-                </li>
+            <div class="account-navbar-content">
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('wishlist.*') ? 'active' : '' }}" href="{{ route('wishlist.index') }}">
-                        <i class="bi bi-heart me-1"></i>
-                        Wishlist
-                    </a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('cart.*') ? 'active' : '' }}" href="{{ route('cart.index') }}">
-                        <i class="bi bi-cart3 me-1"></i>
-                        Cart
-                    </a>
-                </li>
+                {{-- Navigation --}}
+                <ul class="account-nav-list">
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('addresses.*') ? 'active' : '' }}" href="{{ route('addresses.index') }}">
-                        <i class="bi bi-geo-alt me-1"></i>
-                        Addresses
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{ route('orders.index') }}" class="account-nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
 
-            </ul>
+                            <span class="account-nav-icon">
+                                <i class="bi bi-bag-check"></i>
+                            </span>
 
-            <div class="d-flex align-items-center gap-3">
+                            <span>
+                                Orders
+                            </span>
 
-                <div class="dropdown">
-                    <a class="btn btn-outline-light position-relative" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-5"></i>
+                        </a>
+                    </li>
 
-                        @if(auth()->user()->unreadNotifications->count())
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ auth()->user()->unreadNotifications->count() }}
-                        </span>
-                        @endif
-                    </a>
 
-                    <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0" style="width:380px;border-radius:12px;overflow:hidden;">
+                    <li>
+                        <a href="{{ route('wishlist.index') }}" class="account-nav-link {{ request()->routeIs('wishlist.*') ? 'active' : '' }}">
 
-                        {{-- Header --}}
-                        <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
-                            <strong>
-                                Notifications
-                                ({{ auth()->user()->unreadNotifications->count() }})
-                            </strong>
+                            <span class="account-nav-icon">
+                                <i class="bi bi-heart"></i>
+                            </span>
+
+                            <span>
+                                Wishlist
+                            </span>
+
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="{{ route('cart.index') }}" class="account-nav-link {{ request()->routeIs('cart.*') ? 'active' : '' }}">
+
+                            <span class="account-nav-icon">
+                                <i class="bi bi-cart3"></i>
+                            </span>
+
+                            <span>
+                                Cart
+                            </span>
+
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="{{ route('addresses.index') }}" class="account-nav-link {{ request()->routeIs('addresses.*') ? 'active' : '' }}">
+
+                            <span class="account-nav-icon">
+                                <i class="bi bi-geo-alt"></i>
+                            </span>
+
+                            <span>
+                                Addresses
+                            </span>
+
+                        </a>
+                    </li>
+
+                </ul>
+
+
+                {{-- Right Actions --}}
+                <div class="account-nav-actions">
+
+
+                    {{-- Notifications --}}
+                    <div class="dropdown">
+
+                        <button type="button" class="account-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+
+                            <i class="bi bi-bell"></i>
 
                             @if(auth()->user()->unreadNotifications->count())
-                            <form action="{{ route('notifications.read-all') }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button class="btn btn-sm btn-link text-decoration-none p-0">
-                                    Read All
-                                </button>
-                            </form>
+
+                            <span class="notification-count">
+                                {{ auth()->user()->unreadNotifications->count() }}
+                            </span>
+
                             @endif
-                        </div>
 
-                        {{-- Notifications --}}
-                        <div style="max-height:400px;overflow-y:auto;">
+                        </button>
 
-                            @forelse(auth()->user()->notifications->take(10) as $notification)
 
-                            <div class="border-bottom">
+                        <div class="dropdown-menu dropdown-menu-end account-notification-menu">
 
-                                <div class="d-flex justify-content-between align-items-start px-3 py-3 {{ is_null($notification->read_at) ? 'bg-light' : '' }}">
+                            {{-- Header --}}
+                            <div class="notification-menu-header">
 
-                                    <a href="{{ $notification->data['url'] }}" class="text-decoration-none text-dark flex-grow-1">
+                                <div>
 
-                                        <div class="fw-semibold">
-                                            {{ $notification->data['title'] }}
-                                        </div>
+                                    <span>
+                                        ACCOUNT
+                                    </span>
 
-                                        <small class="text-muted d-block">
-                                            {{ $notification->data['message'] }}
-                                        </small>
+                                    <h3>
+                                        Notifications
+                                    </h3>
 
-                                        <small class="text-secondary">
-                                            {{ $notification->created_at->diffForHumans() }}
-                                        </small>
+                                </div>
 
-                                    </a>
+
+                                @if(auth()->user()->unreadNotifications->count())
+
+                                <form action="{{ route('notifications.read-all') }}" method="POST">
+
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <button type="submit" class="notification-read-all">
+
+                                        <i class="bi bi-check2-all"></i>
+
+                                        Read All
+
+                                    </button>
+
+                                </form>
+
+                                @endif
+
+                            </div>
+
+
+                            {{-- List --}}
+                            <div class="notification-menu-list">
+
+                                @forelse(auth()->user()->notifications->take(10) as $notification)
+
+                                <div class="notification-menu-item {{ is_null($notification->read_at) ? 'unread' : '' }}">
 
                                     @if(is_null($notification->read_at))
 
-                                    <form action="{{ route('notifications.read',$notification->id) }}" method="POST" class="ms-2">
+                                    <span class="notification-live-dot"></span>
+
+                                    @endif
+
+
+                                    <div class="notification-menu-icon">
+
+                                        <i class="bi {{ $notification->data['icon'] ?? 'bi-bell' }}"></i>
+
+                                    </div>
+
+
+                                    <div class="notification-menu-content">
+
+                                        <a href="{{ $notification->data['url'] ?? route('notifications.index') }}" class="notification-menu-title">
+
+                                            {{ $notification->data['title'] ?? 'Notification' }}
+
+                                        </a>
+
+
+                                        <p>
+
+                                            {{ $notification->data['message'] ?? '' }}
+
+                                        </p>
+
+
+                                        <span class="notification-menu-time">
+
+                                            <i class="bi bi-clock"></i>
+
+                                            {{ $notification->created_at->diffForHumans() }}
+
+                                        </span>
+
+                                    </div>
+
+
+                                    @if(is_null($notification->read_at))
+
+                                    <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
+
                                         @csrf
                                         @method('PATCH')
 
-                                        <button class="btn btn-sm btn-outline-success" title="Mark as Read">
+                                        <button type="submit" class="notification-mark-read" title="Mark as read">
 
-                                            <i class="bi bi-check-lg"></i>
+                                            <i class="bi bi-check"></i>
 
                                         </button>
+
                                     </form>
 
                                     @else
 
-                                    <i class="bi bi-check2-all text-success ms-2"></i>
+                                    <i class="bi bi-check2-all notification-read-icon"></i>
 
                                     @endif
 
                                 </div>
 
+                                @empty
+
+                                <div class="notification-empty">
+
+                                    <i class="bi bi-bell-slash"></i>
+
+                                    <strong>
+                                        No Notifications
+                                    </strong>
+
+                                    <span>
+                                        You're all caught up.
+                                    </span>
+
+                                </div>
+
+                                @endforelse
+
                             </div>
 
-                            @empty
 
-                            <div class="text-center text-muted py-5">
-                                <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
-                                No Notifications
-                            </div>
+                            {{-- Footer --}}
+                            <a href="{{ route('notifications.index') }}" class="notification-menu-footer">
 
-                            @endforelse
-
-                        </div>
-
-                        {{-- Footer --}}
-                        <div class="border-top text-center">
-                            <a href="{{ route('notifications.index') }}" class="dropdown-item py-2 fw-semibold">
                                 View All Notifications
+
+                                <i class="bi bi-arrow-right"></i>
+
                             </a>
+
                         </div>
 
                     </div>
 
-                </div>
 
-                {{-- User --}}
-                <div class="dropdown">
+                    {{-- User --}}
+                    {{-- User --}}
+                    <div class="dropdown">
 
-                    <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button type="button" class="account-user-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 
-                        <img src="{{ auth()->user()->avatar_url }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;" alt="Avatar">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="account-user-avatar">
 
-                        <span>{{ auth()->user()->name }}</span>
+                            <span class="account-user-name">
+                                {{ auth()->user()->name }}
+                            </span>
 
-                    </button>
+                        </button>
 
-                    <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end account-user-menu">
 
-                        <li>
-                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-person me-2"></i>
-                                Profile
-                            </a>
-                        </li>
+                            {{-- Admin Dashboard --}}
+                            @if(auth()->user()->hasRole('admin'))
+                            <li>
+                                <a href="{{ route('admin.dashboard.index') }}" class="dropdown-item">
+                                    <i class="bi bi-speedometer2"></i>
+                                    Admin Dashboard
+                                </a>
+                            </li>
 
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            @endif
 
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST" class="m-0">
-                                @csrf
 
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2"></i>
-                                    Logout
-                                </button>
-                            </form>
-                        </li>
+                            {{-- Profile --}}
+                            <li>
+                                <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                                    <i class="bi bi-person"></i>
+                                    Profile
+                                </a>
+                            </li>
 
-                    </ul>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+
+                            {{-- Logout --}}
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                    @csrf
+
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+
+                        </ul>
+
+                    </div>
 
                 </div>
 

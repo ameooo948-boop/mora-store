@@ -4,163 +4,323 @@
 
 @section('content')
 
-<div class="container py-5">
+<div class="notifications-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container">
 
-        <div>
+        {{-- =====================================================
+            HEADER
+        ====================================================== --}}
 
-            <h3 class="fw-bold mb-1">
+        <div class="notifications-header">
 
-                Notifications
+            <div class="notifications-header-content">
 
-            </h3>
+                <span class="notifications-eyebrow">
+                    <i class="bi bi-bell-fill"></i>
+                    ACCOUNT CENTER
+                </span>
 
-            <p class="text-muted mb-0">
+                <h1>
+                    Notifications
+                </h1>
 
-                View all your notifications.
+                <p>
+                    Stay up to date with your latest account activity.
+                </p>
 
-            </p>
+            </div>
+
+            @if($notifications->whereNull('read_at')->count())
+
+            <form action="{{ route('notifications.read-all') }}" method="POST">
+
+                @csrf
+                @method('PATCH')
+
+                <button type="submit" class="mark-all-btn">
+
+                    <i class="bi bi-check2-all"></i>
+
+                    <span>
+                        Mark All As Read
+                    </span>
+
+                </button>
+
+            </form>
+
+            @endif
 
         </div>
 
-        @if($notifications->whereNull('read_at')->count())
 
-        <form action="{{ route('notifications.read-all') }}" method="POST">
+        {{-- =====================================================
+            MAIN CARD
+        ====================================================== --}}
 
-            @csrf
+        <section class="notifications-card">
 
-            @method('PATCH')
 
-            <button class="btn btn-outline-primary">
+            {{-- =================================================
+                SUMMARY
+            ================================================== --}}
 
-                <i class="bi bi-check2-all me-2"></i>
+            <div class="notifications-card-top">
 
-                Mark All As Read
+                <div class="notifications-summary">
 
-            </button>
-
-        </form>
-
-        @endif
-
-    </div>
-
-    <div class="card border-0 shadow-sm">
-
-        <div class="list-group list-group-flush">
-
-            @forelse($notifications as $notification)
-
-            <div class="list-group-item py-3">
-
-                <div class="d-flex justify-content-between align-items-start">
-
-                    <div class="d-flex">
-
-                        <div class="me-3">
-
-                            <i class="bi {{ $notification->data['icon'] }} fs-3 text-primary"></i>
-
-                        </div>
-
-                        <div>
-
-                            <h6 class="mb-1">
-
-                                {{ $notification->data['title'] }}
-
-                            </h6>
-
-                            <p class="mb-1 text-muted">
-
-                                {{ $notification->data['message'] }}
-
-                            </p>
-
-                            <small class="text-secondary">
-
-                                {{ $notification->created_at->diffForHumans() }}
-
-                            </small>
-
-                        </div>
-
+                    <div class="notifications-summary-icon">
+                        <i class="bi bi-bell"></i>
                     </div>
 
-                    <div class="text-end">
-                        @if(is_null($notification->read_at))
+                    <div class="notifications-summary-text">
 
-                        <span class="badge bg-primary mb-2">
-
-                            New
-
+                        <span>
+                            YOUR ACTIVITY
                         </span>
 
-                        <form action="{{ route('notifications.read',$notification->id) }}" method="POST">
-
-                            @csrf
-
-                            @method('PATCH')
-
-                            <button class="btn btn-sm btn-outline-secondary">
-
-                                Mark Read
-
-                            </button>
-
-                        </form>
-
-                        @endif
-
-                        @if(!empty($notification->data['url']))
-
-                        <a href="{{ $notification->data['url'] }}" class="btn btn-sm btn-link mt-2">
-
-                            View
-
-                        </a>
-
-                        @endif
+                        <strong>
+                            {{ $notifications->total() }}
+                            {{ Str::plural('Notification', $notifications->total()) }}
+                        </strong>
 
                     </div>
 
                 </div>
 
+
+                @if($notifications->whereNull('read_at')->count())
+
+                <div class="unread-counter">
+
+                    <span></span>
+
+                    {{ $notifications->whereNull('read_at')->count() }}
+
+                    unread
+
+                </div>
+
+                @else
+
+                <div class="all-read-badge">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    All caught up
+
+                </div>
+
+                @endif
+
             </div>
 
-            @empty
 
-            <div class="text-center py-5">
+            {{-- =================================================
+                NOTIFICATIONS LIST
+            ================================================== --}}
 
-                <i class="bi bi-bell display-4 text-secondary"></i>
+            <div class="notifications-list">
 
-                <h5 class="mt-3">
+                @forelse($notifications as $notification)
 
-                    No Notifications
+                @php
 
-                </h5>
+                $isUnread = is_null($notification->read_at);
 
-                <p class="text-muted mb-0">
+                $icon = $notification->data['icon'] ?? 'bi-bell';
 
-                    You don't have any notifications yet.
+                $title = $notification->data['title'] ?? 'Notification';
 
-                </p>
+                $message = $notification->data['message'] ?? '';
+
+                $url = $notification->data['url'] ?? null;
+
+                @endphp
+
+
+                <article class="notification-item {{ $isUnread ? 'is-unread' : '' }}">
+
+
+                    {{-- Unread Indicator --}}
+
+                    @if($isUnread)
+
+                    <span class="notification-unread-dot"></span>
+
+                    @endif
+
+
+                    {{-- Icon --}}
+
+                    <div class="notification-icon">
+
+                        <i class="bi {{ $icon }}"></i>
+
+                    </div>
+
+
+                    {{-- Content --}}
+
+                    <div class="notification-content">
+
+                        <div class="notification-title-row">
+
+                            <h2>
+                                {{ $title }}
+                            </h2>
+
+                            @if($isUnread)
+
+                            <span class="notification-new">
+                                New
+                            </span>
+
+                            @endif
+
+                        </div>
+
+
+                        @if($message)
+
+                        <p>
+                            {{ $message }}
+                        </p>
+
+                        @endif
+
+
+                        <div class="notification-meta">
+
+                            <span>
+
+                                <i class="bi bi-clock"></i>
+
+                                {{ $notification->created_at->diffForHumans() }}
+
+                            </span>
+
+                            <span class="notification-meta-separator">
+                                •
+                            </span>
+
+                            <span>
+
+                                {{ $notification->created_at->format('d M Y') }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- Actions --}}
+
+                    <div class="notification-actions">
+
+                        @if($url)
+
+                        <a href="{{ $url }}" class="notification-view-btn">
+
+                            <span>
+                                View
+                            </span>
+
+                            <i class="bi bi-arrow-up-right"></i>
+
+                        </a>
+
+                        @endif
+
+
+                        @if($isUnread)
+
+                        <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
+
+                            @csrf
+                            @method('PATCH')
+
+                            <button type="submit" class="notification-read-btn" title="Mark as read">
+
+                                <i class="bi bi-check2"></i>
+
+                                <span>
+                                    Mark Read
+                                </span>
+
+                            </button>
+
+                        </form>
+
+                        @else
+
+                        <span class="notification-read-status">
+
+                            <i class="bi bi-check2-circle"></i>
+
+                            Read
+
+                        </span>
+
+                        @endif
+
+                    </div>
+
+                </article>
+
+
+                @empty
+
+
+                {{-- =================================================
+                    EMPTY STATE
+                ================================================== --}}
+
+                <div class="notifications-empty">
+
+                    <div class="notifications-empty-icon">
+
+                        <i class="bi bi-bell-slash"></i>
+
+                    </div>
+
+                    <span>
+                        ALL QUIET
+                    </span>
+
+                    <h2>
+                        No Notifications
+                    </h2>
+
+                    <p>
+                        You don't have any notifications yet.
+                        We'll let you know when something important happens.
+                    </p>
+
+                </div>
+
+                @endforelse
 
             </div>
 
-            @endforelse
-        </div>
 
-        @if($notifications instanceof \Illuminate\Contracts\Pagination\Paginator)
+            {{-- =================================================
+                PAGINATION
+            ================================================== --}}
 
-        <div class="card-footer">
+            @if($notifications instanceof \Illuminate\Contracts\Pagination\Paginator)
 
-            {{ $notifications->links() }}
+            <div class="notifications-pagination">
 
-        </div>
+                {{ $notifications->links() }}
 
-        @endif
+            </div>
+
+            @endif
+
+        </section>
 
     </div>
 

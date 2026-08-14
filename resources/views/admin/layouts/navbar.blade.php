@@ -1,30 +1,76 @@
-<nav class="navbar-custom">
+<nav class="admin-topbar">
 
-    <div>
+    {{-- =========================
+         PAGE TITLE
+    ========================== --}}
 
-        <h4 class="mb-0">
+    <div class="admin-topbar-title">
 
-            @yield('page-title')
+        <div class="admin-page-icon">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </div>
 
-        </h4>
+        <div>
+
+            <span>
+                ADMIN PANEL
+            </span>
+
+            <h4>
+                @yield('page-title', 'Dashboard')
+            </h4>
+
+        </div>
 
     </div>
 
-    <div class="d-flex align-items-center gap-3">
 
-        <span class="fw-semibold">
+    {{-- =========================
+         RIGHT SIDE
+    ========================== --}}
 
-            {{ auth()->user()->name }}
+    <div class="admin-topbar-actions">
 
-        </span>
 
-        <form method="POST" action="{{ route('logout') }}">
+        {{-- Current User --}}
+
+        <div class="admin-current-user">
+
+            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="admin-current-avatar">
+
+            <div class="admin-current-user-info">
+
+                <strong>
+                    {{ auth()->user()->name }}
+                </strong>
+
+                <span>
+                    Administrator
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {{-- Divider --}}
+
+        <div class="admin-topbar-divider"></div>
+
+
+        {{-- Logout --}}
+
+        <form method="POST" action="{{ route('logout') }}" class="m-0">
 
             @csrf
 
-            <button class="btn btn-outline-danger">
+            <button type="submit" class="admin-logout-btn" title="Logout">
 
                 <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Logout
+                </span>
 
             </button>
 

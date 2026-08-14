@@ -1,110 +1,155 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Stock Movements')
-
 @section('page-title', 'Stock Movements')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="stock-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- =====================================================
+         PAGE HEADER
+    ====================================================== --}}
 
-        <div>
+    <div class="stock-hero">
 
-            <h3 class="fw-bold mb-1">
-                Stock Movements
-            </h3>
+        <div class="stock-hero-left">
 
-            <p class="text-muted mb-0">
-                Track all inventory movements
-            </p>
+            <div class="stock-hero-icon">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
+
+            <div>
+
+                <span class="stock-eyebrow">
+                    INVENTORY MANAGEMENT
+                </span>
+
+                <h1>
+                    Stock Movements
+                </h1>
+
+                <p>
+                    Track and monitor all inventory movements.
+                </p>
+
+            </div>
 
         </div>
 
     </div>
 
-    <div class="row mb-4">
 
-        <div class="col">
+    {{-- =====================================================
+         STATISTICS
+    ====================================================== --}}
 
-            <div class="card shadow-sm border-0">
+    <div class="stock-stats">
 
-                <div class="card-body">
+        <div class="stock-stat-card">
 
-                    <small class="text-muted">
-                        Total Movements
-                    </small>
+            <div class="stock-stat-icon blue">
+                <i class="bi bi-arrow-left-right"></i>
+            </div>
 
-                    <h2 class="fw-bold mt-2">
-                        {{ $statistics['total'] }}
-                    </h2>
-
-                </div>
-
+            <div>
+                <span>Total Movements</span>
+                <strong>{{ $statistics['total'] }}</strong>
             </div>
 
         </div>
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0">
+        <div class="stock-stat-card">
 
-                <div class="card-body">
+            <div class="stock-stat-icon green">
+                <i class="bi bi-arrow-up-circle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
-                        Increase
-                    </small>
-
-                    <h2 class="fw-bold text-success mt-2">
-                        {{ $statistics['increase'] }}
-                    </h2>
-
-                </div>
-
+            <div>
+                <span>Increase</span>
+                <strong class="text-success">
+                    {{ $statistics['increase'] }}
+                </strong>
             </div>
 
         </div>
 
-        <div class="col">
 
-            <div class="card shadow-sm border-0">
+        <div class="stock-stat-card">
 
-                <div class="card-body">
+            <div class="stock-stat-icon red">
+                <i class="bi bi-arrow-down-circle-fill"></i>
+            </div>
 
-                    <small class="text-muted">
-                        Decrease
-                    </small>
-
-                    <h2 class="fw-bold text-danger mt-2">
-                        {{ $statistics['decrease'] }}
-                    </h2>
-
-                </div>
-
+            <div>
+                <span>Decrease</span>
+                <strong class="text-danger">
+                    {{ $statistics['decrease'] }}
+                </strong>
             </div>
 
         </div>
-        
+
     </div>
 
-    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="card-body">
+    {{-- =====================================================
+         FILTERS
+    ====================================================== --}}
 
-            <form method="GET">
+    <div class="stock-filter-card">
 
-                <div class="row g-3">
+        <div class="stock-filter-header">
 
-                    <div class="col-md-6">
+            <div class="stock-filter-title">
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by product...">
+                <div class="stock-filter-icon">
+                    <i class="bi bi-funnel-fill"></i>
+                </div>
+
+                <div>
+                    <strong>Search & Filter</strong>
+                    <span>Find specific inventory movements.</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <form method="GET">
+
+            <div class="stock-filter-body">
+
+                <div class="stock-field search-field">
+
+                    <label>
+                        Search
+                    </label>
+
+                    <div class="stock-input-wrap">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by product...">
 
                     </div>
 
-                    <div class="col-md-3">
+                </div>
 
-                        <select name="type" class="form-select">
+
+                <div class="stock-field">
+
+                    <label>
+                        Movement Type
+                    </label>
+
+                    <div class="stock-select-wrap">
+
+                        <i class="bi bi-arrow-left-right"></i>
+
+                        <select name="type">
 
                             <option value="">
                                 All Types
@@ -114,9 +159,7 @@
 
                             <option value="{{ $type->value }}" @selected(request('type')==$type->value)
                                 >
-
                                 {{ $type->label() }}
-
                             </option>
 
                             @endforeach
@@ -125,77 +168,78 @@
 
                     </div>
 
-                    <div class="col-md-3 d-grid">
-
-                        <button class="btn btn-primary">
-
-                            <i class="bi bi-search me-2"></i>
-
-                            Filter
-
-                        </button>
-
-                    </div>
-
                 </div>
 
-            </form>
 
-        </div>
+                <button class="stock-filter-btn">
+
+                    <i class="bi bi-search"></i>
+
+                    Filter
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
-    <div class="card shadow-sm border-0">
 
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    {{-- =====================================================
+         MOVEMENTS TABLE
+    ====================================================== --}}
 
-            <h5 class="mb-0">
+    <div class="stock-table-card">
 
-                Stock Movements
+        <div class="stock-table-header">
 
-            </h5>
+            <div>
 
-            <small class="text-muted">
+                <span class="stock-table-eyebrow">
+                    INVENTORY LOG
+                </span>
 
-                Showing {{ $movements->total() }} Movements
+                <h2>
+                    All Stock Movements
+                </h2>
 
-            </small>
+            </div>
+
+            <div class="stock-table-count">
+
+                <i class="bi bi-box-seam"></i>
+
+                {{ $movements->total() }} movements
+
+            </div>
 
         </div>
 
+
         <div class="table-responsive">
 
-            <table class="table align-middle mb-0">
+            <table class="stock-table">
 
-                <thead class="table-light">
+                <thead>
 
                     <tr>
 
                         <th>ID</th>
-
-                        <th>Product</th>
-
-                        <th>Type</th>
-
-                        <th>Quantity</th>
-
-                        <th>Before</th>
-
-                        <th>After</th>
-
-                        <th>User</th>
-
-                        <th>Reference</th>
-
-                        <th>Date</th>
-
-                        <th width="80" class="text-center">
-                            Actions
-                        </th>
+                        <th>PRODUCT</th>
+                        <th>TYPE</th>
+                        <th>QUANTITY</th>
+                        <th>BEFORE</th>
+                        <th>AFTER</th>
+                        <th>USER</th>
+                        <th>REFERENCE</th>
+                        <th>DATE</th>
+                        <th class="text-center">ACTION</th>
 
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -203,31 +247,51 @@
 
                     <tr>
 
+                        {{-- ID --}}
+
                         <td>
 
-                            <span class="badge bg-light text-dark">
-
+                            <span class="stock-id">
                                 #{{ $movement->id }}
-
                             </span>
 
                         </td>
 
+
+                        {{-- PRODUCT --}}
+
                         <td>
 
-                            <div class="fw-semibold">
+                            <div class="stock-product">
 
-                                {{ $movement->product->name }}
+                                <div class="stock-product-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {{ $movement->product->name }}
+                                    </strong>
+
+                                    <small>
+                                        Product inventory
+                                    </small>
+
+                                </div>
 
                             </div>
 
                         </td>
 
+
+                        {{-- TYPE --}}
+
                         <td>
 
-                            <span class="badge bg-{{ $movement->type->badge() }}">
+                            <span class="stock-type {{ strtolower($movement->type->value) }}">
 
-                                <i class="bi {{ $movement->type->icon() }} me-1"></i>
+                                <i class="bi {{ $movement->type->icon() }}"></i>
 
                                 {{ $movement->type->label() }}
 
@@ -235,45 +299,72 @@
 
                         </td>
 
+
+                        {{-- QUANTITY --}}
+
                         <td>
 
                             @if($movement->type === \App\Enums\StockMovementType::Decrease)
 
-                            <span class="fw-bold text-danger">
-
+                            <span class="stock-quantity decrease">
                                 -{{ $movement->quantity }}
-
                             </span>
 
                             @else
 
-                            <span class="fw-bold text-success">
-
+                            <span class="stock-quantity increase">
                                 +{{ $movement->quantity }}
-
                             </span>
 
                             @endif
 
                         </td>
 
-                        <td>
 
-                            {{ $movement->before_quantity }}
-
-                        </td>
+                        {{-- BEFORE --}}
 
                         <td>
 
-                            {{ $movement->after_quantity }}
+                            <span class="stock-number">
+                                {{ $movement->before_quantity }}
+                            </span>
 
                         </td>
+
+
+                        {{-- AFTER --}}
 
                         <td>
 
-                            {{ $movement->user?->name ?? 'System' }}
+                            <span class="stock-number after">
+                                {{ $movement->after_quantity }}
+                            </span>
 
                         </td>
+
+
+                        {{-- USER --}}
+
+                        <td>
+
+                            <div class="stock-user">
+
+                                <div class="stock-user-avatar">
+
+                                    {{ strtoupper(substr($movement->user?->name ?? 'S', 0, 1)) }}
+
+                                </div>
+
+                                <span>
+                                    {{ $movement->user?->name ?? 'System' }}
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        {{-- REFERENCE --}}
 
                         <td>
 
@@ -281,7 +372,9 @@
 
                             @if($movement->reference instanceof \App\Models\Order)
 
-                            <a href="{{ route('admin.orders.show', $movement->reference) }}" class="text-decoration-none">
+                            <a href="{{ route('admin.orders.show', $movement->reference) }}" class="stock-reference">
+
+                                <i class="bi bi-receipt"></i>
 
                                 Order #{{ $movement->reference->id }}
 
@@ -289,57 +382,55 @@
 
                             @else
 
-                            {{ class_basename($movement->reference_type) }}
+                            <span class="stock-reference-text">
 
-                            #{{ $movement->reference_id }}
+                                {{ class_basename($movement->reference_type) }}
+
+                                #{{ $movement->reference_id }}
+
+                            </span>
 
                             @endif
 
                             @else
 
-                            <span class="text-muted">
-
-                                -
-
+                            <span class="stock-empty">
+                                —
                             </span>
 
                             @endif
 
                         </td>
 
+
+                        {{-- DATE --}}
+
                         <td>
 
-                            {{ $movement->created_at->format('M d, Y h:i A') }}
+                            <div class="stock-date">
+
+                                <strong>
+                                    {{ $movement->created_at->format('M d, Y') }}
+                                </strong>
+
+                                <small>
+                                    {{ $movement->created_at->format('h:i A') }}
+                                </small>
+
+                            </div>
 
                         </td>
 
+
+                        {{-- ACTION --}}
+
                         <td class="text-center">
 
-                            <div class="dropdown">
+                            <a href="{{ route('admin.stock-movements.show', $movement) }}" class="stock-view-btn" title="View Movement">
 
-                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                                <i class="bi bi-eye"></i>
 
-                                    <i class="bi bi-three-dots-vertical"></i>
-
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-menu-end">
-
-                                    <li>
-
-                                        <a href="{{ route('admin.stock-movements.show', $movement) }}" class="dropdown-item">
-
-                                            <i class="bi bi-eye me-2"></i>
-
-                                            View
-
-                                        </a>
-
-                                    </li>
-
-                                </ul>
-
-                            </div>
+                            </a>
 
                         </td>
 
@@ -351,20 +442,18 @@
 
                         <td colspan="10">
 
-                            <div class="text-center py-5">
+                            <div class="stock-empty-state">
 
-                                <i class="bi bi-box-seam display-4 text-secondary"></i>
+                                <div class="stock-empty-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
 
-                                <h5 class="mt-3">
-
+                                <h3>
                                     No Stock Movements Found
+                                </h3>
 
-                                </h5>
-
-                                <p class="text-muted mb-0">
-
+                                <p>
                                     There are no stock movements matching your search.
-
                                 </p>
 
                             </div>
@@ -381,9 +470,10 @@
 
         </div>
 
+
         @if($movements->hasPages())
 
-        <div class="card-footer">
+        <div class="stock-pagination">
 
             {{ $movements->links() }}
 

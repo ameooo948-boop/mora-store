@@ -43,7 +43,9 @@ class OrderService
     ): Order {
         return DB::transaction(function () use ($user, $addressId, $paymentMethod, $couponCode) {
 
-            $cart = $this->cartService->getCart($user->id);
+            $cart = $this->cartService->getCartForUpdate(
+                $user->id
+            );
 
             if ($cart->items->isEmpty()) {
                 throw ValidationException::withMessages([
@@ -67,18 +69,31 @@ class OrderService
 
             if ($couponCode) {
 
-                $couponData = $this->couponService
-                    ->applyCoupon(
-                        $couponCode,
+                $coupon = $this->couponService
+                    ->findByCodeForUpdate($couponCode);
+
+                if (! $coupon) {
+                    throw ValidationException::withMessages([
+                        'coupon' => __('Coupon not found.'),
+                    ]);
+                }
+
+                $this->couponService->validateCoupon(
+                    $coupon,
+                    $totals['subtotal']
+                );
+
+                $discount = $this->couponService
+                    ->calculateDiscount(
+                        $coupon,
                         $totals['subtotal']
                     );
 
-                $coupon = $couponData['coupon'];
-
-                $totals['discount'] = $couponData['discount'];
+                $totals['discount'] = $discount;
 
                 $totals['total'] =
-                    $couponData['total'] + $totals['shipping'];
+                    max(0, $totals['subtotal'] - $discount)
+                    + $totals['shipping'];
             }
 
             $order = $this->orderRepository->create([
@@ -111,7 +126,7 @@ class OrderService
             );
 
             $items = [];
-            
+
             foreach ($cart->items as $item) {
 
                 $items[] = [
@@ -278,35 +293,55 @@ class OrderService
         Order $order,
         OrderStatus $status
     ): Order {
+        return DB::transaction(function () use ($order, $status) {
 
-        $currentStatus = $order->status;
+            $currentStatus = $order->status;
 
-        if (! $currentStatus->canTransitionTo($status)) {
-            throw new DomainException(
-                'Invalid order status transition.'
-            );
-        }
+            if (! $currentStatus->canTransitionTo($status)) {
+                throw new DomainException(
+                    'Invalid order status transition.'
+                );
+            }
 
-        $oldStatus = $currentStatus;
+            $oldStatus = $currentStatus;
 
-        $updatedOrder = $this->orderRepository->update(
-            $order,
-            [
-                'status' => $status,
-            ]
-        );
-
-        $this->historyService->create(
-            $updatedOrder,
-            $oldStatus,
-            $status
-        );
-
-        $this->notificationService
-            ->orderStatusChanged(
-                $order
+            $updatedOrder = $this->orderRepository->update(
+                $order,
+                [
+                    'status' => $status,
+                ]
             );
 
-        return $updatedOrder;
+            /*
+        |--------------------------------------------------------------------------
+        | Restore stock when order is cancelled
+        |--------------------------------------------------------------------------
+        */
+
+            if ($status === OrderStatus::Cancelled) {
+
+                $order->loadMissing('items.product');
+
+                foreach ($order->items as $item) {
+                    $this->productService->increaseStock(
+                        product: $item->product,
+                        quantity: $item->quantity,
+                        reference: $order,
+                    );
+                }
+            }
+
+            $this->historyService->create(
+                $updatedOrder,
+                $oldStatus,
+                $status
+            );
+
+            $this->notificationService->orderStatusChanged(
+                $updatedOrder
+            );
+
+            return $updatedOrder;
+        });
     }
 }

@@ -2,26 +2,28 @@ const mainImage = document.getElementById('mainImage');
 
 if (mainImage) {
 
-    const thumbnails = document.querySelectorAll('.thumbnail-image');
+    document.querySelectorAll('.product-thumbnail').forEach((thumbnail) => {
+        thumbnail.addEventListener('click', function () {
+            const mainImage = document.getElementById('mainImage');
 
-    thumbnails.forEach(image => {
+            if (!mainImage) {
+                return;
+            }
 
-        image.addEventListener('click', function () {
+            const imageUrl = this.dataset.image;
 
-            mainImage.src = this.dataset.image;
+            if (!imageUrl) {
+                return;
+            }
 
-            thumbnails.forEach(img => img.classList.remove('active'));
+            mainImage.src = imageUrl;
+
+            document
+                .querySelectorAll('.product-thumbnail')
+                .forEach((item) => item.classList.remove('active'));
 
             this.classList.add('active');
-
         });
-
     });
-
-    if (thumbnails.length) {
-
-        thumbnails[0].classList.add('active');
-
-    }
 
 }

@@ -1,259 +1,300 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Users')
-
 @section('page-title', 'Users')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="users-page">
 
-    <div class="row mb-4">
+    {{-- =====================================================
+         PAGE HEADER
+    ====================================================== --}}
 
-        <div class="col-md-3">
+    <div class="users-page-header">
 
-            <div class="card border-0 shadow-sm">
+        <div>
 
-                <div class="card-body">
+            <span class="users-eyebrow">
+                USER MANAGEMENT
+            </span>
 
-                    <small class="text-muted">
+            <h1>
+                Users
+            </h1>
 
-                        Total Users
-
-                    </small>
-
-                    <h2 class="fw-bold mt-2">
-
-                        {{ $statistics['total'] }}
-
-                    </h2>
-
-                </div>
-
-            </div>
+            <p>
+                Manage customers, vendors and administrators
+            </p>
 
         </div>
 
-        <div class="col-md-3">
+        <a href="{{ route('admin.users.create') }}" class="users-add-btn">
 
-            <div class="card border-0 shadow-sm">
+            <i class="bi bi-plus-lg"></i>
 
-                <div class="card-body">
+            Add User
 
-                    <small class="text-muted">
-
-                        Admins
-
-                    </small>
-
-                    <h2 class="fw-bold text-danger mt-2">
-
-                        {{ $statistics['admins'] }}
-
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Vendors
-
-                    </small>
-
-                    <h2 class="fw-bold text-warning mt-2">
-
-                        {{ $statistics['vendor'] }}
-
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <small class="text-muted">
-
-                        Customers
-
-                    </small>
-
-                    <h2 class="fw-bold text-primary mt-2">
-
-                        {{ $statistics['customers'] }}
-
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
+        </a>
 
     </div>
 
-    <div class="card border-0 shadow-sm mb-4">
 
-        <div class="card-body">
+    {{-- =====================================================
+         STATISTICS
+    ====================================================== --}}
 
-            <form method="GET" action="{{ route('admin.users.index') }}">
+    <div class="users-stats">
 
-                <div class="row g-3">
+        <div class="users-stat-card">
 
-                    <div class="col-md-5">
-
-                        <input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="{{ request('search') }}">
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <select name="role" class="form-select">
-
-                            <option value="">
-
-                                All Roles
-
-                            </option>
-
-                            @foreach($roles as $role)
-
-                            <option value="{{ $role->name }}" @selected(request('role')==$role->name)>
-
-                                {{ ucfirst($role->name) }}
-
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-3 d-flex gap-2">
-
-                        <button class="btn btn-primary flex-fill">
-
-                            <i class="bi bi-search me-2"></i>
-
-                            Filter
-
-                        </button>
-
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-light">
-
-                            Reset
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-    <div class="card border-0 shadow-sm">
-
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div class="users-stat-icon blue">
+                <i class="bi bi-people-fill"></i>
+            </div>
 
             <div>
 
-                <h5 class="mb-1">
+                <span>
+                    Total Users
+                </span>
 
-                    Users
-
-                </h5>
-
-                <small class="text-muted">
-
-                    Showing {{ $users->total() }} Users
-
-                </small>
+                <strong>
+                    {{ $statistics['total'] }}
+                </strong>
 
             </div>
 
-            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+        </div>
 
-                <i class="bi bi-plus-circle me-2"></i>
 
-                Add User
+        <div class="users-stat-card">
 
-            </a>
+            <div class="users-stat-icon red">
+                <i class="bi bi-shield-fill-check"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Admins
+                </span>
+
+                <strong>
+                    {{ $statistics['admins'] }}
+                </strong>
+
+            </div>
 
         </div>
 
+
+        <div class="users-stat-card">
+
+            <div class="users-stat-icon orange">
+                <i class="bi bi-shop"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Vendors
+                </span>
+
+                <strong>
+                    {{ $statistics['vendor'] }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="users-stat-card">
+
+            <div class="users-stat-icon purple">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Customers
+                </span>
+
+                <strong>
+                    {{ $statistics['customers'] }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         FILTERS
+    ====================================================== --}}
+
+    <div class="users-filter-card">
+
+        <form method="GET" action="{{ route('admin.users.index') }}">
+
+            <div class="users-filter-grid">
+
+                <div class="users-search">
+
+                    <label>
+                        Search
+                    </label>
+
+                    <div class="users-input-icon">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email...">
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Role
+                    </label>
+
+                    <select name="role" class="users-select">
+
+                        <option value="">
+                            All Roles
+                        </option>
+
+                        @foreach($roles as $role)
+
+                        <option value="{{ $role->name }}" @selected(request('role')==$role->name)
+                            >
+                            {{ ucfirst($role->name) }}
+                        </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                <div class="users-filter-actions">
+
+                    <button type="submit" class="users-filter-btn">
+
+                        <i class="bi bi-funnel"></i>
+
+                        Filter
+
+                    </button>
+
+                    <a href="{{ route('admin.users.index') }}" class="users-reset-btn">
+                        Reset
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- =====================================================
+         USERS TABLE
+    ====================================================== --}}
+
+    <div class="users-table-card">
+
+        <div class="users-table-header">
+
+            <div>
+
+                <strong>
+                    Users
+                </strong>
+
+                <span>
+                    Showing {{ $users->total() }} users
+                </span>
+
+            </div>
+
+            <div class="users-count">
+
+                <i class="bi bi-people"></i>
+
+                {{ $users->total() }}
+
+            </div>
+
+        </div>
+
+
         <div class="table-responsive">
 
-            <table class="table align-middle mb-0">
+            <table class="users-table">
 
-                <thead class="table-light">
+                <thead>
 
                     <tr>
 
-                        <th>User</th>
+                        <th>
+                            User
+                        </th>
 
-                        <th>Role</th>
+                        <th>
+                            Role
+                        </th>
 
-                        <th>Created</th>
+                        <th>
+                            Created
+                        </th>
 
-                        <th class="text-center" width="80">
-
+                        <th class="text-center">
                             Actions
-
                         </th>
 
                     </tr>
 
                 </thead>
 
+
                 <tbody>
+
                     @forelse($users as $user)
 
                     <tr>
 
+                        {{-- USER --}}
+
                         <td>
 
-                            <div class="d-flex align-items-center">
+                            <div class="user-cell">
 
-                                <div class="rounded-circle bg-primary text-white fw-bold d-flex justify-content-center align-items-center" style="width:45px;height:45px;">
+                                <div class="user-avatar">
 
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
 
                                 </div>
 
-                                <div class="ms-3">
+                                <div>
 
-                                    <div class="fw-semibold">
-
+                                    <strong>
                                         {{ $user->name }}
+                                    </strong>
 
-                                    </div>
-
-                                    <small class="text-muted">
-
+                                    <span>
                                         {{ $user->email }}
-
-                                    </small>
+                                    </span>
 
                                 </div>
 
@@ -261,105 +302,110 @@
 
                         </td>
 
-                        <td>
 
-                            @foreach($user->roles as $role)
-
-                            @php
-
-                            $badgeClass = match ($role->name) {
-
-                            'admin' => 'bg-danger',
-
-                            'vendor' => 'bg-warning text-dark',
-
-                            'customer' => 'bg-primary',
-
-                            default => 'bg-secondary',
-
-                            };
-
-                            @endphp
-
-                            <span class="badge {{ $badgeClass }} me-1">
-
-                                {{ ucfirst($role->name) }}
-
-                            </span>
-
-                            @endforeach
-
-                        </td>
+                        {{-- ROLE --}}
 
                         <td>
 
-                            {{ $user->created_at->format('Y-m-d') }}
+                            <div class="user-roles">
+
+                                @foreach($user->roles as $role)
+
+                                @php
+
+                                $roleClass = match ($role->name) {
+
+                                'admin' => 'admin',
+
+                                'vendor' => 'vendor',
+
+                                'customer' => 'customer',
+
+                                default => 'default',
+
+                                };
+
+                                @endphp
+
+                                <span class="user-role {{ $roleClass }}">
+
+                                    @if($role->name === 'admin')
+
+                                    <i class="bi bi-shield-fill-check"></i>
+
+                                    @elseif($role->name === 'vendor')
+
+                                    <i class="bi bi-shop"></i>
+
+                                    @elseif($role->name === 'customer')
+
+                                    <i class="bi bi-person"></i>
+
+                                    @else
+
+                                    <i class="bi bi-person-badge"></i>
+
+                                    @endif
+
+                                    {{ ucfirst($role->name) }}
+
+                                </span>
+
+                                @endforeach
+
+                            </div>
 
                         </td>
 
-                        <td class="text-center">
 
-                            <div class="dropdown">
+                        {{-- CREATED --}}
 
-                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                        <td>
 
-                                    <i class="bi bi-three-dots-vertical"></i>
+                            <div class="user-date">
 
-                                </button>
+                                <i class="bi bi-calendar3"></i>
 
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                {{ $user->created_at->format('M d, Y') }}
 
-                                    <li>
+                            </div>
 
-                                        <a href="{{ route('admin.users.show', $user) }}" class="dropdown-item">
+                        </td>
 
-                                            <i class="bi bi-eye me-2"></i>
 
-                                            View
+                        {{-- ACTIONS --}}
 
-                                        </a>
+                        <td>
 
-                                    </li>
+                            <div class="user-actions">
 
-                                    <li>
+                                <a href="{{ route('admin.users.show', $user) }}" class="user-action view" title="View User">
 
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="dropdown-item">
+                                    <i class="bi bi-eye"></i>
 
-                                            <i class="bi bi-pencil-square me-2"></i>
+                                </a>
 
-                                            Edit
 
-                                        </a>
+                                <a href="{{ route('admin.users.edit', $user) }}" class="user-action edit" title="Edit User">
 
-                                    </li>
+                                    <i class="bi bi-pencil-square"></i>
 
-                                    <li>
+                                </a>
 
-                                        <hr class="dropdown-divider">
 
-                                    </li>
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="delete-form">
 
-                                    <li>
+                                    @csrf
 
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="delete-form">
+                                    @method('DELETE')
 
-                                            @csrf
+                                    <button type="submit" class="user-action delete" title="Delete User">
 
-                                            @method('DELETE')
+                                        <i class="bi bi-trash3"></i>
 
-                                            <button type="submit" class="dropdown-item text-danger">
+                                    </button>
 
-                                                <i class="bi bi-trash me-2"></i>
-
-                                                Delete
-
-                                            </button>
-
-                                        </form>
-
-                                    </li>
-
-                                </ul>
+                                </form>
 
                             </div>
 
@@ -373,21 +419,21 @@
 
                         <td colspan="4">
 
-                            <div class="text-center py-5">
+                            <div class="users-empty">
 
-                                <i class="bi bi-people display-4 text-secondary"></i>
+                                <div class="users-empty-icon">
 
-                                <h5 class="mt-3">
+                                    <i class="bi bi-people"></i>
 
+                                </div>
+
+                                <strong>
                                     No Users Found
+                                </strong>
 
-                                </h5>
-
-                                <p class="text-muted mb-0">
-
+                                <span>
                                     There are no users matching your search.
-
-                                </p>
+                                </span>
 
                             </div>
 
@@ -403,9 +449,12 @@
 
         </div>
 
+
+        {{-- PAGINATION --}}
+
         @if($users->hasPages())
 
-        <div class="card-footer bg-white">
+        <div class="users-pagination">
 
             {{ $users->links() }}
 

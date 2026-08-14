@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Schema;
 use App\Models\Setting;
 use App\Repositories\Contracts\AddressRepositoryInterface;
 use App\Repositories\Contracts\BrandRepositoryInterface;
@@ -38,9 +37,11 @@ use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\SettingRepository;
 use App\Repositories\Eloquent\StockMovementRepository;
 use App\Repositories\Eloquent\WishlistRepository;
+use App\Services\SettingService;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Services\SettingService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -168,5 +169,7 @@ class AppServiceProvider extends ServiceProvider
                 );
             }
         );
+
+        Paginator::useBootstrapFive();
     }
 }

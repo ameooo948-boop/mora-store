@@ -1,228 +1,500 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Brand Details')
-
 @section('page-title', 'Brand Details')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="brand-details-page">
 
-    <div class="card shadow-sm border-0">
 
-        <div class="card-header d-flex justify-content-between align-items-center">
+    {{-- =====================================================
+         HEADER
+    ====================================================== --}}
 
-            <h4 class="mb-0">
+    <div class="brand-details-hero">
 
-                Brand Details
+        <div class="brand-details-hero-left">
 
-            </h4>
+            <a href="{{ route('admin.brands.index') }}" class="brand-back-btn" title="Back to Brands">
+                <i class="bi bi-arrow-left"></i>
+            </a>
 
             <div>
 
-                <a href="{{ route('admin.brands.edit', $brand) }}" class="btn btn-warning">
+                <span class="brand-details-eyebrow">
+                    BRAND MANAGEMENT
+                </span>
 
-                    <i class="bi bi-pencil-square me-2"></i>
+                <h1>
+                    {{ $brand->name }}
+                </h1>
 
-                    Edit
-
-                </a>
-
-                <a href="{{ route('admin.brands.index') }}" class="btn btn-light">
-
-                    Back
-
-                </a>
+                <p>
+                    View brand information, status and catalog activity.
+                </p>
 
             </div>
 
         </div>
 
-        <div class="card-body">
 
-            <div class="row">
+        <div class="brand-details-actions">
 
-                {{-- Logo --}}
-                <div class="col-md-4">
+            <a href="{{ route('admin.brands.edit', $brand) }}" class="brand-edit-btn">
 
-                    @if($brand->logo)
+                <i class="bi bi-pencil-square"></i>
 
-                    <div class="border rounded p-3 bg-white text-center">
+                Edit Brand
 
-                        <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}" class="img-fluid" style="max-height:300px;object-fit:contain;">
+            </a>
+
+            <a href="{{ route('admin.brands.index') }}" class="brand-back-link">
+
+                <i class="bi bi-grid"></i>
+
+                All Brands
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    {{-- =====================================================
+         OVERVIEW
+    ====================================================== --}}
+
+    <div class="brand-overview-grid">
+
+
+        {{-- =================================================
+             LOGO CARD
+        ================================================== --}}
+
+        <div class="brand-logo-card">
+
+            <div class="brand-logo-card-header">
+
+                <div>
+
+                    <span>
+                        BRAND LOGO
+                    </span>
+
+                    <h3>
+                        Identity
+                    </h3>
+
+                </div>
+
+                @if($brand->status)
+
+                <span class="brand-detail-status active">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    Active
+
+                </span>
+
+                @else
+
+                <span class="brand-detail-status inactive">
+
+                    <i class="bi bi-x-circle-fill"></i>
+
+                    Inactive
+
+                </span>
+
+                @endif
+
+            </div>
+
+
+            <div class="brand-logo-stage">
+
+                @if($brand->logo)
+
+                <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}">
+
+                @else
+
+                <div class="brand-no-logo">
+
+                    <div class="brand-no-logo-icon">
+                        <i class="bi bi-image"></i>
+                    </div>
+
+                    <strong>
+                        No Logo
+                    </strong>
+
+                    <span>
+                        This brand doesn't have a logo yet.
+                    </span>
+
+                </div>
+
+                @endif
+
+            </div>
+
+
+            <div class="brand-logo-name">
+
+                <span>
+                    Brand
+                </span>
+
+                <strong>
+                    {{ $brand->name }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        {{-- =================================================
+             INFORMATION
+        ================================================== --}}
+
+        <div class="brand-information-card">
+
+            <div class="brand-card-header">
+
+                <div class="brand-card-title">
+
+                    <div class="brand-card-icon blue">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Brand Information
+                        </h2>
+
+                        <span>
+                            General information about this brand
+                        </span>
 
                     </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="brand-info-grid">
+
+
+                {{-- Name --}}
+
+                <div class="brand-info-item">
+
+                    <span class="brand-info-label">
+                        <i class="bi bi-tag"></i>
+                        Brand Name
+                    </span>
+
+                    <strong>
+                        {{ $brand->name }}
+                    </strong>
+
+                </div>
+
+
+                {{-- Products --}}
+
+                <div class="brand-info-item">
+
+                    <span class="brand-info-label">
+                        <i class="bi bi-box-seam"></i>
+                        Products
+                    </span>
+
+                    <div>
+
+                        <span class="brand-products-count">
+
+                            <i class="bi bi-box-seam-fill"></i>
+
+                            {{ $brand->products_count }}
+
+                            <small>
+                                products
+                            </small>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Status --}}
+
+                <div class="brand-info-item">
+
+                    <span class="brand-info-label">
+                        <i class="bi bi-activity"></i>
+                        Current Status
+                    </span>
+
+                    @if($brand->status)
+
+                    <span class="brand-detail-status active">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Active
+
+                    </span>
 
                     @else
 
-                    <div class="border rounded bg-light d-flex justify-content-center align-items-center" style="height:300px;">
+                    <span class="brand-detail-status inactive">
 
-                        <div class="text-center">
+                        <i class="bi bi-x-circle-fill"></i>
 
-                            <i class="bi bi-image display-4 text-secondary"></i>
+                        Inactive
 
-                            <p class="text-muted mt-2">
-
-                                No Logo
-
-                            </p>
-
-                        </div>
-
-                    </div>
+                    </span>
 
                     @endif
 
                 </div>
 
-                {{-- Details --}}
-                <div class="col-md-8">
 
-                    <div class="row">
+                {{-- Sort Order --}}
 
-                        <div class="col-md-6 mb-3">
+                @if(isset($brand->sort_order))
 
-                            <label class="fw-semibold">
+                <div class="brand-info-item">
 
-                                Name
+                    <span class="brand-info-label">
+                        <i class="bi bi-sort-numeric-down"></i>
+                        Sort Order
+                    </span>
 
-                            </label>
+                    <strong>
+                        #{{ $brand->sort_order }}
+                    </strong>
 
-                            <div class="form-control bg-light">
+                </div>
 
-                                {{ $brand->name }}
+                @endif
 
-                            </div>
 
-                        </div>
+                {{-- Created --}}
 
-                        <div class="col-md-6 mb-3">
+                <div class="brand-info-item">
 
-                            <label class="fw-semibold">
+                    <span class="brand-info-label">
+                        <i class="bi bi-calendar-plus"></i>
+                        Created
+                    </span>
 
-                                Products
+                    <strong>
+                        {{ $brand->created_at->format('d M Y') }}
+                    </strong>
 
-                            </label>
+                    <small>
+                        {{ $brand->created_at->format('h:i A') }}
+                    </small>
 
-                            <div>
+                </div>
 
-                                <span class="badge bg-primary fs-6">
 
-                                    {{ $brand->products_count }}
+                {{-- Updated --}}
 
-                                </span>
+                <div class="brand-info-item">
 
-                            </div>
+                    <span class="brand-info-label">
+                        <i class="bi bi-clock-history"></i>
+                        Last Updated
+                    </span>
 
-                        </div>
+                    <strong>
+                        {{ $brand->updated_at->format('d M Y') }}
+                    </strong>
 
-                        <div class="col-md-6 mb-3">
-
-                            <label class="fw-semibold">
-
-                                Status
-
-                            </label>
-
-                            <div>
-
-                                @if($brand->status)
-
-                                <span class="badge bg-success">
-
-                                    Active
-
-                                </span>
-
-                                @else
-
-                                <span class="badge bg-danger">
-
-                                    Inactive
-
-                                </span>
-
-                                @endif
-
-                            </div>
-
-                        </div>
-
-                        @if(isset($brand->sort_order))
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="fw-semibold">
-
-                                Sort Order
-
-                            </label>
-
-                            <div class="form-control bg-light">
-
-                                {{ $brand->sort_order }}
-
-                            </div>
-
-                        </div>
-
-                        @endif
-
-                        <div class="col-12 mb-3">
-
-                            <label class="fw-semibold">
-
-                                Description
-
-                            </label>
-
-                            <div class="form-control bg-light" style="min-height:140px;">
-
-                                {!! nl2br(e($brand->description ?: 'No description available.')) !!}
-
-                            </div>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <label class="fw-semibold">
-
-                                Created At
-
-                            </label>
-
-                            <div class="form-control bg-light">
-
-                                {{ $brand->created_at->format('Y-m-d h:i A') }}
-
-                            </div>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <label class="fw-semibold">
-
-                                Updated At
-
-                            </label>
-
-                            <div class="form-control bg-light">
-
-                                {{ $brand->updated_at->format('Y-m-d h:i A') }}
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                    <small>
+                        {{ $brand->updated_at->format('h:i A') }}
+                    </small>
 
                 </div>
 
             </div>
 
         </div>
+
+    </div>
+
+
+
+    {{-- =====================================================
+         DESCRIPTION
+    ====================================================== --}}
+
+    <div class="brand-description-card">
+
+        <div class="brand-card-header">
+
+            <div class="brand-card-title">
+
+                <div class="brand-card-icon purple">
+                    <i class="bi bi-text-paragraph"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Description
+                    </h2>
+
+                    <span>
+                        Brand description and additional information
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="brand-description-body">
+
+            @if($brand->description)
+
+            <div class="brand-description-content">
+
+                {!! nl2br(e($brand->description)) !!}
+
+            </div>
+
+            @else
+
+            <div class="brand-empty-description">
+
+                <div>
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+
+                <span>
+                    No description available for this brand.
+                </span>
+
+            </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
+
+
+    {{-- =====================================================
+         QUICK SUMMARY
+    ====================================================== --}}
+
+    <div class="brand-summary-grid">
+
+
+        <div class="brand-summary-card">
+
+            <div class="brand-summary-icon blue">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Products
+                </span>
+
+                <strong>
+                    {{ $brand->products_count }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="brand-summary-card">
+
+            <div class="brand-summary-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Status
+                </span>
+
+                <strong>
+                    {{ $brand->status ? 'Active' : 'Inactive' }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="brand-summary-card">
+
+            <div class="brand-summary-icon orange">
+                <i class="bi bi-calendar3"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Created
+                </span>
+
+                <strong>
+                    {{ $brand->created_at->format('d M Y') }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        @if(isset($brand->sort_order))
+
+        <div class="brand-summary-card">
+
+            <div class="brand-summary-icon purple">
+                <i class="bi bi-sort-numeric-down"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    Sort Order
+                </span>
+
+                <strong>
+                    #{{ $brand->sort_order }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        @endif
 
     </div>
 

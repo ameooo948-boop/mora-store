@@ -1,251 +1,369 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Brands')
-
 @section('page-title', 'Brands')
 
 @section('content')
 
-<div class="container-fluid">
+<div class="brands-page">
 
-    {{-- Page Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
+    {{-- =====================================================
+         HEADER
+    ====================================================== --}}
 
-            <h3 class="fw-bold mb-1">
+    <div class="brands-hero">
 
-                Brands
+        <div class="brands-hero-content">
 
-            </h3>
+            <div class="brands-hero-icon">
+                <i class="bi bi-tags-fill"></i>
+            </div>
 
-            <p class="text-muted mb-0">
+            <div>
 
-                Manage all brands
+                <span class="brands-eyebrow">
+                    CATALOG MANAGEMENT
+                </span>
 
-            </p>
+                <h1>
+                    Brands
+                </h1>
+
+                <p>
+                    Manage your store brands and keep your catalog organized.
+                </p>
+
+            </div>
 
         </div>
 
-        <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">
 
-            <i class="bi bi-plus-lg me-2"></i>
+        <a href="{{ route('admin.brands.create') }}" class="brands-add-btn">
 
-            Add Brand
+            <i class="bi bi-plus-lg"></i>
+
+            <span>
+                Add Brand
+            </span>
 
         </a>
 
     </div>
 
-    <div class="row mb-4">
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+    {{-- =====================================================
+         STATISTICS
+    ====================================================== --}}
 
-                <div class="card-body">
+    <div class="brands-stat-grid">
 
-                    <small class="text-muted">
 
-                        Total Brands
+        {{-- Total --}}
 
-                    </small>
+        <div class="brands-stat-card">
 
-                    <h2 class="fw-bold mt-2">
+            <div class="brands-stat-icon blue">
+                <i class="bi bi-tags-fill"></i>
+            </div>
 
-                        {{ $statistics['total'] }}
+            <div class="brands-stat-info">
 
-                    </h2>
+                <span>
+                    Total Brands
+                </span>
 
-                </div>
+                <strong>
+                    {{ $statistics['total'] }}
+                </strong>
 
             </div>
+
+            <div class="brands-stat-decoration"></div>
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        {{-- Active --}}
 
-                <div class="card-body">
+        <div class="brands-stat-card">
 
-                    <small class="text-muted">
+            <div class="brands-stat-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
 
-                        Active
+            <div class="brands-stat-info">
 
-                    </small>
+                <span>
+                    Active
+                </span>
 
-                    <h2 class="fw-bold text-success mt-2">
-
-                        {{ $statistics['active'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['active'] }}
+                </strong>
 
             </div>
+
+            <div class="brands-stat-decoration"></div>
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        {{-- Inactive --}}
 
-                <div class="card-body">
+        <div class="brands-stat-card">
 
-                    <small class="text-muted">
+            <div class="brands-stat-icon red">
+                <i class="bi bi-pause-circle-fill"></i>
+            </div>
 
-                        Inactive
+            <div class="brands-stat-info">
 
-                    </small>
+                <span>
+                    Inactive
+                </span>
 
-                    <h2 class="fw-bold text-danger mt-2">
-
-                        {{ $statistics['inactive'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['inactive'] }}
+                </strong>
 
             </div>
+
+            <div class="brands-stat-decoration"></div>
 
         </div>
 
-        <div class="col-md-3">
 
-            <div class="card shadow-sm border-0">
+        {{-- Products --}}
 
-                <div class="card-body">
+        <div class="brands-stat-card">
 
-                    <small class="text-muted">
+            <div class="brands-stat-icon purple">
+                <i class="bi bi-box-seam-fill"></i>
+            </div>
 
-                        With Products
+            <div class="brands-stat-info">
 
-                    </small>
+                <span>
+                    With Products
+                </span>
 
-                    <h2 class="fw-bold text-primary mt-2">
-
-                        {{ $statistics['with_products'] }}
-
-                    </h2>
-
-                </div>
+                <strong>
+                    {{ $statistics['with_products'] }}
+                </strong>
 
             </div>
+
+            <div class="brands-stat-decoration"></div>
 
         </div>
 
     </div>
 
-    {{-- Search Card --}}
-    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="card-body">
 
-            <form method="GET">
+    {{-- =====================================================
+         FILTER
+    ====================================================== --}}
 
-                <div class="row g-3">
+    <div class="brands-filter-card">
 
-                    <div class="col-md-8">
+        <div class="brands-filter-header">
 
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by brand name...">
+            <div class="brands-filter-title">
 
-                    </div>
+                <div class="brands-filter-icon">
+                    <i class="bi bi-funnel-fill"></i>
+                </div>
 
-                    <div class="col-md-2">
+                <div>
 
-                        <select name="status" class="form-select">
+                    <h3>
+                        Find Brands
+                    </h3>
 
-                            <option value="">
+                    <span>
+                        Search and filter your catalog
+                    </span>
 
-                                All Status
+                </div>
 
-                            </option>
+            </div>
 
-                            <option value="1" @selected(request('status')==='1' )>
+            @if(request('search') || request('status') !== null)
 
-                                Active
+            <a href="{{ route('admin.brands.index') }}" class="brands-clear-btn">
+                <i class="bi bi-x-lg"></i>
+                Clear filters
+            </a>
 
-                            </option>
+            @endif
 
-                            <option value="0" @selected(request('status')==='0' )>
+        </div>
 
-                                Inactive
 
-                            </option>
+        <form method="GET">
 
-                        </select>
+            <div class="brands-filter-body">
 
-                    </div>
 
-                    <div class="col-md-2 d-grid">
+                {{-- Search --}}
 
-                        <button class="btn btn-primary">
+                <div class="brands-search">
 
-                            <i class="bi bi-search me-2"></i>
+                    <label>
+                        Search
+                    </label>
 
-                            Filter
+                    <div class="brands-input-wrap">
 
-                        </button>
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by brand name...">
 
                     </div>
 
                 </div>
 
-            </form>
 
-        </div>
+                {{-- Status --}}
+
+                <div class="brands-status-filter">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select name="status" class="brands-select">
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        <option value="1" @selected(request('status')==='1' )>
+                            Active
+                        </option>
+
+                        <option value="0" @selected(request('status')==='0' )>
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                {{-- Submit --}}
+
+                <button type="submit" class="brands-filter-btn">
+
+                    <i class="bi bi-search"></i>
+
+                    <span>
+                        Apply Filters
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
-    {{-- Table --}}
-    <div class="card shadow-sm border-0">
 
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
 
-            <h5 class="mb-0">
+    {{-- =====================================================
+         BRANDS TABLE
+    ====================================================== --}}
 
-                Brands
+    <div class="brands-table-card">
 
-            </h5>
 
-            <small class="text-muted">
+        {{-- Header --}}
 
-                Showing {{ $brands->total() }} Brands
+        <div class="brands-table-header">
 
-            </small>
+            <div>
+
+                <div class="brands-table-title">
+
+                    <div class="brands-table-title-icon">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            All Brands
+                        </h2>
+
+                        <span>
+                            {{ $brands->total() }} total brands
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="brands-result-count">
+
+                <i class="bi bi-database"></i>
+
+                Showing
+                <strong>
+                    {{ $brands->count() }}
+                </strong>
+                results
+
+            </div>
 
         </div>
+
+
+
+        {{-- Table --}}
 
         <div class="table-responsive">
 
-            <table class="table align-middle mb-0">
+            <table class="brands-table">
 
-                <thead class="table-light">
+                <thead>
 
                     <tr>
 
-                        <th>ID</th>
+                        <th>
+                            ID
+                        </th>
 
-                        <th>Logo</th>
+                        <th>
+                            Brand
+                        </th>
 
-                        <th>Brand</th>
+                        <th>
+                            Products
+                        </th>
 
-                        <th>Products</th>
+                        <th>
+                            Status
+                        </th>
 
-                        <th>Status</th>
+                        <th>
+                            Created
+                        </th>
 
-                        <th>Created</th>
-
-                        <th class="text-center" width="80">
-
+                        <th class="text-end">
                             Actions
-
                         </th>
 
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -253,59 +371,78 @@
 
                     <tr>
 
+
+                        {{-- ID --}}
+
                         <td>
 
-                            <span class="badge bg-light text-dark">
-
+                            <span class="brand-id">
                                 #{{ $brand->id }}
-
                             </span>
 
                         </td>
 
-                        <td>
 
-                            @if($brand->logo)
 
-                            <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}" class="rounded border" width="60" height="60" style="object-fit:cover;">
-
-                            @else
-
-                            <div class="border rounded d-flex align-items-center justify-content-center bg-light" style="width:60px;height:60px;">
-
-                                <i class="bi bi-image text-secondary"></i>
-
-                            </div>
-
-                            @endif
-
-                        </td>
+                        {{-- Brand --}}
 
                         <td>
 
-                            <div class="fw-semibold">
+                            <div class="brand-cell">
 
-                                {{ $brand->name }}
+
+                                @if($brand->logo)
+
+                                <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}" class="brand-logo">
+
+                                @else
+
+                                <div class="brand-logo-placeholder">
+
+                                    <i class="bi bi-image"></i>
+
+                                </div>
+
+                                @endif
+
+
+                                <div class="brand-details">
+
+                                    <strong>
+                                        {{ $brand->name }}
+                                    </strong>
+
+                                    @if($brand->description)
+
+                                    <span>
+                                        {{ Str::limit($brand->description, 55) }}
+                                    </span>
+
+                                    @else
+
+                                    <span class="no-description">
+                                        No description
+                                    </span>
+
+                                    @endif
+
+                                </div>
 
                             </div>
 
-                            @if($brand->description)
-
-                            <small class="text-muted">
-
-                                {{ Str::limit($brand->description, 50) }}
-
-                            </small>
-
-                            @endif
-
                         </td>
+
+
+
+                        {{-- Products --}}
 
                         <td>
 
                             @if($brand->products_count)
 
-                            <span class="badge bg-primary">
+                            <span class="products-count">
+
+                                <i class="bi bi-box-seam"></i>
 
                                 {{ $brand->products_count }}
 
@@ -313,7 +450,9 @@
 
                             @else
 
-                            <span class="badge bg-secondary">
+                            <span class="products-count empty">
+
+                                <i class="bi bi-box"></i>
 
                                 0
 
@@ -323,11 +462,17 @@
 
                         </td>
 
+
+
+                        {{-- Status --}}
+
                         <td>
 
                             @if($brand->status)
 
-                            <span class="badge bg-success">
+                            <span class="brand-status active">
+
+                                <i class="bi bi-check-circle-fill"></i>
 
                                 Active
 
@@ -335,7 +480,9 @@
 
                             @else
 
-                            <span class="badge bg-danger">
+                            <span class="brand-status inactive">
+
+                                <i class="bi bi-x-circle-fill"></i>
 
                                 Inactive
 
@@ -345,74 +492,60 @@
 
                         </td>
 
+
+
+                        {{-- Date --}}
+
                         <td>
 
-                            {{ $brand->created_at->format('Y-m-d') }}
+                            <div class="brand-date">
+
+                                <strong>
+                                    {{ $brand->created_at->format('d M Y') }}
+                                </strong>
+
+                                <span>
+                                    {{ $brand->created_at->format('H:i') }}
+                                </span>
+
+                            </div>
 
                         </td>
 
-                        <td class="text-center">
 
-                            <div class="dropdown">
 
-                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                        {{-- Actions --}}
 
-                                    <i class="bi bi-three-dots-vertical"></i>
+                        <td>
 
-                                </button>
+                            <div class="brand-actions">
 
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ route('admin.brands.show', $brand) }}" class="brand-action view" title="View Brand">
 
-                                    <li>
+                                    <i class="bi bi-eye"></i>
 
-                                        <a href="{{ route('admin.brands.show', $brand) }}" class="dropdown-item">
+                                </a>
 
-                                            <i class="bi bi-eye me-2"></i>
 
-                                            View
+                                <a href="{{ route('admin.brands.edit', $brand) }}" class="brand-action edit" title="Edit Brand">
 
-                                        </a>
+                                    <i class="bi bi-pencil-square"></i>
 
-                                    </li>
+                                </a>
 
-                                    <li>
 
-                                        <a href="{{ route('admin.brands.edit', $brand) }}" class="dropdown-item">
+                                <form action="{{ route('admin.brands.destroy', $brand) }}" method="POST" class="delete-form">
 
-                                            <i class="bi bi-pencil-square me-2"></i>
+                                    @csrf
+                                    @method('DELETE')
 
-                                            Edit
+                                    <button type="submit" class="brand-action delete" title="Delete Brand">
 
-                                        </a>
+                                        <i class="bi bi-trash3"></i>
 
-                                    </li>
+                                    </button>
 
-                                    <li>
-
-                                        <hr class="dropdown-divider">
-
-                                    </li>
-
-                                    <li>
-
-                                        <form action="{{ route('admin.brands.destroy', $brand) }}" method="POST" class="delete-form">
-
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="dropdown-item text-danger">
-
-                                                <i class="bi bi-trash me-2"></i>
-
-                                                Delete
-
-                                            </button>
-
-                                        </form>
-
-                                    </li>
-
-                                </ul>
+                                </form>
 
                             </div>
 
@@ -424,23 +557,29 @@
 
                     <tr>
 
-                        <td colspan="7">
+                        <td colspan="6">
 
-                            <div class="text-center py-5">
+                            <div class="brands-empty">
 
-                                <i class="bi bi-tags display-4 text-secondary"></i>
+                                <div class="brands-empty-icon">
+                                    <i class="bi bi-tags"></i>
+                                </div>
 
-                                <h5 class="mt-3">
-
+                                <h3>
                                     No Brands Found
+                                </h3>
 
-                                </h5>
-
-                                <p class="text-muted mb-0">
-
-                                    There are no brands matching your search.
-
+                                <p>
+                                    There are no brands matching your current filters.
                                 </p>
+
+                                <a href="{{ route('admin.brands.create') }}" class="brands-empty-btn">
+
+                                    <i class="bi bi-plus-lg"></i>
+
+                                    Add Your First Brand
+
+                                </a>
 
                             </div>
 
@@ -456,11 +595,36 @@
 
         </div>
 
+
+
+        {{-- Pagination --}}
+
         @if($brands->hasPages())
 
-        <div class="card-footer">
+        <div class="brands-pagination">
 
-            {{ $brands->links() }}
+            <div>
+
+                Showing
+                <strong>
+                    {{ $brands->firstItem() }}
+                </strong>
+
+                –
+                <strong>
+                    {{ $brands->lastItem() }}
+                </strong>
+
+                of
+                <strong>
+                    {{ $brands->total() }}
+                </strong>
+
+            </div>
+
+            <div>
+                {{ $brands->links() }}
+            </div>
 
         </div>
 
@@ -469,6 +633,10 @@
     </div>
 
 </div>
+
+@endsection
+
+
 
 @push('scripts')
 
@@ -483,19 +651,33 @@
 
                 title: 'Delete Brand?',
 
-                text: "You won't be able to undo this action.",
+                text: "This action cannot be undone.",
 
                 icon: 'warning',
 
                 showCancelButton: true,
 
-                confirmButtonColor: '#dc3545',
+                confirmButtonColor: '#dc2626',
 
-                cancelButtonColor: '#6c757d',
+                cancelButtonColor: '#64748b',
 
-                confirmButtonText: 'Yes, Delete',
+                confirmButtonText: '<i class="bi bi-trash3 me-1"></i> Delete Brand',
 
-                cancelButtonText: 'Cancel'
+                cancelButtonText: 'Cancel',
+
+                reverseButtons: true,
+
+                buttonsStyling: true,
+
+                customClass: {
+
+                    popup: 'premium-swal',
+
+                    confirmButton: 'premium-swal-confirm',
+
+                    cancelButton: 'premium-swal-cancel'
+
+                }
 
             }).then((result) => {
 
@@ -514,9 +696,3 @@
 </script>
 
 @endpush
-
-</div>
-
-</div>
-
-@endsection

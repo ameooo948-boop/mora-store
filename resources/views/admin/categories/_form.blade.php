@@ -1,154 +1,343 @@
-<div class="card shadow-sm border-0">
+<div class="category-form-card">
 
-    <div class="card-body p-4">
+    {{-- =====================================================
+         HEADER
+    ====================================================== --}}
 
-        <div class="row">
+    <div class="category-form-header">
 
-            {{-- Category Name --}}
-            <div class="col-md-6 mb-3">
+        <div class="category-form-title">
 
-                <label class="form-label fw-semibold">
-                    Category Name <span class="text-danger">*</span>
+            <div class="category-form-title-icon">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </div>
+
+            <div>
+
+                <span>
+                    CATEGORY MANAGEMENT
+                </span>
+
+                <h2>
+                    {{ isset($category) ? 'Edit Category' : 'Create Category' }}
+                </h2>
+
+                <p>
+                    {{ isset($category)
+                        ? 'Update your category information and catalog settings.'
+                        : 'Add a new category to organize your products.'
+                    }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+         FORM BODY
+    ====================================================== --}}
+
+    <div class="category-form-body">
+
+        <div class="category-form-grid">
+
+
+            {{-- =================================================
+                 CATEGORY NAME
+            ================================================== --}}
+
+            <div class="category-field category-field-half">
+
+                <label for="category-name">
+
+                    Category Name
+
+                    <span>*</span>
+
                 </label>
 
-                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Enter category name" value="{{ old('name', $category->name ?? '') }}">
+                <div class="category-input-wrap">
+
+                    <i class="bi bi-grid"></i>
+
+                    <input id="category-name" type="text" name="name" value="{{ old('name', $category->name ?? '') }}" placeholder="Enter category name" class="@error('name') is-invalid @enderror">
+
+                </div>
 
                 @error('name')
-                <div class="invalid-feedback">
+
+                <div class="category-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
                     {{ $message }}
+
                 </div>
+
                 @enderror
 
             </div>
 
-            {{-- Parent Category --}}
-            <div class="col-md-6 mb-3">
 
-                <label class="form-label fw-semibold">
+
+            {{-- =================================================
+                 PARENT CATEGORY
+            ================================================== --}}
+
+            <div class="category-field category-field-half">
+
+                <label for="parent_id">
                     Parent Category
                 </label>
 
-                <select id="parent_id" name="parent_id" class="form-select @error('parent_id') is-invalid @enderror">
+                <div class="category-select-wrap">
 
-                    <option value="">Main Category</option>
+                    <i class="bi bi-diagram-3"></i>
 
-                    @foreach($parents as $parent)
+                    <select id="parent_id" name="parent_id" class="category-select @error('parent_id') is-invalid @enderror">
 
-                    <option value="{{ $parent->id }}" @selected(old('parent_id', $category->parent_id ?? '') == $parent->id)
-                        >
-                        {{ $parent->name }}
-                    </option>
+                        <option value="">
+                            Main Category
+                        </option>
 
-                    @endforeach
+                        @foreach($parents as $parent)
 
-                </select>
+                        <option value="{{ $parent->id }}" @selected( old( 'parent_id' , $category->parent_id ?? ''
+                            ) == $parent->id
+                            )
+                            >
+                            {{ $parent->name }}
+                        </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
 
                 @error('parent_id')
-                <div class="invalid-feedback">
+
+                <div class="category-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
                     {{ $message }}
+
                 </div>
+
                 @enderror
 
             </div>
 
-            {{-- Description --}}
-            <div class="col-12 mb-3">
 
-                <label class="form-label fw-semibold">
 
+            {{-- =================================================
+                 DESCRIPTION
+            ================================================== --}}
+
+            <div class="category-field category-field-full">
+
+                <label for="category-description">
                     Description
-
                 </label>
 
-                <textarea rows="5" name="description" class="form-control @error('description') is-invalid @enderror" placeholder="Write category description...">{{ old('description', $category->description ?? '') }}</textarea>
+                <div class="category-textarea-wrap">
+
+                    <i class="bi bi-text-paragraph"></i>
+
+                    <textarea id="category-description" name="description" rows="5" placeholder="Write a short description about this category..." class="@error('description') is-invalid @enderror">{{ old('description', $category->description ?? '') }}</textarea>
+
+                </div>
 
                 @error('description')
-                <div class="invalid-feedback">
+
+                <div class="category-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
 
                     {{ $message }}
 
                 </div>
+
                 @enderror
 
             </div>
 
-            {{-- Image --}}
-            <div class="col-md-6 mb-3">
 
-                <label class="form-label fw-semibold">
 
+            {{-- =================================================
+                 IMAGE
+            ================================================== --}}
+
+            <div class="category-field category-field-full">
+
+                <label for="category-image">
                     Category Image
-
                 </label>
 
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
+                <div class="category-upload-area">
+
+                    <input id="category-image" type="file" name="image" accept="image/*" class="category-file-input @error('image') is-invalid @enderror">
+
+                    <label for="category-image" class="category-upload-content">
+
+                        <div class="category-upload-icon">
+
+                            <i class="bi bi-cloud-arrow-up"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Upload Category Image
+                            </strong>
+
+                            <span>
+                                Click to browse or drag & drop your image here
+                            </span>
+
+                            <small>
+                                PNG, JPG, JPEG, WEBP
+                            </small>
+
+                        </div>
+
+                    </label>
+
+                </div>
+
+
+                {{-- Existing Image --}}
 
                 @if (!empty($category?->image))
-                <div class="mt-2">
-                    <img src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}" class="img-thumbnail" width="120">
+
+                <div class="category-current-image">
+
+                    <div class="category-current-image-preview">
+
+                        <img src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}">
+
+                    </div>
+
+                    <div class="category-current-image-info">
+
+                        <span>
+                            CURRENT IMAGE
+                        </span>
+
+                        <strong>
+                            {{ $category->name }}
+                        </strong>
+
+                        <small>
+                            Upload a new image to replace it.
+                        </small>
+
+                    </div>
+
                 </div>
+
                 @endif
 
+
                 @error('image')
-                <div class="invalid-feedback">
+
+                <div class="category-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
 
                     {{ $message }}
 
                 </div>
+
                 @enderror
 
             </div>
 
-            {{-- Status --}}
-            <div class="col-md-3 mb-3">
 
-                <label class="form-label fw-semibold">
 
+            {{-- =================================================
+                 STATUS
+            ================================================== --}}
+
+            <div class="category-field category-field-half">
+
+                <label for="category-status">
                     Status
-
                 </label>
 
-                <select name="status" class="form-select @error('status') is-invalid @enderror">
+                <div class="category-select-wrap">
 
-                    <option value="1" @selected((string) old('status', (int) ($category->status ?? true)) === '1')
-                        >
-                        Active
-                    </option>
+                    <i class="bi bi-activity"></i>
 
-                    <option value="0" @selected((string) old('status', (int) ($category->status ?? true)) === '0')
-                        >
-                        Inactive
-                    </option>
+                    <select id="category-status" name="status" class="category-select @error('status') is-invalid @enderror">
 
-                </select>
+                        <option value="1" @selected( (string) old( 'status' , (int) ($category->status ?? true)
+                            ) === '1'
+                            )
+                            >
+                            Active
+                        </option>
+
+                        <option value="0" @selected( (string) old( 'status' , (int) ($category->status ?? true)
+                            ) === '0'
+                            )
+                            >
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
 
                 @error('status')
-                <div class="invalid-feedback">
+
+                <div class="category-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
 
                     {{ $message }}
 
                 </div>
+
                 @enderror
 
             </div>
 
-            {{-- Sort Order --}}
-            <div class="col-md-3 mb-3">
 
-                <label class="form-label fw-semibold">
 
+            {{-- =================================================
+                 SORT ORDER
+            ================================================== --}}
+
+            <div class="category-field category-field-half">
+
+                <label for="category-sort-order">
                     Sort Order
-
                 </label>
 
-                <input type="number" min="0" name="sort_order" class="form-control @error('sort_order') is-invalid @enderror" value="{{ old('sort_order', $category->sort_order ?? 0) }}">
+                <div class="category-input-wrap">
+
+                    <i class="bi bi-sort-numeric-down"></i>
+
+                    <input id="category-sort-order" type="number" min="0" name="sort_order" value="{{ old('sort_order', $category->sort_order ?? 0) }}" placeholder="0" class="@error('sort_order') is-invalid @enderror">
+
+                </div>
 
                 @error('sort_order')
-                <div class="invalid-feedback">
+
+                <div class="category-error">
+
+                    <i class="bi bi-exclamation-circle"></i>
 
                     {{ $message }}
 
                 </div>
+
                 @enderror
 
             </div>
@@ -157,17 +346,28 @@
 
     </div>
 
-    <div class="card-footer bg-white d-flex justify-content-end">
 
-        <a href="{{ route('admin.categories.index') }}" class="btn btn-light me-2">
+
+    {{-- =====================================================
+         FOOTER ACTIONS
+    ====================================================== --}}
+
+    <div class="category-form-footer">
+
+        <a href="{{ route('admin.categories.index') }}" class="category-form-cancel">
+
+            <i class="bi bi-arrow-left"></i>
+
             Cancel
+
         </a>
 
-        <button type="submit" class="btn btn-primary">
 
-            <i class="bi bi-check-lg"></i>
+        <button type="submit" class="category-form-submit">
 
-            Save Category
+            <i class="bi bi-check2-circle"></i>
+
+            {{ isset($category) ? 'Update Category' : 'Save Category' }}
 
         </button>
 

@@ -3,6 +3,11 @@ import { confirmAction } from '../../components/confirm';
 
 const cartForm = document.getElementById('addToCartForm');
 
+
+// =====================================================
+// Add To Cart
+// =====================================================
+
 if (cartForm) {
 
     cartForm.addEventListener('submit', async function (e) {
@@ -10,6 +15,11 @@ if (cartForm) {
         e.preventDefault();
 
         const button = document.getElementById('addToCartButton');
+
+        if (!button) {
+            return;
+        }
+
         const original = button.innerHTML;
 
         button.disabled = true;
@@ -17,39 +27,43 @@ if (cartForm) {
 
         try {
 
+            const token = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.content;
+
             const response = await fetch(this.action, {
                 method: 'POST',
+
                 headers: {
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document
-                        .querySelector('meta[name="csrf-token"]')
-                        .content,
+                    'X-CSRF-TOKEN': token,
                 },
+
                 body: new FormData(this),
             });
 
             const data = await response.json();
 
-            if (data.success) {
+            if (!response.ok || !data.success) {
 
-                const cartCount = document.getElementById('cartCount');
-
-                if (cartCount) {
-                    cartCount.textContent = data.cartCount;
-                }
-
-                showToast(data.message);
-
-            } else {
-
-                showToast(data.message, 'danger');
+                throw new Error(
+                    data.message ?? 'Something went wrong.'
+                );
 
             }
+
+            const cartCount = document.getElementById('cartCount');
+
+            if (cartCount) {
+                cartCount.textContent = data.cartCount;
+            }
+
+            showToast(data.message);
 
         } catch (error) {
 
             showToast(
-                'Something went wrong.',
+                error.message ?? 'Something went wrong.',
                 'danger'
             );
 
@@ -64,15 +78,12 @@ if (cartForm) {
 
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const token = document
         .querySelector('meta[name="csrf-token"]')
         ?.content;
-
-    // ===========================
-    // Update Quantity
-    // ===========================
 
     document.querySelectorAll('.cart-update-form').forEach(form => {
 
@@ -80,14 +91,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const increase = form.querySelector('.increase-btn');
         const decrease = form.querySelector('.decrease-btn');
 
-        const row = form.closest('tr');
-        const rowTotal = row.querySelector('.row-total');
+        if (!input || !increase || !decrease) {
+            return;
+        }
 
-        const submit = async (quantity, previousValue) => {
+        const row = form.closest('.cart-product-row');
+        const rowTotal = row?.querySelector('.row-total');
+
+        async function updateQuantity(quantity, previousValue) {
 
             input.value = quantity;
 
             try {
+
+                const formData = new FormData();
+
+                formData.append('_method', 'PUT');
+                formData.append('quantity', quantity);
 
                 const response = await fetch(form.action, {
                     method: 'POST',
@@ -95,29 +115,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': token,
                     },
-                    body: (() => {
-
-                        const data = new FormData();
-
-                        data.append('_method', 'PUT');
-                        data.append('quantity', quantity);
-
-                        return data;
-
-                    })(),
+                    body: formData,
                 });
 
                 const data = await response.json();
 
                 if (!response.ok || !data.success) {
-
                     throw new Error(
                         data.message ?? 'Something went wrong.'
                     );
-
                 }
 
-                rowTotal.textContent = `$${data.itemTotal}`;
+                if (rowTotal) {
+                    rowTotal.innerHTML = `
+                        ${data.itemTotal}
+                        <small>${data.currency ?? ''}</small>
+                    `;
+                }
 
                 document.getElementById('summary-items').textContent =
                     data.summary.items;
@@ -126,12 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     data.summary.quantity;
 
                 document.getElementById('summary-subtotal').textContent =
-                    `$${data.summary.subtotal}`;
+                    `${data.summary.subtotal} ${data.currency ?? ''}`;
 
-                document.getElementById('summary-total').textContent =
-                    `$${data.summary.total}`;
+                document.getElementById('summary-total').innerHTML =
+                    `${data.summary.total}
+                    <small>${data.currency ?? ''}</small>`;
 
-                const cartCount = document.getElementById('cartCount');
+                const cartCount =
+                    document.getElementById('cartCount');
 
                 if (cartCount) {
                     cartCount.textContent = data.cartCount;
@@ -143,16 +159,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 input.value = previousValue;
 
-                showToast(error.message, 'danger');
+                showToast(
+                    error.message ?? 'Something went wrong.',
+                    'danger'
+                );
 
             }
 
-        };
+        }
 
         increase.addEventListener('click', () => {
 
-            const current = parseInt(input.value);
-            const max = parseInt(input.max);
+            const current = parseInt(input.value, 10);
+            const max = parseInt(input.max, 10);
+
+            if (Number.isNaN(current)) {
+                return;
+            }
 
             if (current >= max) {
 
@@ -162,208 +185,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
                 return;
-
             }
 
-            submit(current + 1, current);
+            updateQuantity(current + 1, current);
 
         });
 
         decrease.addEventListener('click', () => {
 
-            const current = parseInt(input.value);
+            const current = parseInt(input.value, 10);
+
+            if (Number.isNaN(current)) {
+                return;
+            }
 
             if (current <= 1) {
                 return;
             }
 
-            submit(current - 1, current);
+            updateQuantity(current - 1, current);
 
         });
-
-    });
-
-    // ===========================
-    // Remove Item
-    // ===========================
-
-    document.querySelectorAll('.remove-item-form').forEach(form => {
-
-        form.addEventListener('submit', async (e) => {
-
-            e.preventDefault();
-
-            const confirmed = await confirmAction(
-                'Remove Product',
-                'Are you sure you want to remove this product?',
-                'Remove'
-            );
-
-            if (!confirmed) {
-                return;
-            }
-
-            const row = form.closest('tr');
-
-            try {
-
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': token,
-                    },
-                    body: (() => {
-
-                        const data = new FormData();
-
-                        data.append('_method', 'DELETE');
-
-                        return data;
-
-                    })(),
-                });
-
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-
-                    throw new Error(
-                        data.message ?? 'Something went wrong.'
-                    );
-
-                }
-
-                row.remove();
-
-                document.getElementById('summary-items').textContent =
-                    data.summary.items;
-
-                document.getElementById('summary-quantity').textContent =
-                    data.summary.quantity;
-
-                document.getElementById('summary-subtotal').textContent =
-                    `$${data.summary.subtotal}`;
-
-                document.getElementById('summary-total').textContent =
-                    `$${data.summary.total}`;
-
-                const cartCount = document.getElementById('cartCount');
-
-                if (cartCount) {
-                    cartCount.textContent = data.cartCount;
-                }
-
-                showToast(data.message);
-
-            } catch (error) {
-
-                showToast(error.message, 'danger');
-
-            }
-
-        });
-
-    });
-
-    // ===========================
-    // Clear Cart
-    // ===========================
-
-    document.querySelector('.clear-cart-form')?.addEventListener('submit', async (e) => {
-
-        e.preventDefault();
-
-        const confirmed = await confirmAction(
-            'Clear Cart',
-            'All products will be removed from your cart.',
-            'Clear'
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
-        const form = document.querySelector('.clear-cart-form');
-
-        if (!form) {
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('_method', 'DELETE');
-
-        const response = await fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': token,
-            },
-            body: formData,
-        });
-
-        try {
-            const formData = new FormData();
-
-            formData.append('_method', 'DELETE');
-
-            const response = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                },
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-
-                throw new Error(
-                    data.message ?? 'Something went wrong.'
-                );
-
-            }
-
-            document.querySelectorAll('.cart-row').forEach(row => {
-                row.remove();
-            });
-
-            document.getElementById('summary-items').textContent = 0;
-
-            document.getElementById('summary-quantity').textContent = 0;
-
-            document.getElementById('summary-subtotal').textContent = '$0.00';
-
-            document.getElementById('summary-total').textContent = '$0.00';
-
-            const cartCount = document.getElementById('cartCount');
-
-            if (cartCount) {
-                cartCount.textContent = 0;
-            }
-
-            const tbody = document.querySelector('tbody');
-
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="text-center py-5">
-                        <h4>Your cart is empty</h4>
-                        <a href="/products" class="btn btn-primary mt-3">
-                            Continue Shopping
-                        </a>
-                    </td>
-                </tr>
-            `;
-
-            showToast(data.message);
-
-        } catch (error) {
-
-            showToast(error.message, 'danger');
-
-        }
 
     });
 

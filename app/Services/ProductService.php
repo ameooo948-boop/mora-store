@@ -192,17 +192,21 @@ class ProductService
             );
         }
 
-        if ($product->quantity < $quantity) {
-            throw new DomainException(
-                'Not enough stock available.'
-            );
-        }
-
         return DB::transaction(function () use (
             $product,
             $quantity,
             $reference,
         ) {
+
+            $product = Product::query()
+                ->lockForUpdate()
+                ->findOrFail($product->id);
+
+            if ($product->quantity < $quantity) {
+                throw new DomainException(
+                    'Not enough stock available.'
+                );
+            }
 
             $beforeQuantity = $product->quantity;
 
@@ -226,13 +230,9 @@ class ProductService
             );
 
             if (
-
                 $beforeQuantity > $threshold &&
-
                 $product->quantity <= $threshold
-
             ) {
-
                 $this->notificationService->lowStock(
                     $product
                 );
@@ -241,7 +241,7 @@ class ProductService
             return $product;
         });
     }
-
+    
     public function increaseStock(
         Product $product,
         int $quantity,

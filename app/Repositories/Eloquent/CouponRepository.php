@@ -10,6 +10,27 @@ class CouponRepository implements CouponRepositoryInterface
 {
     public function paginate(array $filters = [], int $perPage = 10)
     {
+
+        $allowedSorts = [
+            'created_at',
+            'code',
+            'starts_at',
+            'expires_at',
+            'used_count',
+        ];
+
+        $sortBy = in_array(
+            $filters['sort_by'] ?? null,
+            $allowedSorts,
+            true
+        )
+            ? $filters['sort_by']
+            : 'created_at';
+
+        $sortDirection = ($filters['sort_direction'] ?? null) === 'asc'
+            ? 'asc'
+            : 'desc';
+            
         return Coupon::query()
 
             ->when($filters['search'] ?? null, function ($query, $search) {
@@ -25,8 +46,8 @@ class CouponRepository implements CouponRepositoryInterface
             })
 
             ->orderBy(
-                $filters['sort_by'] ?? 'created_at',
-                $filters['sort_direction'] ?? 'desc'
+                $sortBy,
+                $sortDirection
             )
 
             ->paginate($perPage)
@@ -62,5 +83,13 @@ class CouponRepository implements CouponRepositoryInterface
     public function delete(Coupon $coupon): bool
     {
         return $coupon->delete();
+    }
+
+    public function findByCodeForUpdate(string $code): ?Coupon
+    {
+        return Coupon::query()
+            ->where('code', strtoupper($code))
+            ->lockForUpdate()
+            ->first();
     }
 }
