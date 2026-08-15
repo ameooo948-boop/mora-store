@@ -49,7 +49,7 @@ class UpdateSettingRequest extends FormRequest
 
                 'image',
 
-                'max:1024',
+                'max:2048',
 
             ],
 
@@ -107,7 +107,7 @@ class UpdateSettingRequest extends FormRequest
 
                 'string',
 
-                'max:50',
+                'max:2',
 
             ],
 

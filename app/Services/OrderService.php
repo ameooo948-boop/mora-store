@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
@@ -13,6 +14,7 @@ use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Services\CartService;
 use App\Services\CouponService;
+use App\Services\NotificationService;
 use App\Services\OrderStatusHistoryService;
 use App\Services\PaymentService;
 use App\Services\ProductService;
@@ -312,12 +314,6 @@ class OrderService
                 ]
             );
 
-            /*
-        |--------------------------------------------------------------------------
-        | Restore stock when order is cancelled
-        |--------------------------------------------------------------------------
-        */
-
             if ($status === OrderStatus::Cancelled) {
 
                 $order->loadMissing('items.product');
@@ -328,6 +324,18 @@ class OrderService
                         quantity: $item->quantity,
                         reference: $order,
                     );
+                }
+            }
+
+            if ($status === OrderStatus::Delivered) {
+
+                $order->loadMissing('payment');
+
+                if ($order->payment) {
+                    $order->payment->update([
+                        'status' => PaymentStatus::Paid,
+                        'paid_at' => now(),
+                    ]);
                 }
             }
 

@@ -26,6 +26,7 @@
         @yield('title', setting('site_name'))
     </title>
 
+    <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
 
     {{-- =====================================================
         FAVICON
@@ -255,7 +256,7 @@
         }, 4500);
 
     </script>
-    
+
     @stack('scripts')
 
 </body>

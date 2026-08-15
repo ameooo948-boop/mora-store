@@ -18,3 +18,4 @@ auth.json
 /.nova
 /.zed
 *.log
+/public/storage

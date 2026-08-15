@@ -10,6 +10,8 @@
     <title>
         @yield('title', 'Admin Dashboard')
     </title>
+    
+    <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
 
     @vite([
     'resources/css/admin.css',
@@ -34,6 +36,7 @@
 
 
 <body class="admin-body">
+
 
     <div class="admin-layout">
 
