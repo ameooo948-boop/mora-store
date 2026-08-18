@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Events\OrderCreated;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
@@ -150,11 +151,6 @@ class OrderService
                 $items
             );
 
-            $this->notificationService
-                ->newOrder(
-                    $order
-                );
-
             $this->cartService->clear($user->id);
 
             if ($coupon) {
@@ -162,6 +158,8 @@ class OrderService
                 $this->couponService
                     ->incrementUsedCount($coupon);
             }
+
+            OrderCreated::dispatch($order);
 
             return $order->fresh([
                 'items.product',

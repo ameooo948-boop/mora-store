@@ -8,6 +8,7 @@ use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -224,6 +225,8 @@ class CheckoutTest extends TestCase
         ]);
 
         $this->seed();
+
+        $this->seed(RolesAndPermissionsSeeder::class);
 
         $product = Product::factory()
             ->withRelations()

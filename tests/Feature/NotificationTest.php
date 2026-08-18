@@ -3,9 +3,13 @@
 namespace Tests\Feature;
 
 use App\Enums\OrderStatus;
+use App\Events\OrderCreated;
+use App\Listeners\NotifyAdminsAboutNewOrder;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\NotificationService;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
@@ -69,6 +73,30 @@ class NotificationTest extends TestCase
         Notification::assertNotSentTo(
             $user,
             \App\Notifications\NewOrderNotification::class
+        );
+    }
+
+    public function test_new_order_listener_is_queued(): void
+    {
+        $listener = new NotifyAdminsAboutNewOrder(
+            app(\App\Services\NotificationService::class)
+        );
+
+        $this->assertInstanceOf(
+            ShouldQueue::class,
+            $listener
+        );
+    }
+
+    public function test_order_created_event_dispatches_after_commit(): void
+    {
+        $order = new Order();
+
+        $event = new OrderCreated($order);
+
+        $this->assertInstanceOf(
+            ShouldDispatchAfterCommit::class,
+            $event
         );
     }
 
