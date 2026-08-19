@@ -9,6 +9,9 @@
 
     <title>Forgot Password | {{ config('app.name') }}</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+
+
     @vite([
     'resources/css/app.css',
     'resources/js/app.js',
@@ -30,22 +33,20 @@
 
             <div class="showcase-content">
 
-                <div class="brand-logo">
+                <div class="brand">
+                    <div class="brand-logo">
 
-                    @if($siteLogo)
+                        @if($siteLogo)
+                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ setting('site_name') }}">
+                        @else
+                        <i class="bi bi-bag-check-fill"></i>
+                        @endif
 
-                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ config('app.name') }}">
+                    </div>
 
-                    @else
-
-                    <i class="bi bi-bag-check-fill"></i>
-
-                    @endif
-
-                    <span>
-                        {{ config('app.name') }}
+                    <span class="brand-name">
+                        {{ setting('site_name') }}
                     </span>
-
                 </div>
 
                 <div class="showcase-main">

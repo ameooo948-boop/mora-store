@@ -26,7 +26,7 @@ class StockMovementController extends Controller
                     search: $request->search,
 
                     type: $request->filled('type')
-                        ? StockMovementType::from(
+                        ? StockMovementType::tryFrom(
                             $request->type
                         )
                         : null,

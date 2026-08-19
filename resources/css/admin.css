@@ -21688,3 +21688,153 @@ body.admin-body {
     align-items: center;
     justify-content: center;
 }
+
+/* =========================================================
+   ADMIN SIDEBAR — MOBILE
+   ========================================================= */
+
+.admin-sidebar-toggle {
+    display: none;
+
+    width: 42px;
+    height: 42px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #0f172a;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.admin-sidebar-toggle:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.admin-sidebar-toggle:active {
+    transform: scale(.95);
+}
+
+
+/* Overlay */
+
+.admin-sidebar-overlay {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(15, 23, 42, .45);
+
+    z-index: 1040;
+
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .admin-sidebar-toggle {
+        display: inline-flex;
+    }
+
+
+    /* Sidebar */
+
+    .admin-sidebar {
+        position: fixed !important;
+
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: 280px !important;
+        max-width: 85vw;
+
+        height: 100vh;
+
+        z-index: 1050;
+
+        transform: translateX(-100%);
+
+        transition: transform .28s ease;
+
+        overflow-y: auto;
+
+        box-shadow: 12px 0 35px rgba(15, 23, 42, .18);
+    }
+
+
+    /* Open */
+
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+
+    /* Overlay */
+
+    .admin-sidebar-overlay {
+        display: block;
+        pointer-events: none;
+    }
+
+    .admin-sidebar-overlay.mobile-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+
+    /* Main */
+
+    .admin-main {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+
+    /* Prevent horizontal overflow */
+
+    .admin-layout {
+        overflow-x: hidden;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .admin-sidebar {
+        width: 270px !important;
+    }
+
+    .admin-sidebar-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 21px;
+    }
+
+}

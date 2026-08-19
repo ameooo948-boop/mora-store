@@ -76,7 +76,7 @@ class UpdateProductRequest extends FormRequest
             'images.*' => [
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:5102',
+                'max:5120',
             ],
 
             'status' => [

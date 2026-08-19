@@ -6,6 +6,7 @@ use App\Enums\ReviewStatus;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
+use App\Events\ReviewCreated;
 use App\Notifications\ReviewApprovedNotification;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\ReviewRepositoryInterface;
@@ -70,9 +71,7 @@ class ReviewService
 
         ]);
 
-        $this->notificationService->newReview(
-            $review
-        );
+        event(new ReviewCreated($review));
 
         return $review;
     }

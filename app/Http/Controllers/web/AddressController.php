@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Web\StoreAddressRequest;
 use App\Http\Requests\Web\UpdateAddressRequest;
 use App\Models\Address;
 use App\Services\AddressService;
+use Illuminate\Http\Request;
 
 class AddressController extends Controller
 {
@@ -26,8 +26,13 @@ class AddressController extends Controller
         );
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->user()->addresses()->count() >= 4) {
+            return redirect()->back()
+                ->with('error', 'You can only have a maximum of 4 addresses.');
+        }
+
         return view('web.addresses.create');
     }
 
@@ -55,7 +60,7 @@ class AddressController extends Controller
                 $address->id
             );
 
-        abort_if(!$address, 404);
+        abort_if(! $address, 404);
 
         return view(
             'web.addresses.edit',
@@ -73,7 +78,7 @@ class AddressController extends Controller
                 $address->id
             );
 
-        abort_if(!$address, 404);
+        abort_if(! $address, 404);
 
         $this->addressService
             ->update(
@@ -99,7 +104,7 @@ class AddressController extends Controller
                 $address->id
             );
 
-        abort_if(!$address, 404);
+        abort_if(! $address, 404);
 
         $this->addressService
             ->delete($address);
@@ -121,7 +126,7 @@ class AddressController extends Controller
                 $address->id
             );
 
-        abort_if(!$address, 404);
+        abort_if(! $address, 404);
 
         $this->addressService
             ->setDefault($address);

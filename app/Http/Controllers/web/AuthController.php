@@ -31,7 +31,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-         $user->sendEmailVerificationNotification();
+         event(new \Illuminate\Auth\Events\Registered($request->user()));
 
         return redirect()->route('home');
     }
@@ -57,7 +57,7 @@ public function login(LoginRequest $request)
 
     if (! $user->hasVerifiedEmail()) {
 
-    $user->sendEmailVerificationNotification();
+    event(new \Illuminate\Auth\Events\Registered($request->user()));
         return redirect()
             ->route('verification.notice')
             ->with(

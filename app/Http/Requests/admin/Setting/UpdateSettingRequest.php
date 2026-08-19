@@ -107,7 +107,7 @@ class UpdateSettingRequest extends FormRequest
 
                 'string',
 
-                'max:2',
+                'max:20',
 
             ],
 

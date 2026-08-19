@@ -9,6 +9,9 @@
 
     <title>Login | {{ setting('site_name') }}</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+
+
     @vite([
     'resources/css/app.css',
     'resources/js/app.js',

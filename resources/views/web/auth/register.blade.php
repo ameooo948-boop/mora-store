@@ -4,9 +4,12 @@
 
 <title>Create Account | {{ setting('site_name') }}</title>
 
+<link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+
+
 @vite([
-    'resources/css/app.css',
-    'resources/js/app.js',
+'resources/css/app.css',
+'resources/js/app.js',
 ])
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,26 +25,22 @@
 
         <div class="showcase-content">
 
-            <div class="brand-logo">
+            <div class="brand">
+                <div class="brand-logo">
 
-                @if($siteLogo)
-
-                    <img
-                        src="{{ asset('storage/' . $siteLogo) }}"
-                        alt="{{ setting('site_name') }}"
-                    >
-
-                @else
-
+                    @if($siteLogo)
+                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ setting('site_name') }}">
+                    @else
                     <i class="bi bi-bag-check-fill"></i>
+                    @endif
 
-                @endif
+                </div>
 
-                <span>
+                <span class="brand-name">
                     {{ setting('site_name') }}
                 </span>
-
             </div>
+
 
 
             <div class="showcase-main">
@@ -158,21 +157,18 @@
 
                 @if($errors->any())
 
-                    <div class="alert alert-danger">
+                <div class="alert alert-danger">
 
-                        <i class="bi bi-exclamation-triangle me-1"></i>
+                    <i class="bi bi-exclamation-triangle me-1"></i>
 
-                        Please check the information below.
+                    Please check the information below.
 
-                    </div>
+                </div>
 
                 @endif
 
 
-                <form
-                    action="{{ route('register') }}"
-                    method="POST"
-                >
+                <form action="{{ route('register') }}" method="POST">
 
                     @csrf
 
@@ -193,29 +189,20 @@
                             <i class="bi bi-person"></i>
 
 
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value="{{ old('name') }}"
-                                placeholder="Enter your name"
-                                required
-                                autofocus
-                                autocomplete="name"
-                            >
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Enter your name" required autofocus autocomplete="name">
 
                         </div>
 
 
                         @error('name')
 
-                            <small class="login-error">
+                        <small class="login-error">
 
-                                <i class="bi bi-exclamation-circle"></i>
+                            <i class="bi bi-exclamation-circle"></i>
 
-                                {{ $message }}
+                            {{ $message }}
 
-                            </small>
+                        </small>
 
                         @enderror
 
@@ -238,28 +225,20 @@
                             <i class="bi bi-envelope"></i>
 
 
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                placeholder="Enter your email"
-                                required
-                                autocomplete="email"
-                            >
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="Enter your email" required autocomplete="email">
 
                         </div>
 
 
                         @error('email')
 
-                            <small class="login-error">
+                        <small class="login-error">
 
-                                <i class="bi bi-exclamation-circle"></i>
+                            <i class="bi bi-exclamation-circle"></i>
 
-                                {{ $message }}
+                            {{ $message }}
 
-                            </small>
+                        </small>
 
                         @enderror
 
@@ -282,21 +261,10 @@
                             <i class="bi bi-lock"></i>
 
 
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Create a password"
-                                required
-                                autocomplete="new-password"
-                            >
+                            <input type="password" id="password" name="password" placeholder="Create a password" required autocomplete="new-password">
 
 
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                onclick="togglePassword('password', this)"
-                            >
+                            <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
 
                                 <i class="bi bi-eye"></i>
 
@@ -307,13 +275,13 @@
 
                         @error('password')
 
-                            <small class="login-error">
+                        <small class="login-error">
 
-                                <i class="bi bi-exclamation-circle"></i>
+                            <i class="bi bi-exclamation-circle"></i>
 
-                                {{ $message }}
+                            {{ $message }}
 
-                            </small>
+                        </small>
 
                         @enderror
 
@@ -336,21 +304,10 @@
                             <i class="bi bi-shield-lock"></i>
 
 
-                            <input
-                                type="password"
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                placeholder="Confirm your password"
-                                required
-                                autocomplete="new-password"
-                            >
+                            <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" required autocomplete="new-password">
 
 
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                onclick="togglePassword('password_confirmation', this)"
-                            >
+                            <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation', this)">
 
                                 <i class="bi bi-eye"></i>
 
@@ -361,13 +318,13 @@
 
                         @error('password_confirmation')
 
-                            <small class="login-error">
+                        <small class="login-error">
 
-                                <i class="bi bi-exclamation-circle"></i>
+                            <i class="bi bi-exclamation-circle"></i>
 
-                                {{ $message }}
+                            {{ $message }}
 
-                            </small>
+                        </small>
 
                         @enderror
 
@@ -376,10 +333,7 @@
 
                     {{-- Register Button --}}
 
-                    <button
-                        type="submit"
-                        class="login-button"
-                    >
+                    <button type="submit" class="login-button">
 
                         <span>
 
@@ -424,32 +378,31 @@
 
 
 <script>
+    function togglePassword(inputId, button) {
 
-function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
 
-    const input = document.getElementById(inputId);
-
-    const icon = button.querySelector('i');
+        const icon = button.querySelector('i');
 
 
-    if (input.type === 'password') {
+        if (input.type === 'password') {
 
-        input.type = 'text';
+            input.type = 'text';
 
-        icon.classList.remove('bi-eye');
+            icon.classList.remove('bi-eye');
 
-        icon.classList.add('bi-eye-slash');
+            icon.classList.add('bi-eye-slash');
 
-    } else {
+        } else {
 
-        input.type = 'password';
+            input.type = 'password';
 
-        icon.classList.remove('bi-eye-slash');
+            icon.classList.remove('bi-eye-slash');
 
-        icon.classList.add('bi-eye');
+            icon.classList.add('bi-eye');
+
+        }
 
     }
-
-}
 
 </script>

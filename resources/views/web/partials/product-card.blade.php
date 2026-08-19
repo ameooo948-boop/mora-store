@@ -124,6 +124,7 @@ $inWishlist = auth()->check()
                 <input type="hidden" name="quantity" value="1">
 
                 <button type="submit" class="add-to-cart-btn" {{ $product->quantity == 0 ? 'disabled' : '' }}>
+
                     <span class="cart-icon">
                         <i class="bi bi-cart-plus"></i>
                     </span>
@@ -133,6 +134,7 @@ $inWishlist = auth()->check()
                     </span>
 
                     <i class="bi bi-arrow-right cart-arrow"></i>
+
                 </button>
 
             </form>

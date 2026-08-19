@@ -27,7 +27,7 @@ class ReviewController extends Controller
                     search: $request->search,
 
                     status: $request->filled('status')
-                        ? ReviewStatus::from($request->status)
+                        ? ReviewStatus::tryFrom($request->status)
                         : null,
 
                 ),

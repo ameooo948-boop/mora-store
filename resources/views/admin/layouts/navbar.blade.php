@@ -4,6 +4,10 @@
          PAGE TITLE
     ========================== --}}
 
+    <button type="button" class="admin-sidebar-toggle" id="adminSidebarToggle" aria-label="Open sidebar" aria-controls="adminSidebar" aria-expanded="false">
+        <i class="bi bi-list"></i>
+    </button>
+
     <div class="admin-topbar-title">
 
         <div class="admin-page-icon">

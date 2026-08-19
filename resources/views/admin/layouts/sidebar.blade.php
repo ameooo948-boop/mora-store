@@ -1,4 +1,4 @@
-<aside class="admin-sidebar">
+<aside class="admin-sidebar" id="adminSidebar">
 
     {{-- =========================
          BRAND
@@ -106,6 +106,27 @@
                     @endif
 
                 </a>
+            </li>
+
+            {{-- =========================
+                BACK TO STORE
+            ========================== --}}
+            <li>
+
+                <a href="{{ route('home') }}" class="admin-store-link">
+
+                    <span class="admin-menu-icon">
+                        <i class="bi bi-shop"></i>
+                    </span>
+
+                    <span class="admin-menu-text">
+                        View Store
+                    </span>
+
+                    <i class="bi bi-arrow-up-right ms-auto"></i>
+
+                </a>
+
             </li>
 
 

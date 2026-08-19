@@ -7,6 +7,7 @@ use App\Http\Requests\Web\StoreCartRequest;
 use App\Http\Requests\Web\UpdateCartRequest;
 use App\Models\Product;
 use App\Services\CartService;
+use DomainException;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -54,10 +55,9 @@ class CartController extends Controller
                 'success',
                 'Product added to cart.'
             );
-        } catch (\Throwable $e) {
+        } catch (DomainException $e) {
 
             if ($request->expectsJson()) {
-
                 return response()->json([
                     'success' => false,
                     'message' => $e->getMessage(),
@@ -66,6 +66,20 @@ class CartController extends Controller
 
             return back()->withErrors([
                 'cart' => $e->getMessage(),
+            ]);
+        } catch (\Throwable $e) {
+
+            report($e);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to update cart.',
+                ], 500);
+            }
+
+            return back()->withErrors([
+                'cart' => 'Unable to update cart.',
             ]);
         }
     }
@@ -129,10 +143,9 @@ class CartController extends Controller
                 'success',
                 'Cart updated successfully.'
             );
-        } catch (\Throwable $e) {
+        } catch (DomainException $e) {
 
             if ($request->expectsJson()) {
-
                 return response()->json([
                     'success' => false,
                     'message' => $e->getMessage(),
@@ -141,6 +154,20 @@ class CartController extends Controller
 
             return back()->withErrors([
                 'cart' => $e->getMessage(),
+            ]);
+        } catch (\Throwable $e) {
+
+            report($e);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to update cart.',
+                ], 500);
+            }
+
+            return back()->withErrors([
+                'cart' => 'Unable to update cart.',
             ]);
         }
     }

@@ -200,12 +200,12 @@
                             <div class="checkout-item-price">
 
                                 <span>
-                                    {{ number_format($item->price, 2) }}
+                                    {{ number_format($item->product->final_price, 2) }}
                                     {{ setting('currency') }}
                                 </span>
 
                                 <strong>
-                                    {{ number_format($item->price * $item->quantity, 2) }}
+                                    {{ number_format($item->product->final_price * $item->quantity, 2) }}
                                     {{ setting('currency') }}
                                 </strong>
 

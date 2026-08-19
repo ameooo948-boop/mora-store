@@ -72,6 +72,8 @@
    ========================================================= */
 
 .account-navbar {
+    position: relative;
+    z-index: 1050;
     background: rgba(15, 23, 42, .97);
     border-bottom: 1px solid var(--border-dark);
     padding: 10px 0;
@@ -84,6 +86,10 @@
     font-weight: 750;
     letter-spacing: -.3px;
     transition: opacity .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 .account-navbar .navbar-brand:hover {
@@ -91,7 +97,93 @@
     opacity: .9;
 }
 
-.account-navbar .nav-link {
+.account-navbar .brand-logo {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.account-navbar .brand-logo img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.account-navbar .brand-logo i {
+    color: #fff;
+    font-size: 19px;
+}
+
+.account-navbar .brand-name {
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.account-navbar .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, .14);
+    color: #fff;
+    background: rgba(255, 255, 255, .05);
+    border-radius: 11px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.account-navbar .navbar-toggler:hover,
+.account-navbar .navbar-toggler:focus {
+    color: #fff;
+    background: rgba(255, 255, 255, .10);
+    border-color: rgba(255, 255, 255, .22);
+    box-shadow: none;
+}
+
+.account-navbar .navbar-toggler:active {
+    transform: scale(.96);
+}
+
+.account-navbar .navbar-toggler i {
+    font-size: 23px;
+    line-height: 1;
+}
+
+.account-navbar .account-navbar-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+}
+
+.account-navbar .account-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.account-navbar .account-nav-list li {
+    margin: 0;
+    padding: 0;
+}
+
+.account-navbar .account-nav-link {
     color: #cbd5e1;
     font-weight: 500;
     font-size: 14px;
@@ -101,23 +193,39 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    text-decoration: none;
 }
 
-.account-navbar .nav-link i {
-    font-size: 16px;
-    opacity: .9;
-}
-
-.account-navbar .nav-link:hover {
+.account-navbar .account-nav-link:hover {
     color: #fff;
     background: rgba(255, 255, 255, .07);
     transform: translateY(-1px);
 }
 
-.account-navbar .nav-link.active {
+.account-navbar .account-nav-link.active {
     color: #fff;
     background: rgba(37, 99, 235, .95);
     box-shadow: 0 5px 15px rgba(37, 99, 235, .22);
+}
+
+.account-navbar .account-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.account-navbar .account-nav-icon i {
+    font-size: 16px;
+    opacity: .9;
+}
+
+.account-navbar .account-nav-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex: 0 0 auto;
 }
 
 .account-navbar .dropdown-toggle {
@@ -132,7 +240,8 @@
 }
 
 .account-navbar .dropdown-toggle:hover,
-.account-navbar .dropdown-toggle:focus {
+.account-navbar .dropdown-toggle:focus,
+.account-navbar .dropdown-toggle.show {
     background: rgba(255, 255, 255, .10);
     color: #fff;
     border-color: rgba(255, 255, 255, .18);
@@ -172,36 +281,187 @@
     color: var(--danger);
 }
 
-@media (max-width: 991px) {
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 992px) {
+
     .account-navbar .navbar-collapse {
+        display: flex !important;
+        flex-basis: auto;
+        flex-grow: 1;
+        align-items: center;
+        margin-left: 24px;
+    }
+
+    .account-navbar .account-navbar-content {
+        min-width: 0;
+    }
+
+    .account-navbar .account-nav-list {
+        flex-wrap: nowrap;
+    }
+
+    .account-navbar .account-nav-actions {
+        margin-left: auto;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .account-navbar {
+        padding: 8px 0;
+    }
+
+    .account-navbar>.container-fluid {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .account-navbar .navbar-toggler {
+        display: inline-flex;
+        flex: 0 0 44px;
+        margin-left: auto;
+    }
+
+    /*
+     * Bootstrap owns the collapse state.
+     * Do not force display:flex or use custom .is-open rules.
+     */
+
+    .account-navbar .navbar-collapse {
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    .account-navbar .navbar-collapse.show {
+        display: block;
+    }
+
+    .account-navbar .account-navbar-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
         margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid var(--border-dark);
+        padding: 14px 0 4px;
+        border-top: 1px solid rgba(255, 255, 255, .10);
     }
 
-    .account-navbar .nav-item {
-        margin-bottom: 5px;
+    .account-navbar .account-nav-list {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
     }
 
-    .account-navbar .dropdown {
-        margin-top: 12px;
+    .account-navbar .account-nav-list li {
+        width: 100%;
+    }
+
+    .account-navbar .account-nav-link {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 12px;
+        border-radius: 10px;
+    }
+
+    .account-navbar .account-nav-icon {
+        width: 30px;
+    }
+
+    .account-navbar .account-nav-actions {
+        width: 100%;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255, 255, 255, .10);
+    }
+
+    .account-navbar .account-nav-actions>.dropdown {
+        margin: 0;
+    }
+
+    .account-navbar .account-navbar-collapse:not(.show) .account-navbar-content {
+        margin-top: 0;
     }
 }
 
-.navbar-collapse {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: center;
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .account-navbar .navbar-brand {
+        font-size: 18px;
+        gap: 8px;
+        max-width: calc(100% - 58px);
+    }
+
+    .account-navbar .brand-logo {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 10px;
+    }
+
+    .account-navbar .brand-name {
+        max-width: 180px;
+    }
+
+    .account-navbar .navbar-toggler {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .account-navbar .account-nav-link {
+        min-height: 47px;
+        font-size: 14px;
+    }
+
+    .account-navbar .account-nav-actions {
+        justify-content: space-between;
+    }
 }
 
-.navbar-nav {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 5px;
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .account-navbar .brand-name {
+        max-width: 145px;
+    }
+
+    .account-navbar .account-nav-link {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 }
 
-.navbar-nav .nav-item {
-    display: block !important;
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.account-navbar .account-nav-link:focus-visible,
+.account-navbar .navbar-toggler:focus-visible,
+.account-navbar .dropdown-toggle:focus-visible {
+    outline: 3px solid rgba(96, 165, 250, .35);
+    outline-offset: 2px;
 }
 
 /* =========================================================
@@ -9366,90 +9626,82 @@
 }
 
 /* =========================================================
-   ACCOUNT NAVBAR — PREMIUM E-COMMERCE
+   MORA STORE — ACCOUNT NAVBAR
+   PREMIUM RESPONSIVE NAVIGATION
    ========================================================= */
 
 .account-navbar {
-    position: sticky;
+    width: 100%;
+    min-height: 76px;
 
-    top: 0;
-
-    z-index: 1030;
-
-    min-height: 72px;
-
-    border-bottom: 1px solid rgba(226, 232, 240, .12);
+    padding: 0;
 
     background:
         linear-gradient(135deg,
-            #0f172a,
-            #172554);
+            #0f172a 0%,
+            #172554 100%);
+
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
 
     box-shadow:
-        0 8px 30px rgba(15, 23, 42, .12);
+        0 8px 30px rgba(15, 23, 42, .14);
+
+    position: relative;
+    z-index: 1000;
 }
 
-.account-navbar::after {
-    content: "";
-
-    position: absolute;
-
-    right: 0;
-    bottom: -1px;
-    left: 0;
-
-    height: 1px;
-
-    background:
-        linear-gradient(90deg,
-            transparent,
-            rgba(96, 165, 250, .55),
-            transparent);
-
-    pointer-events: none;
-}
-
-.account-navbar>.container {
-    min-height: 72px;
-}
 
 /* =========================================================
-   INNER
+   CONTAINER
    ========================================================= */
 
-.account-navbar-inner {
-    min-height: 72px;
+.account-navbar>.container-fluid {
+    width: 100%;
+    min-height: 76px;
 
     display: flex;
     align-items: center;
-
-    gap: 25px;
 }
+
 
 /* =========================================================
    BRAND
    ========================================================= */
 
-.account-brand {
+.account-navbar .account-brand {
+    min-width: max-content;
+
     display: inline-flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 11px;
 
-    flex-shrink: 0;
+    margin-right: 32px;
 
-    color: #fff;
+    color: #fff !important;
 
     text-decoration: none;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
 }
 
-.account-brand:hover {
-    color: #fff;
+.account-navbar .account-brand:hover {
+    color: #fff !important;
+    opacity: .92;
+    transform: translateY(-1px);
 }
 
-.brand-logo {
-    width: 39px;
-    height: 39px;
+
+/* Logo */
+
+.account-navbar .account-brand .brand-logo {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
 
     display: flex;
     align-items: center;
@@ -9457,87 +9709,81 @@
 
     overflow: hidden;
 
-    border: 1px solid rgba(255, 255, 255, .16);
     border-radius: 11px;
 
-    background:
-        linear-gradient(135deg,
-            #2563eb,
-            #1d4ed8);
+    background: rgba(255, 255, 255, .08);
 
-    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .16);
 
     box-shadow:
-        0 7px 18px rgba(37, 99, 235, .25);
+        0 6px 18px rgba(0, 0, 0, .16);
 }
 
-.brand-logo img {
+.account-navbar .account-brand .brand-logo img {
     width: 100%;
     height: 100%;
 
-    object-fit: contain;
+    display: block;
 
-    padding: 4px;
-
-    background: #fff;
+    object-fit: cover;
 }
 
-.brand-logo i {
-    position: absolute;
 
-    right: -2px;
-    bottom: -1px;
+/* Store name */
 
-    width: 8px;
-    height: 8px;
-
-    border: 2px solid #172554;
-    border-radius: 50%;
-
-    background: #22c55e;
-}
-
-.brand-name {
-    max-width: 145px;
-
-    overflow: hidden;
+.account-navbar .account-brand .brand-name {
+    max-width: 220px;
 
     color: #fff;
 
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 800;
 
-    letter-spacing: -.25px;
+    line-height: 1;
 
-    text-overflow: ellipsis;
+    letter-spacing: -.35px;
+
     white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 
 /* =========================================================
    COLLAPSE
    ========================================================= */
 
-.account-navbar-collapse {
-    flex: 1;
+.account-navbar .account-navbar-collapse {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
-.account-navbar-content {
+
+/* =========================================================
+   NAVBAR CONTENT
+   ========================================================= */
+
+.account-navbar .account-navbar-content {
+    width: 100%;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 28px;
 }
 
+
 /* =========================================================
-   NAV LINKS
+   NAVIGATION
    ========================================================= */
 
-.account-nav-list {
+.account-navbar .account-nav-list {
     display: flex;
     align-items: center;
 
-    gap: 4px;
+    gap: 5px;
 
     margin: 0;
     padding: 0;
@@ -9545,1050 +9791,437 @@
     list-style: none;
 }
 
-.account-nav-list li {
+.account-navbar .account-nav-list li {
     margin: 0;
+    padding: 0;
 }
 
-.account-nav-link {
-    position: relative;
 
-    min-height: 42px;
+/* Link */
+
+.account-navbar .account-nav-link {
+    min-height: 46px;
 
     display: inline-flex;
     align-items: center;
 
-    gap: 7px;
+    gap: 9px;
 
-    padding: 0 11px;
+    padding: 0 14px;
 
-    border-radius: 9px;
+    border-radius: 11px;
 
     color: #cbd5e1;
 
-    font-size: 9px;
-    font-weight: 650;
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
 
     text-decoration: none;
 
     transition:
         color .2s ease,
         background .2s ease,
-        transform .2s ease;
-}
-
-.account-nav-link:hover {
-    color: #fff;
-
-    background: rgba(255, 255, 255, .07);
-
-    transform: translateY(-1px);
-}
-
-.account-nav-link.active {
-    color: #fff;
-
-    background: rgba(59, 130, 246, .16);
-}
-
-.account-nav-link.active::after {
-    content: "";
-
-    position: absolute;
-
-    right: 11px;
-    bottom: 3px;
-    left: 11px;
-
-    height: 2px;
-
-    border-radius: 2px;
-
-    background: #60a5fa;
-}
-
-.account-nav-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 20px;
-    height: 20px;
-}
-
-.account-nav-icon i {
-    font-size: 13px;
-}
-
-/* =========================================================
-   RIGHT ACTIONS
-   ========================================================= */
-
-.account-nav-actions {
-    display: flex;
-    align-items: center;
-
-    gap: 9px;
-
-    flex-shrink: 0;
-}
-
-/* =========================================================
-   NOTIFICATION BUTTON
-   ========================================================= */
-
-.account-icon-btn {
-    position: relative;
-
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 10px;
-
-    background: rgba(255, 255, 255, .055);
-    color: #e2e8f0;
-
-    cursor: pointer;
-
-    transition:
         transform .2s ease,
-        background .2s ease,
-        border-color .2s ease,
-        color .2s ease;
+        box-shadow .2s ease;
 }
 
-.account-icon-btn:hover,
-.account-icon-btn.show {
-    transform: translateY(-1px);
 
-    border-color: rgba(96, 165, 250, .35);
+/* Icon */
 
-    background: rgba(59, 130, 246, .16);
+.account-navbar .account-nav-icon {
+    width: 22px;
+    height: 22px;
 
-    color: #fff;
-}
+    flex: 0 0 22px;
 
-.account-icon-btn>i {
-    font-size: 16px;
-}
-
-.notification-count {
-    position: absolute;
-
-    top: -5px;
-    right: -5px;
-
-    min-width: 17px;
-    height: 17px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0 4px;
-
-    border: 2px solid #0f172a;
-    border-radius: 999px;
-
-    background: #ef4444;
-    color: #fff;
-
-    font-size: 6px;
-    font-weight: 800;
-
-    box-shadow:
-        0 3px 9px rgba(239, 68, 68, .35);
-}
-
-/* =========================================================
-   NOTIFICATION DROPDOWN
-   ========================================================= */
-
-.account-notification-menu {
-    width: 390px;
-
-    padding: 0;
-
-    margin-top: 12px !important;
-
-    overflow: hidden;
-
-    border: 1px solid #e2e8f0;
-    border-radius: 15px;
-
-    background: #fff;
-
-    box-shadow:
-        0 20px 50px rgba(15, 23, 42, .16);
-}
-
-.notification-menu-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-
-    padding: 16px;
-
-    border-bottom: 1px solid #edf1f5;
-
-    background:
-        linear-gradient(180deg,
-            #ffffff,
-            #fafcff);
-}
-
-.notification-menu-header span {
-    display: block;
-
-    margin-bottom: 3px;
-
-    color: #94a3b8;
-
-    font-size: 7px;
-    font-weight: 800;
-
-    letter-spacing: .8px;
-}
-
-.notification-menu-header h3 {
-    margin: 0;
-
-    color: #1e293b;
-
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.notification-read-all {
     display: inline-flex;
     align-items: center;
-
-    gap: 5px;
-
-    padding: 5px 7px;
-
-    border: 0;
-    border-radius: 6px;
-
-    background: #eff6ff;
-    color: #2563eb;
-
-    font-size: 7px;
-    font-weight: 750;
-
-    cursor: pointer;
-
-    transition: background .2s ease;
-}
-
-.notification-read-all:hover {
-    background: #dbeafe;
-}
-
-/* =========================================================
-   NOTIFICATION LIST
-   ========================================================= */
-
-.notification-menu-list {
-    max-height: 410px;
-
-    overflow-y: auto;
-}
-
-.notification-menu-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.notification-menu-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.notification-menu-list::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-
-    background: #cbd5e1;
-}
-
-.notification-menu-item {
-    position: relative;
-
-    display: flex;
-    align-items: flex-start;
-
-    gap: 10px;
-
-    padding: 13px 14px;
-
-    border-bottom: 1px solid #f0f3f6;
-
-    background: #fff;
-
-    transition: background .2s ease;
-}
-
-.notification-menu-item:hover {
-    background: #fafcff;
-}
-
-.notification-menu-item.unread {
-    background:
-        linear-gradient(90deg,
-            #eff6ff,
-            #fff);
-}
-
-.notification-live-dot {
-    position: absolute;
-
-    top: 18px;
-    left: 6px;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: #2563eb;
-
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, .09);
-}
-
-.notification-menu-icon {
-    width: 35px;
-    height: 35px;
-
-    display: flex;
-    align-items: center;
     justify-content: center;
-
-    flex-shrink: 0;
-
-    border: 1px solid #dbeafe;
-    border-radius: 9px;
-
-    background: #eff6ff;
-    color: #2563eb;
 }
 
-.notification-menu-icon i {
-    font-size: 13px;
-}
-
-.notification-menu-content {
-    min-width: 0;
-
-    flex: 1;
-}
-
-.notification-menu-title {
-    display: block;
-
-    margin-bottom: 3px;
-
-    overflow: hidden;
-
-    color: #334155;
-
-    font-size: 9px;
-    font-weight: 750;
-
-    text-decoration: none;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.notification-menu-title:hover {
-    color: #2563eb;
-}
-
-.notification-menu-content p {
-    display: -webkit-box;
-
-    overflow: hidden;
-
-    margin: 0 0 5px;
-
-    color: #64748b;
-
-    font-size: 8px;
-    line-height: 1.5;
-
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-.notification-menu-time {
-    display: inline-flex;
-    align-items: center;
-
-    gap: 4px;
-
-    color: #a1adba;
-
-    font-size: 7px;
-}
-
-.notification-menu-time i {
-    font-size: 8px;
-}
-
-.notification-mark-read {
-    width: 25px;
-    height: 25px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border: 1px solid #bbf7d0;
-    border-radius: 7px;
-
-    background: #f0fdf4;
-    color: #16a34a;
-
-    cursor: pointer;
-
-    transition:
-        background .2s ease,
-        transform .2s ease;
-}
-
-.notification-mark-read:hover {
-    transform: scale(1.05);
-
-    background: #dcfce7;
-}
-
-.notification-mark-read i {
-    font-size: 10px;
-}
-
-.notification-read-icon {
-    padding-top: 5px;
-
-    color: #22c55e;
-
-    font-size: 11px;
-}
-
-/* =========================================================
-   EMPTY NOTIFICATIONS
-   ========================================================= */
-
-.notification-empty {
-    min-height: 220px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px;
-
-    text-align: center;
-}
-
-.notification-empty-icon {
-    width: 58px;
-    height: 58px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin-bottom: 11px;
-
-    border-radius: 17px;
-
-    background: #f1f5f9;
-    color: #94a3b8;
-}
-
-.notification-empty-icon i {
-    font-size: 22px;
-}
-
-.notification-empty strong {
-    margin-bottom: 3px;
-
-    color: #334155;
-
-    font-size: 10px;
-}
-
-.notification-empty span {
-    color: #94a3b8;
-
-    font-size: 8px;
-}
-
-/* =========================================================
-   NOTIFICATION FOOTER
-   ========================================================= */
-
-.notification-menu-footer {
-    padding: 0;
-
-    border-top: 1px solid #edf1f5;
-
-    background: #fafcff;
-}
-
-.notification-menu-footer a {
-    min-height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 7px;
-
-    color: #2563eb;
-
-    font-size: 8px;
-    font-weight: 750;
-
-    text-decoration: none;
-
-    transition:
-        background .2s ease,
-        color .2s ease;
-}
-
-.notification-menu-footer a:hover {
-    background: #eff6ff;
-    color: #1d4ed8;
-}
-
-.notification-menu-footer i {
-    transition: transform .2s ease;
-}
-
-.notification-menu-footer a:hover i {
-    transform: translateX(3px);
-}
-
-/* =========================================================
-   USER TRIGGER
-   ========================================================= */
-
-.account-user-trigger {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 4px 7px 4px 4px;
-
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 11px;
-
-    background: rgba(255, 255, 255, .055);
-    color: #fff;
-
-    cursor: pointer;
-
-    transition:
-        background .2s ease,
-        border-color .2s ease,
-        transform .2s ease;
-}
-
-.account-user-trigger:hover,
-.account-user-trigger.show {
-    transform: translateY(-1px);
-
-    border-color: rgba(96, 165, 250, .35);
-
-    background: rgba(255, 255, 255, .09);
-
-    color: #fff;
-}
-
-.account-user-avatar-wrap {
-    position: relative;
-
-    display: block;
-}
-
-.account-user-avatar {
-    width: 33px;
-    height: 33px;
-
-    display: block;
-
-    object-fit: cover;
-
-    border: 2px solid rgba(255, 255, 255, .35);
-    border-radius: 9px;
-}
-
-.account-user-online {
-    position: absolute;
-
-    right: -2px;
-    bottom: -1px;
-
-    width: 8px;
-    height: 8px;
-
-    border: 2px solid #172554;
-    border-radius: 50%;
-
-    background: #22c55e;
-}
-
-.account-user-details {
-    display: flex;
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    min-width: 0;
-}
-
-.account-user-details strong {
-    max-width: 105px;
-
-    overflow: hidden;
-
-    color: #f8fafc;
-
-    font-size: 9px;
-    font-weight: 750;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.account-user-details small {
-    color: #94a3b8;
-
-    font-size: 7px;
-}
-
-.account-user-chevron {
-    margin-left: 2px;
-
-    color: #94a3b8;
-
-    font-size: 8px;
-
-    transition: transform .2s ease;
-}
-
-.account-user-trigger.show .account-user-chevron {
-    transform: rotate(180deg);
-}
-
-/* =========================================================
-   USER DROPDOWN
-   ========================================================= */
-
-.account-user-menu {
-    width: 285px;
-
-    padding: 7px;
-
-    margin-top: 11px !important;
-
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-
-    background: #fff;
-
-    box-shadow:
-        0 20px 50px rgba(15, 23, 42, .15);
-}
-
-.user-menu-profile {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 10px;
-
-    border-radius: 9px;
-
-    background: #f8fafc;
-}
-
-.user-menu-avatar {
-    width: 39px;
-    height: 39px;
-
-    overflow: hidden;
-
-    flex-shrink: 0;
-
-    border-radius: 10px;
-
-    background: #eff6ff;
-}
-
-.user-menu-avatar img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
-.user-menu-profile>div:last-child {
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-}
-
-.user-menu-profile strong {
-    overflow: hidden;
-
-    color: #1e293b;
-
-    font-size: 10px;
-    font-weight: 750;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.user-menu-profile span {
-    overflow: hidden;
-
-    color: #94a3b8;
-
-    font-size: 7px;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.account-user-menu .dropdown-divider {
-    margin: 6px 3px;
-
-    border-color: #edf1f5;
-}
-
-/* =========================================================
-   USER MENU LINKS
-   ========================================================= */
-
-.user-menu-link {
-    display: flex;
-    align-items: center;
-
-    gap: 9px;
-
-    padding: 9px;
-
-    border-radius: 8px;
-
-    color: #334155;
-
-    text-decoration: none;
-
-    transition: background .2s ease;
-}
-
-.user-menu-link:hover {
-    background: #f8fafc;
-
-    color: #334155;
-}
-
-.user-menu-link-icon {
-    width: 31px;
-    height: 31px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border-radius: 8px;
-}
-
-.user-menu-link-icon.blue {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.user-menu-link-icon.purple {
-    background: #f5f3ff;
-    color: #7c3aed;
-}
-
-.user-menu-link-icon.red {
-    background: #fff1f2;
-    color: #e11d48;
-}
-
-.user-menu-link-icon i {
-    font-size: 12px;
-}
-
-.user-menu-link>span:nth-child(2) {
-    flex: 1;
-
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 1px;
-}
-
-.user-menu-link strong {
-    font-size: 9px;
-    font-weight: 700;
-}
-
-.user-menu-link small {
-    color: #94a3b8;
-
-    font-size: 7px;
-}
-
-.user-menu-link>i:last-child {
-    color: #cbd5e1;
-
-    font-size: 8px;
-
-    transition:
-        transform .2s ease,
-        color .2s ease;
-}
-
-.user-menu-link:hover>i:last-child {
-    transform: translateX(2px);
-
-    color: #2563eb;
-}
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-.user-menu-logout {
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 9px;
-
-    border: 0;
-    border-radius: 8px;
-
-    background: transparent;
-    color: #dc2626;
-
-    font-size: 9px;
-    font-weight: 700;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition: background .2s ease;
-}
-
-.user-menu-logout:hover {
-    background: #fef2f2;
-}
-
-.user-menu-logout>span {
-    width: 31px;
-    height: 31px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 8px;
-
-    background: #fef2f2;
-}
-
-.user-menu-logout i {
-    font-size: 12px;
-}
-
-/* =========================================================
-   MOBILE TOGGLER
-   ========================================================= */
-
-.account-navbar-toggler {
-    width: 40px;
-    height: 40px;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-
-    gap: 4px;
-
-    padding: 0;
-
-    border: 1px solid rgba(255, 255, 255, .14);
-    border-radius: 9px;
-
-    background: rgba(255, 255, 255, .06);
-
-    cursor: pointer;
-}
-
-.account-navbar-toggler span {
-    width: 17px;
-    height: 2px;
-
-    border-radius: 2px;
-
-    background: #e2e8f0;
+.account-navbar .account-nav-icon i {
+    font-size: 17px;
 
     transition:
         transform .2s ease,
         opacity .2s ease;
 }
 
+
+/* Hover */
+
+.account-navbar .account-nav-link:hover {
+    color: #fff;
+
+    background: rgba(255, 255, 255, .075);
+
+    transform: translateY(-1px);
+}
+
+.account-navbar .account-nav-link:hover .account-nav-icon i {
+    transform: scale(1.08);
+}
+
+
+/* Active */
+
+.account-navbar .account-nav-link.active {
+    color: #fff;
+
+    background:
+        linear-gradient(135deg,
+            rgba(59, 130, 246, .22),
+            rgba(37, 99, 235, .13));
+
+    box-shadow:
+        inset 0 0 0 1px rgba(96, 165, 250, .13),
+        0 5px 18px rgba(15, 23, 42, .10);
+}
+
+.account-navbar .account-nav-link.active .account-nav-icon i {
+    color: #93c5fd;
+}
+
+
 /* =========================================================
-   RESPONSIVE
+   RIGHT ACTIONS
    ========================================================= */
 
-@media (max-width: 991px) {
+.account-navbar .account-nav-actions {
+    display: flex;
+    align-items: center;
 
-    .account-navbar-inner {
-        min-height: 68px;
+    gap: 10px;
 
-        flex-wrap: wrap;
+    margin-left: auto;
 
-        gap: 0;
-    }
-
-    .account-navbar-toggler {
-        display: flex;
-
-        margin-left: auto;
-    }
-
-    .account-navbar-collapse {
-        width: 100%;
-        flex-basis: 100%;
-    }
-
-    .account-navbar-content {
-        align-items: stretch;
-
-        flex-direction: column;
-
-        gap: 12px;
-
-        padding: 13px 0 16px;
-    }
-
-    .account-nav-list {
-        align-items: stretch;
-
-        flex-direction: column;
-
-        gap: 3px;
-    }
-
-    .account-nav-link {
-        width: 100%;
-
-        min-height: 42px;
-
-        padding: 0 12px;
-    }
-
-    .account-nav-link.active::after {
-        right: auto;
-        bottom: 9px;
-        left: 3px;
-
-        width: 2px;
-        height: 24px;
-    }
-
-    .account-nav-actions {
-        justify-content: flex-end;
-
-        padding-top: 10px;
-
-        border-top: 1px solid rgba(255, 255, 255, .08);
-    }
-
+    flex-shrink: 0;
 }
 
-@media (max-width: 576px) {
-
-    .account-navbar {
-        min-height: 64px;
-    }
-
-    .account-navbar>.container {
-        min-height: 64px;
-    }
-
-    .account-navbar-inner {
-        min-height: 64px;
-    }
-
-    .brand-name {
-        max-width: 120px;
-
-        font-size: 12px;
-    }
-
-    .account-notification-menu {
-        position: fixed !important;
-
-        top: 64px !important;
-        right: 10px !important;
-        left: 10px !important;
-
-        width: auto;
-
-        margin: 0 !important;
-
-        transform: none !important;
-    }
-
-    .account-user-details {
-        display: none;
-    }
-
-    .account-user-chevron {
-        display: none;
-    }
-
-    .account-user-trigger {
-        padding-right: 4px;
-    }
-
-}
 
 /* =========================================================
-   FIX — ACCOUNT NAVBAR VISIBILITY
+   NOTIFICATION BUTTON
+   ========================================================= */
+
+.account-navbar .account-icon-btn {
+    position: relative;
+
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, .12);
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, .055);
+
+    color: #e2e8f0;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.account-navbar .account-icon-btn:hover,
+.account-navbar .account-icon-btn.show {
+    color: #fff;
+
+    background: rgba(59, 130, 246, .17);
+
+    border-color: rgba(96, 165, 250, .30);
+
+    box-shadow:
+        0 7px 20px rgba(15, 23, 42, .16);
+
+    transform: translateY(-1px);
+}
+
+.account-navbar .account-icon-btn>i {
+    font-size: 18px;
+}
+
+
+/* Notification counter */
+
+.account-navbar .notification-count {
+    position: absolute;
+
+    top: -5px;
+    right: -5px;
+
+    min-width: 19px;
+    height: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 5px;
+
+    border-radius: 999px;
+
+    background: #ef4444;
+
+    border: 2px solid #0f172a;
+
+    color: #fff;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+   ========================================================= */
+
+.account-navbar .account-notification-menu {
+    width: 390px !important;
+
+    max-width: calc(100vw - 24px);
+
+    margin-top: 10px !important;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 22px 60px rgba(15, 23, 42, .16);
+}
+
+
+/* =========================================================
+   USER BUTTON
+   ========================================================= */
+
+.account-navbar .account-user-btn {
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 4px 12px 4px 5px;
+
+    border: 1px solid rgba(255, 255, 255, .12);
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, .055);
+
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.account-navbar .account-user-btn:hover,
+.account-navbar .account-user-btn.show {
+    color: #fff;
+
+    background: rgba(255, 255, 255, .095);
+
+    border-color: rgba(255, 255, 255, .20);
+
+    box-shadow:
+        0 7px 20px rgba(15, 23, 42, .14);
+
+    transform: translateY(-1px);
+}
+
+
+/* Avatar */
+
+.account-navbar .account-user-avatar {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255, 255, 255, .18);
+
+    background: #020617;
+}
+
+
+/* User name */
+
+.account-navbar .account-user-name {
+    max-width: 150px;
+
+    overflow: hidden;
+
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Bootstrap arrow */
+
+.account-navbar .account-user-btn::after {
+    margin-left: 2px;
+}
+
+
+/* =========================================================
+   USER DROPDOWN
+   ========================================================= */
+
+.account-navbar .account-user-menu {
+    min-width: 210px;
+
+    margin-top: 10px !important;
+
+    padding: 7px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 20px 50px rgba(15, 23, 42, .14);
+}
+
+.account-navbar .account-user-menu .dropdown-item {
+    min-height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 11px;
+
+    border-radius: 9px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 550;
+
+    transition:
+        background .18s ease,
+        color .18s ease;
+}
+
+.account-navbar .account-user-menu .dropdown-item:hover {
+    background: #f1f5f9;
+
+    color: #0f172a;
+}
+
+.account-navbar .account-user-menu .dropdown-item i {
+    width: 18px;
+
+    text-align: center;
+}
+
+.account-navbar .account-user-menu .dropdown-divider {
+    margin: 6px 0;
+
+    border-color: #e2e8f0;
+}
+
+
+/* =========================================================
+   MOBILE TOGGLER
+   ========================================================= */
+
+.account-navbar .account-navbar-toggler {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, .15) !important;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, .06);
+
+    color: #fff !important;
+
+    box-shadow: none;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.account-navbar .account-navbar-toggler:hover,
+.account-navbar .account-navbar-toggler:focus {
+    background: rgba(255, 255, 255, .11);
+
+    border-color: rgba(255, 255, 255, .25) !important;
+
+    color: #fff;
+
+    box-shadow: none;
+
+    outline: none;
+}
+
+.account-navbar .account-navbar-toggler:active {
+    transform: scale(.96);
+}
+
+.account-navbar .account-navbar-toggler i {
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   DESKTOP
    ========================================================= */
 
 @media (min-width: 992px) {
@@ -10603,59 +10236,368 @@
         height: auto !important;
 
         overflow: visible !important;
-
-        flex: 1 1 auto !important;
     }
 
     .account-navbar .account-navbar-content {
-        display: flex !important;
+        display: flex;
 
-        align-items: center !important;
-
-        justify-content: space-between !important;
-
-        width: 100% !important;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .account-navbar .account-nav-list {
-        display: flex !important;
-
-        align-items: center !important;
-
-        visibility: visible !important;
-
-        opacity: 1 !important;
-
-        margin: 0 !important;
-        padding: 0 !important;
+        display: flex;
+        flex-direction: row;
     }
 
-    .account-navbar .account-nav-list li {
-        display: list-item !important;
+}
 
-        visibility: visible !important;
 
-        opacity: 1 !important;
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1199px) and (min-width: 992px) {
+
+    .account-navbar .account-brand {
+        margin-right: 16px;
+    }
+
+    .account-navbar .account-nav-list {
+        gap: 2px;
     }
 
     .account-navbar .account-nav-link {
-        display: inline-flex !important;
+        padding: 0 10px;
 
-        visibility: visible !important;
+        font-size: 13px;
+    }
 
-        opacity: 1 !important;
+    .account-navbar .account-nav-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .account-navbar .account-nav-icon i {
+        font-size: 15px;
+    }
+
+    .account-navbar .account-user-name {
+        max-width: 100px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .account-navbar {
+        min-height: 68px;
+    }
+
+    .account-navbar>.container-fluid {
+        min-height: 68px;
+
+        flex-wrap: wrap;
+    }
+
+
+    /* Brand + toggle stay on one row */
+
+    .account-navbar .account-brand {
+        margin-right: 0;
+
+        gap: 10px;
+    }
+
+    .account-navbar .account-brand .brand-logo {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+
+        border-radius: 11px;
+    }
+
+    .account-navbar .account-brand .brand-name {
+        max-width: 170px;
+
+        font-size: 16px;
+    }
+
+
+    /* Hamburger */
+
+    .account-navbar .account-navbar-toggler {
+        display: inline-flex;
+
+        margin-left: auto;
+    }
+
+
+    /*
+     * IMPORTANT:
+     * Bootstrap controls .collapse visibility.
+     * Do NOT force display:flex/block here.
+     */
+
+    .account-navbar .account-navbar-collapse {
+        width: 100%;
+
+        flex-basis: 100%;
+
+        min-width: 100%;
+    }
+
+
+    /* Open menu */
+
+    .account-navbar .account-navbar-collapse.show {
+        display: block;
+    }
+
+
+    /* Content */
+
+    .account-navbar .account-navbar-content {
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 12px;
+
+        padding: 14px 0 16px;
+
+        margin-top: 10px;
+
+        border-top: 1px solid rgba(255, 255, 255, .09);
+    }
+
+
+    /* Navigation */
+
+    .account-navbar .account-nav-list {
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 3px;
+    }
+
+    .account-navbar .account-nav-list li {
+        width: 100%;
+    }
+
+    .account-navbar .account-nav-link {
+        width: 100%;
+
+        min-height: 46px;
+
+        display: flex;
+
+        justify-content: flex-start;
+
+        padding: 0 13px;
+
+        border-radius: 11px;
+    }
+
+
+    /* Active mobile indicator */
+
+    .account-navbar .account-nav-link.active {
+        position: relative;
+
+        background: rgba(59, 130, 246, .15);
+
+        box-shadow: none;
+    }
+
+    .account-navbar .account-nav-link.active::before {
+        content: "";
+
+        position: absolute;
+
+        top: 10px;
+        bottom: 10px;
+        left: 3px;
+
+        width: 3px;
+
+        border-radius: 999px;
+
+        background: #60a5fa;
+    }
+
+
+    /* Actions */
+
+    .account-navbar .account-nav-actions {
+        width: 100%;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: flex-end;
+
+        gap: 10px;
+
+        margin-left: 0;
+
+        padding-top: 13px;
+
+        border-top: 1px solid rgba(255, 255, 255, .09);
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .account-navbar {
+        min-height: 64px;
+    }
+
+    .account-navbar>.container-fluid {
+        min-height: 64px;
+
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+
+    .account-navbar .account-brand .brand-logo {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+    }
+
+    .account-navbar .account-brand .brand-name {
+        max-width: 145px;
+
+        font-size: 15px;
+    }
+
+
+    .account-navbar .account-navbar-toggler {
+        width: 44px;
+        height: 44px;
+
+        flex-basis: 44px;
+    }
+
+
+    /* User actions */
+
+    .account-navbar .account-nav-actions {
+        justify-content: space-between;
+    }
+
+
+    .account-navbar .account-user-btn {
+        flex: 1;
+
+        min-width: 0;
+
+        justify-content: center;
+
+        padding-right: 10px;
+    }
+
+    .account-navbar .account-user-name {
+        max-width: 130px;
+    }
+
+
+    /* Notification dropdown */
+
+    .account-navbar .account-notification-menu {
+        position: fixed !important;
+
+        top: 74px !important;
+
+        left: 10px !important;
+        right: 10px !important;
+
+        width: auto !important;
+        max-width: none;
+
+        margin: 0 !important;
+
+        transform: none !important;
+    }
+
+
+    .account-navbar .account-user-menu {
+        min-width: 190px;
+
+        max-width: calc(100vw - 20px);
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .account-navbar .account-brand .brand-name {
+        max-width: 110px;
+
+        font-size: 14px;
     }
 
     .account-navbar .account-nav-actions {
-        display: flex !important;
-
-        visibility: visible !important;
-
-        opacity: 1 !important;
+        gap: 7px;
     }
 
-    .account-navbar .account-navbar-toggler {
-        display: none !important;
+    .account-navbar .account-user-name {
+        max-width: 105px;
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.account-navbar a:focus-visible,
+.account-navbar button:focus-visible {
+    outline: 3px solid rgba(96, 165, 250, .35);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .account-navbar *,
+    .account-navbar *::before,
+    .account-navbar *::after {
+        transition: none !important;
+        animation: none !important;
     }
 
 }
@@ -14737,15 +14679,17 @@ body.store-body {
 }
 
 
-/* Notification */
+/* =========================================================
+   NAVBAR NOTIFICATIONS
+   ========================================================= */
 
-.account-icon-btn {
+.account-navbar .account-icon-btn {
     position: relative;
 
     width: 44px;
     height: 44px;
 
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 
@@ -14755,39 +14699,522 @@ body.store-body {
     border-radius: 11px;
 
     background: rgba(255, 255, 255, .055);
-
     color: #e2e8f0;
-
-    cursor: pointer;
 
     transition: .2s ease;
 }
 
-.account-icon-btn:hover,
-.account-icon-btn.show {
+.account-navbar .account-icon-btn:hover,
+.account-navbar .account-icon-btn.show {
     background: rgba(59, 130, 246, .18);
-
     border-color: rgba(96, 165, 250, .35);
-
     color: #fff;
-
-    transform: translateY(-1px);
 }
 
-.account-icon-btn>i {
+.account-navbar .account-icon-btn>i {
     font-size: 18px !important;
 }
 
-.notification-count {
+
+/* =========================================================
+   NOTIFICATION BADGE
+   ========================================================= */
+
+.account-navbar .notification-count {
+    position: absolute;
+
     top: -5px;
     right: -5px;
 
     min-width: 19px;
     height: 19px;
 
+    padding: 0 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ef4444;
+    color: #fff;
+
+    border: 2px solid #0f172a;
+
     font-size: 9px !important;
+    font-weight: 800;
+    line-height: 1;
+
+    z-index: 10;
 }
 
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+   ========================================================= */
+
+.account-navbar .account-notification-menu {
+    width: 390px !important;
+    max-width: calc(100vw - 24px);
+
+    padding: 0 !important;
+    margin-top: 10px !important;
+
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+
+    overflow: hidden;
+
+    background: #fff !important;
+
+    box-shadow: 0 20px 50px rgba(15, 23, 42, .18) !important;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-menu-header {
+    min-height: 74px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 13px 16px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    background: #fff;
+}
+
+
+/* ACCOUNT */
+
+.account-navbar .account-notification-menu .notification-menu-header>div>span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #64748b;
+
+    font-size: 9px !important;
+    font-weight: 700;
+
+    letter-spacing: 1.4px;
+}
+
+
+/* Notifications */
+
+.account-navbar .account-notification-menu .notification-menu-header h3 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 20px !important;
+    font-weight: 700 !important;
+
+    line-height: 1.15;
+}
+
+
+/* =========================================================
+   READ ALL
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-read-all {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 34px;
+
+    padding: 7px 11px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    background: #fff;
+    color: #475569;
+
+    font-size: 11px !important;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition: .18s ease;
+}
+
+.account-navbar .account-notification-menu .notification-read-all:hover {
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+
+    color: #2563eb;
+}
+
+.account-navbar .account-notification-menu .notification-read-all i {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   NOTIFICATION LIST
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-menu-list {
+    max-height: 350px;
+
+    overflow-y: auto;
+}
+
+.account-navbar .account-notification-menu .notification-menu-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.account-navbar .account-notification-menu .notification-menu-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   ITEM
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-menu-item {
+    position: relative;
+
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 11px 13px;
+
+    background: #fff;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    transition: background .18s ease;
+}
+
+.account-navbar .account-notification-menu .notification-menu-item:hover {
+    background: #f8fafc;
+}
+
+.account-navbar .account-notification-menu .notification-menu-item.unread {
+    background: #f8fbff;
+}
+
+
+/* Blue unread line */
+
+.account-navbar .account-notification-menu .notification-menu-item.unread::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 3px;
+
+    background: #2563eb;
+}
+
+
+/* =========================================================
+   LIVE DOT
+   ========================================================= */
+
+.account-navbar .notification-live-dot {
+    position: absolute;
+
+    top: 13px;
+    left: 7px;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-menu-icon {
+    width: 36px;
+    height: 36px;
+
+    flex: 0 0 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 4px;
+
+    border-radius: 9px;
+
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.account-navbar .notification-menu-icon i {
+    font-size: 15px !important;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-menu-content {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+/* Notification title */
+
+.account-navbar .account-notification-menu .notification-menu-title {
+    display: block;
+
+    margin: 0 0 3px;
+
+    color: #334155 !important;
+
+    font-size: 12px !important;
+    font-weight: 700 !important;
+
+    line-height: 1.25;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.account-navbar .account-notification-menu .notification-menu-title:hover {
+    color: #2563eb !important;
+    text-decoration: underline;
+}
+
+
+/* Message */
+
+.account-navbar .account-notification-menu .notification-menu-content p {
+    margin: 0 0 4px;
+
+    color: #64748b;
+
+    font-size: 10px !important;
+    line-height: 1.35;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* Time */
+
+.account-navbar .account-notification-menu .notification-menu-time {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 9px !important;
+    line-height: 1;
+}
+
+.account-navbar .notification-menu-time i {
+    margin-right: 3px;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   MARK AS READ
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-mark-read {
+    width: 32px;
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+
+    background: #fff;
+    color: #475569;
+
+    cursor: pointer;
+
+    transition: .18s ease;
+}
+
+.account-navbar .notification-mark-read:hover {
+    background: #eff6ff;
+
+    border-color: #93c5fd;
+
+    color: #2563eb;
+}
+
+
+/* Already read */
+
+.account-navbar .notification-read-icon {
+    flex: 0 0 32px;
+
+    text-align: center;
+
+    color: #94a3b8;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-menu-footer {
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 0 15px;
+
+    border-top: 1px solid #e5e7eb;
+
+    background: #fafcff;
+
+    color: #2563eb !important;
+
+    font-size: 11px !important;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.account-navbar .account-notification-menu .notification-menu-footer:hover {
+    background: #f1f5f9;
+
+    color: #1d4ed8 !important;
+}
+
+.account-navbar .notification-menu-footer i {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.account-navbar .account-notification-menu .notification-empty {
+    padding: 35px 20px;
+
+    text-align: center;
+}
+
+.account-navbar .notification-empty>i {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #cbd5e1;
+
+    font-size: 25px;
+}
+
+.account-navbar .notification-empty strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #334155;
+
+    font-size: 12px;
+}
+
+.account-navbar .notification-empty span {
+    color: #94a3b8;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .account-navbar .account-notification-menu {
+        position: fixed !important;
+
+        top: 68px !important;
+
+        left: 10px !important;
+        right: 10px !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        margin: 0 !important;
+
+        border-radius: 14px !important;
+    }
+
+    .account-navbar .account-notification-menu .notification-menu-header {
+        min-height: 68px;
+
+        padding: 11px 13px;
+    }
+
+    .account-navbar .account-notification-menu .notification-menu-header h3 {
+        font-size: 18px !important;
+    }
+
+    .account-navbar .account-notification-menu .notification-menu-list {
+        max-height: calc(100vh - 180px);
+    }
+
+}
 
 /* User */
 
@@ -15688,4 +16115,342 @@ svg {
 
 .quantity-input[type="number"] {
     appearance: textfield;
+}
+
+/* =====================================================
+   PREMIUM APP TOAST
+===================================================== */
+
+.app-toast-container {
+    position: fixed;
+
+    top: 24px;
+    right: 24px;
+
+    width: min(390px, calc(100vw - 32px));
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    z-index: 99999;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.app-toast {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    min-height: 76px;
+
+    padding: 14px 42px 14px 14px;
+
+    overflow: hidden;
+
+    pointer-events: auto;
+
+    border: 1px solid rgba(255, 255, 255, 0.65);
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.88);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 20px 45px rgba(15, 23, 42, 0.12),
+        0 4px 12px rgba(15, 23, 42, 0.06);
+
+    animation: appToastIn 0.35s cubic-bezier(.21, 1.02, .73, 1);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.app-toast-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    font-size: 19px;
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.app-toast-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.app-toast-title {
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    color: #0f172a;
+}
+
+.app-toast-message {
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.45;
+
+    color: #64748b;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =====================================================
+   CLOSE
+===================================================== */
+
+.app-toast-close {
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #94a3b8;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.app-toast-close:hover {
+    color: #334155;
+
+    background: rgba(15, 23, 42, 0.06);
+}
+
+.app-toast-close i {
+    font-size: 17px;
+}
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+.app-toast-success {
+    border-left: 4px solid #16a34a;
+}
+
+.app-toast-success .app-toast-icon {
+    color: #16a34a;
+
+    background: rgba(22, 163, 74, 0.10);
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.app-toast-error {
+    border-left: 4px solid #dc2626;
+}
+
+.app-toast-error .app-toast-icon {
+    color: #dc2626;
+
+    background: rgba(220, 38, 38, 0.10);
+}
+
+
+/* =====================================================
+   WARNING
+===================================================== */
+
+.app-toast-warning {
+    border-left: 4px solid #d97706;
+}
+
+.app-toast-warning .app-toast-icon {
+    color: #d97706;
+
+    background: rgba(217, 119, 6, 0.10);
+}
+
+
+/* =====================================================
+   INFO
+===================================================== */
+
+.app-toast-info {
+    border-left: 4px solid #2563eb;
+}
+
+.app-toast-info .app-toast-icon {
+    color: #2563eb;
+
+    background: rgba(37, 99, 235, 0.10);
+}
+
+
+/* =====================================================
+   PROGRESS BAR
+===================================================== */
+
+.app-toast-progress {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    height: 3px;
+
+    width: 100%;
+
+    transform-origin: left;
+
+    animation: appToastProgress 4s linear forwards;
+}
+
+.app-toast-success .app-toast-progress {
+    background: #16a34a;
+}
+
+.app-toast-error .app-toast-progress {
+    background: #dc2626;
+}
+
+.app-toast-warning .app-toast-progress {
+    background: #d97706;
+}
+
+.app-toast-info .app-toast-progress {
+    background: #2563eb;
+}
+
+
+/* =====================================================
+   REMOVE
+===================================================== */
+
+.app-toast.is-removing {
+    opacity: 0;
+
+    transform:
+        translateX(30px) scale(0.96);
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes appToastIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateX(40px) scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateX(0) scale(1);
+    }
+
+}
+
+@keyframes appToastProgress {
+
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 576px) {
+
+    .app-toast-container {
+        top: 14px;
+        right: 14px;
+        left: 14px;
+
+        width: auto;
+    }
+
+    .app-toast {
+        min-height: 70px;
+
+        padding: 12px 38px 12px 12px;
+
+        border-radius: 14px;
+    }
+
+    .app-toast-icon {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+
+        font-size: 17px;
+    }
+
 }

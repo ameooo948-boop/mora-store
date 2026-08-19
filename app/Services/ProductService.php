@@ -225,23 +225,10 @@ class ProductService
                 $reference
             );
 
-            $threshold = config(
-                'notifications.low_stock_threshold'
-            );
-
-            if (
-                $beforeQuantity > $threshold &&
-                $product->quantity <= $threshold
-            ) {
-                $this->notificationService->lowStock(
-                    $product
-                );
-            }
-
             return $product;
         });
     }
-    
+
     public function increaseStock(
         Product $product,
         int $quantity,

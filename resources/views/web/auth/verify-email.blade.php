@@ -4,20 +4,16 @@
 
 <title>Verify Email | {{ config('app.name') }}</title>
 
+<link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+
 @vite([
-    'resources/css/app.css',
-    'resources/js/app.js',
+'resources/css/app.css',
+'resources/js/app.js',
 ])
 
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-    rel="stylesheet"
->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-    rel="stylesheet"
->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
 
 <div class="login-wrapper">
@@ -28,25 +24,20 @@
 
         <div class="showcase-content">
 
-            <div class="brand-logo">
+            <div class="brand">
+                <div class="brand-logo">
 
-                @if($siteLogo)
-
-                    <img
-                        src="{{ asset('storage/' . $siteLogo) }}"
-                        alt="{{ config('app.name') }}"
-                    >
-
-                @else
-
+                    @if($siteLogo)
+                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ setting('site_name') }}">
+                    @else
                     <i class="bi bi-bag-check-fill"></i>
+                    @endif
 
-                @endif
+                </div>
 
-                <span>
-                    {{ config('app.name') }}
+                <span class="brand-name">
+                    {{ setting('site_name') }}
                 </span>
-
             </div>
 
 
@@ -171,13 +162,13 @@
 
                 @if(session('success'))
 
-                    <div class="alert alert-success">
+                <div class="alert alert-success">
 
-                        <i class="bi bi-check-circle me-1"></i>
+                    <i class="bi bi-check-circle me-1"></i>
 
-                        {{ session('success') }}
+                    {{ session('success') }}
 
-                    </div>
+                </div>
 
                 @endif
 
@@ -196,17 +187,11 @@
 
                 {{-- Resend --}}
 
-                <form
-                    action="{{ route('verification.send') }}"
-                    method="POST"
-                >
+                <form action="{{ route('verification.send') }}" method="POST">
 
                     @csrf
 
-                    <button
-                        type="submit"
-                        class="login-button"
-                    >
+                    <button type="submit" class="login-button">
 
                         <span>
 
@@ -222,26 +207,19 @@
                 </form>
 
 
-                {{-- Logout --}}
+                {{-- Back To Login --}}
 
                 <div class="register-section">
 
-                    <form
-                        action="{{ route('logout') }}"
-                        method="POST"
-                        class="d-inline"
-                    >
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
 
-                        @csrf
-
-                        <button
-                            type="submit"
-                            class="btn btn-link p-0 text-decoration-none"
-                        >
+                    @csrf
+                    
+                        <button type="submit" class="btn btn-link p-0 text-decoration-none">
 
                             <i class="bi bi-box-arrow-left me-1"></i>
 
-                            Logout
+                            Back To Login
 
                         </button>
 

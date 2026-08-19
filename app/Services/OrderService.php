@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Events\OrderCreated;
+use App\Events\OrderStatusChanged;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
@@ -343,9 +344,7 @@ class OrderService
                 $status
             );
 
-            $this->notificationService->orderStatusChanged(
-                $updatedOrder
-            );
+            event(new OrderStatusChanged($order));
 
             return $updatedOrder;
         });

@@ -210,3 +210,110 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+
+        form.addEventListener('submit', async function (e) {
+
+            e.preventDefault();
+
+            const button = form.querySelector('.add-to-cart-btn');
+
+            if (!button || button.disabled) {
+                return;
+            }
+
+            const originalHTML = button.innerHTML;
+
+            button.disabled = true;
+
+            button.innerHTML = `
+                <span class="cart-icon">
+                    <span class="spinner-border spinner-border-sm"></span>
+                </span>
+
+                <span class="cart-text">
+                    Adding...
+                </span>
+            `;
+
+
+            try {
+
+                const response = await fetch(form.action, {
+
+                    method: 'POST',
+
+                    headers: {
+                        'X-CSRF-TOKEN': document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'),
+
+                        'X-Requested-With': 'XMLHttpRequest',
+
+                        'Accept': 'application/json'
+                    },
+
+                    body: new FormData(form)
+
+                });
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message || 'Something went wrong.'
+                    );
+
+                }
+
+
+                // Success
+                showToast(
+                    data.message || 'Product added to cart successfully.',
+                    'success'
+                );
+
+
+                // Update cart counter if it exists
+                if (data.cart_count !== undefined) {
+
+                    document
+                        .querySelectorAll('[data-cart-count]')
+                        .forEach(counter => {
+
+                            counter.textContent = data.cart_count;
+
+                        });
+
+                }
+
+
+            } catch (error) {
+
+                console.error('Add to cart error:', error);
+
+                showToast(
+                    error.message || 'Unable to add product to cart.',
+                    'error'
+                );
+
+
+            } finally {
+
+                button.disabled = false;
+
+                button.innerHTML = originalHTML;
+
+            }
+
+        });
+
+    });
+
+});

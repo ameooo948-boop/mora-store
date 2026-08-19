@@ -6,6 +6,7 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Events\PaymentCreated;
 use App\Repositories\Contracts\PaymentGatewayInterface;
 use App\Repositories\Contracts\PaymentRepositoryInterface;
 use App\Services\NotificationService;
@@ -36,7 +37,7 @@ class PaymentService
 
         ]);
 
-        $this->notificationService->newPayment($payment);
+        event(new PaymentCreated($payment));
 
         return $payment;
     }

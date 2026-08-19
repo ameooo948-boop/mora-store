@@ -10,7 +10,7 @@
     <title>
         @yield('title', 'Admin Dashboard')
     </title>
-    
+
     <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
 
     @vite([
@@ -55,10 +55,11 @@
             <main class="admin-content">
 
                 {{-- Flash Messages --}}
-                @if(session('success') || session('error'))
+                @if(session('success') || session('error') || $errors->any())
 
                 <div class="admin-flash-container">
 
+                    {{-- Success --}}
                     @if(session('success'))
 
                     <div class="admin-flash admin-flash-success" role="alert">
@@ -88,6 +89,7 @@
                     @endif
 
 
+                    {{-- Error --}}
                     @if(session('error'))
 
                     <div class="admin-flash admin-flash-error" role="alert">
@@ -116,14 +118,53 @@
 
                     @endif
 
+
+                    {{-- Validation Errors --}}
+                    @if($errors->any())
+
+                    <div class="admin-flash admin-flash-error" role="alert">
+
+                        <div class="admin-flash-icon">
+                            <i class="bi bi-exclamation-lg"></i>
+                        </div>
+
+                        <div class="admin-flash-content">
+
+                            <span class="admin-flash-title">
+                                Please check your information
+                            </span>
+
+                            <ul class="admin-flash-message admin-flash-errors">
+
+                                @foreach($errors->all() as $error)
+
+                                <li>
+                                    {{ $error }}
+                                </li>
+
+                                @endforeach
+
+                            </ul>
+
+                        </div>
+
+                        <button type="button" class="admin-flash-close" onclick="this.closest('.admin-flash').remove()">
+                            <i class="bi bi-x"></i>
+                        </button>
+
+                    </div>
+
+                    @endif
+
                 </div>
 
                 @endif
 
+
+                {{-- Page Content --}}
                 @yield('content')
 
             </main>
-
 
             {{-- Footer --}}
             @include('admin.layouts.footer')
@@ -132,6 +173,7 @@
 
     </div>
 
+    <div class="admin-sidebar-overlay" id="adminSidebarOverlay"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -3,7 +3,7 @@
     <div class="container-fluid px-4 px-xl-5">
 
         {{-- Brand --}}
-        <a class="navbar-brand account-brand" href="{{ route('products.index') }}">
+        <a class="navbar-brand account-brand" href="{{ route('home') }}">
 
             <div class="brand-logo">
 
@@ -42,6 +42,20 @@
 
                 {{-- Navigation --}}
                 <ul class="account-nav-list">
+
+                    <li>
+                        <a href="{{ route('products.index') }}" class="account-nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
+
+                            <span class="account-nav-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </span>
+
+                            <span>
+                                Products
+                            </span>
+
+                        </a>
+                    </li>
 
                     <li>
                         <a href="{{ route('orders.index') }}" class="account-nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">

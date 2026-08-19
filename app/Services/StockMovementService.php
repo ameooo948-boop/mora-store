@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\StockMovementType;
+use App\Events\StockMovementCreated;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Repositories\Contracts\StockMovementRepositoryInterface;
@@ -27,27 +28,21 @@ class StockMovementService
             $notes = 'Order #' . $reference->order_number;
         }
 
-        return $this->repository->create([
-
+        $movement = $this->repository->create([
             'product_id' => $product->id,
-
             'user_id' => Auth::id(),
-
             'reference_type' => $reference?->getMorphClass(),
-
             'reference_id' => $reference?->getKey(),
-
             'type' => $type,
-
             'quantity' => $quantity,
-
             'before_quantity' => $beforeQuantity,
-
             'after_quantity' => $product->quantity,
-
             'notes' => $notes,
-
         ]);
+
+        event(new StockMovementCreated($movement));
+
+        return $movement;
     }
 
     public function paginate(

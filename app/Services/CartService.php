@@ -24,15 +24,17 @@ class CartService
 
             $cartItem = $this->cartItemRepository->find($cart, $product);
 
-            $available = $product->quantity - ($cartItem?->quantity ?? 0);
-
             if (! $product->status) {
-                throw new \Exception('This product is unavailable.');
+                throw new DomainException(
+                    'This product is unavailable.'
+                );
             }
+
+            $available = $product->quantity - ($cartItem?->quantity ?? 0);
 
             if ($quantity > $available) {
 
-                throw new \Exception(
+                throw new DomainException(
                     "You can only add {$available} more item(s)."
                 );
             }
@@ -106,7 +108,7 @@ class CartService
 
             if ($quantity > $product->quantity) {
 
-                throw new \Exception(
+                throw new DomainException(
                     "Only {$product->quantity} item(s) available."
                 );
             }

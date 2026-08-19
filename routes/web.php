@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\PasswordResetRequested;
 use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CartController;
@@ -14,20 +15,20 @@ use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
 use App\Services\SettingService;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 Route::get('/', [HomeController::class, 'index'])
-    ->name('home')->middleware('auth','verified');
+    ->name('home')->middleware('auth', 'verified');
 
-
-Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware(['auth', 'verified']);
-
+Route::post('/register', [AuthController::class, 'register'])->name('register.submit')->middleware('guest');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit')->middleware('guest');
+Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register')->middleware('guest');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -46,13 +47,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/carts', [CartController::class, 'clear'])
         ->name('cart.clear');
 
-
     Route::get('/orders', [OrderController::class, 'index'])
         ->name('orders.index');
 
     Route::get('/orders/{order}', [OrderController::class, 'show'])
         ->name('orders.show');
-
 
     Route::resource(
         'addresses',
@@ -63,7 +62,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'addresses/{address}/default',
         [AddressController::class, 'setDefault']
     )->name('addresses.default');
-
 
     Route::get('/checkout', [CheckoutController::class, 'index'])
         ->name('checkout.index');
@@ -77,7 +75,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/checkout/coupon', [CheckoutController::class, 'removeCoupon'])
         ->name('checkout.coupon.destroy');
 
-
     Route::get(
         'wishlist',
         [WishlistController::class, 'index']
@@ -87,7 +84,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'wishlist/{product}',
         [WishlistController::class, 'toggle']
     )->name('wishlist.toggle');
-
 
     Route::get(
         '/products',
@@ -113,7 +109,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'reviews/{review}',
         [ReviewController::class, 'destroy']
     )->name('reviews.destroy');
-
 
     Route::get(
         '/profile',
@@ -157,7 +152,6 @@ Route::post(
     StripeWebhookController::class
 )->name('stripe.webhook');
 
-
 Route::prefix('notifications')
     ->middleware(['auth', 'verified'])
 
@@ -184,20 +178,22 @@ Route::prefix('notifications')
 Route::get('/forgot-password', function () {
     $siteLogo = app()->make(SettingService::class)
         ->value('site_logo');
+
     return view('web.auth.forgot-password', compact('siteLogo'));
 })->middleware('guest')->name('password.request');
 
 Route::post('/forgot-password', function (Request $request) {
 
-    $request->validate([
-        'email' => ['required', 'email'],
-    ]);
+    $request->validate(['email' => 'required|email']);
 
-    $status = \Illuminate\Support\Facades\Password::sendResetLink(
-        $request->only('email')
+    $status = Password::sendResetLink(
+        $request->only('email'),
+        function ($user, $token) {
+            event(new PasswordResetRequested($user, $token));
+        }
     );
 
-    return $status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT
+    return $status === Password::RESET_LINK_SENT
         ? back()->with('success', __($status))
         : back()->withErrors(['email' => __($status)]);
 })->middleware('guest')->name('password.email');
@@ -221,7 +217,7 @@ Route::post('/reset-password', function (Request $request) {
         'password' => ['required', 'confirmed', 'min:8'],
     ]);
 
-    $status = \Illuminate\Support\Facades\Password::reset(
+    $status = Password::reset(
         $request->only(
             'email',
             'password',
@@ -235,19 +231,18 @@ Route::post('/reset-password', function (Request $request) {
             ])->save();
 
             $user->setRememberToken(
-                \Illuminate\Support\Str::random(60)
+                Str::random(60)
             );
         }
     );
 
-    return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
+    return $status === Password::PASSWORD_RESET
         ? redirect()
-        ->route('login')
-        ->with('success', __($status))
+            ->route('login')
+            ->with('success', __($status))
         : back()
-        ->withErrors(['email' => [__($status)]]);
+            ->withErrors(['email' => [__($status)]]);
 })->middleware('guest')->name('password.update');
-
 
 Route::get('/email/verify', function () {
 
@@ -259,7 +254,7 @@ Route::get('/email/verify', function () {
         compact('siteLogo')
     );
 
-})->middleware('auth')->name('verification.notice');
+})->middleware(['auth'])->name('verification.notice');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
 

@@ -15,7 +15,9 @@ class StripeGateway implements PaymentGatewayInterface
         Payment $payment,
     ): mixed {
 
-        Stripe::setApiKey(config('services.stripe.secret'));
+        Stripe::setApiKey(
+            config('services.stripe.secret')
+        );
 
         $session = Session::create([
 
@@ -64,10 +66,8 @@ class StripeGateway implements PaymentGatewayInterface
         ]);
 
         $payment->update([
-
-            $payment->transaction_id = $session->id,
-            $payment->gateway_response = $session->toArray(),
-
+            'transaction_id' => $session->id,
+            'gateway_response' => $session->toArray(),
         ]);
 
         return $session->url;

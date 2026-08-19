@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use App\Notifications\PasswordResetNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -29,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'phone',
         'avatar',
     ];
 
@@ -99,5 +101,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    public function wishlist()
+    {
+        return $this->belongsToMany(Product::class, 'wishlists');
     }
 }
