@@ -7,6 +7,7 @@ use App\Repositories\Contracts\BrandRepositoryInterface;
 use App\Services\StorageService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class BrandService
@@ -29,7 +30,11 @@ class BrandService
                 );
             }
 
-            return $this->brandRepository->create($data);
+            $brand = $this->brandRepository->create($data);
+
+            Cache::forget('categories.active');
+
+            return $brand;
         });
     }
     public function update(Brand $brand, array $data): bool
@@ -48,10 +53,14 @@ class BrandService
                 unset($data['logo']);
             }
 
-            return $this->brandRepository->update(
+            $result = $this->brandRepository->update(
                 $brand,
                 $data
             );
+
+            Cache::forget('categories.active');
+
+            return $result;
         });
     }
 
@@ -67,7 +76,13 @@ class BrandService
                 $this->storageService->delete($brand->logo);
             }
 
-            return $this->brandRepository->delete($brand);
+            $result = $this->brandRepository->delete($brand);
+
+            if ($result) {
+                Cache::forget('categories.active');
+            }
+
+            return $result;
         });
     }
 

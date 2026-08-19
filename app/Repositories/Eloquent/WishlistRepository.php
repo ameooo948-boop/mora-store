@@ -13,7 +13,10 @@ class WishlistRepository implements WishlistRepositoryInterface
     public function paginate(User $user, int $perPage = 12): LengthAwarePaginator
     {
         return $user->wishlists()
-            ->with('product.images')
+            ->with([
+                'product.images',
+                'product.category',
+            ])
             ->latest()
             ->paginate($perPage);
     }

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Setting;
 use App\Repositories\Contracts\AddressRepositoryInterface;
 use App\Repositories\Contracts\BrandRepositoryInterface;
 use App\Repositories\Contracts\CartItemRepositoryInterface;
@@ -147,13 +146,6 @@ class AppServiceProvider extends ServiceProvider
         if (! Schema::hasTable('settings')) {
             return;
         }
-
-        $settings = Setting::first();
-
-        View::share(
-            'settings',
-            $settings
-        );
 
         View::composer(
             'web.layouts.navbar',

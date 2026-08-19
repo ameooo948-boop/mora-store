@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Product;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\Traits\HasSlug;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
-
 
 class Brand extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug;
+    use HasFactory, HasSlug, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -33,11 +32,20 @@ class Brand extends Model
         return 'slug';
     }
 
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', true);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', false);
+    }
 
     protected function logoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->logo
+            get: fn () => $this->logo
                 ? Storage::url($this->logo)
                 : null
         );

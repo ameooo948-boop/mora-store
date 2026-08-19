@@ -3,17 +3,14 @@
 namespace App\Services;
 
 use App\Models\Category;
-use App\Models\Product;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
-use App\Services\ProductService;
-use App\Services\StorageService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class CategoryService
 {
-
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly StorageService $storageService,
@@ -24,7 +21,7 @@ class CategoryService
     {
         return DB::transaction(function () use ($data) {
 
-            if (!empty($data['image'])) {
+            if (! empty($data['image'])) {
 
                 $data['image'] = $this->storageService->upload(
                     $data['image'],
@@ -32,7 +29,11 @@ class CategoryService
                 );
             }
 
-            return $this->categoryRepository->create($data);
+            $category = $this->categoryRepository->create($data);
+
+            Cache::forget('categories.active');
+
+            return $category;
         });
     }
 
@@ -40,7 +41,7 @@ class CategoryService
     {
         return DB::transaction(function () use ($category, $data) {
 
-            if (!empty($data['image'])) {
+            if (! empty($data['image'])) {
 
                 $data['image'] = $this->storageService->replace(
                     file: $data['image'],
@@ -52,10 +53,14 @@ class CategoryService
                 unset($data['image']);
             }
 
-            return $this->categoryRepository->update(
+            $result = $this->categoryRepository->update(
                 $category,
                 $data
             );
+
+            Cache::forget('categories.active');
+
+            return $result;
         });
     }
 
@@ -75,7 +80,13 @@ class CategoryService
                 $this->storageService->delete($category->image);
             }
 
-            return $this->categoryRepository->delete($category);
+            $result = $this->categoryRepository->delete($category);
+
+            if ($result) {
+                Cache::forget('categories.active');
+            }
+
+            return $result;
         });
     }
 

@@ -42,6 +42,7 @@ class OrderRepository implements OrderRepositoryInterface
     public function getUserOrders(User $user): LengthAwarePaginator
     {
         return $user->orders()
+            ->withCount('items')
             ->latest()
             ->paginate(10);
     }

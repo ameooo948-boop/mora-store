@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
-use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -88,7 +87,13 @@ class Order extends Model
 
     public function getItemsCountAttribute(): int
     {
-        return $this->items->count();
+        if (array_key_exists('items_count', $this->attributes)) {
+            return (int) $this->attributes['items_count'];
+        }
+
+        return $this->relationLoaded('items')
+            ? $this->items->count()
+            : $this->items()->count();
     }
 
     public function getFormattedSubtotalAttribute(): string
