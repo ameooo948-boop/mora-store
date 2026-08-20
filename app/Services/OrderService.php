@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\Order\PlaceOrderData;
 use App\Enums\OrderStatus;
-use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Events\OrderCreated;
 use App\Events\OrderStatusChanged;
@@ -14,12 +14,6 @@ use App\Models\User;
 use App\Repositories\Contracts\AddressRepositoryInterface;
 use App\Repositories\Contracts\OrderItemRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
-use App\Services\CartService;
-use App\Services\CouponService;
-use App\Services\NotificationService;
-use App\Services\OrderStatusHistoryService;
-use App\Services\PaymentService;
-use App\Services\ProductService;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -41,11 +35,9 @@ class OrderService
 
     public function placeOrder(
         User $user,
-        int $addressId,
-        PaymentMethod $paymentMethod,
-        ?string $couponCode = null,
+        PlaceOrderData $data,
     ): Order {
-        return DB::transaction(function () use ($user, $addressId, $paymentMethod, $couponCode) {
+        return DB::transaction(function () use ($user, $data) {
 
             $cart = $this->cartService->getCartForUpdate(
                 $user->id
@@ -57,7 +49,7 @@ class OrderService
                 ]);
             }
 
-            $address = $this->addressRepository->find($user, $addressId);
+            $address = $this->addressRepository->find($user, $data->addressId);
 
             if (! $address) {
                 throw ValidationException::withMessages([
@@ -71,10 +63,10 @@ class OrderService
 
             $coupon = null;
 
-            if ($couponCode) {
+            if ($data->couponCode) {
 
                 $coupon = $this->couponService
-                    ->findByCodeForUpdate($couponCode);
+                    ->findByCodeForUpdate($data->couponCode);
 
                 if (! $coupon) {
                     throw ValidationException::withMessages([
@@ -126,7 +118,7 @@ class OrderService
 
             $this->paymentService->createPayment(
                 $order,
-                $paymentMethod
+                $data->paymentMethod
             );
 
             $items = [];
@@ -198,12 +190,13 @@ class OrderService
             $order
         );
     }
+
     private function generateOrderNumber(): string
     {
         return 'ORD-'
-            . now()->format('YmdHis')
-            . '-'
-            . Str::upper(Str::random(5));
+            .now()->format('YmdHis')
+            .'-'
+            .Str::upper(Str::random(5));
     }
 
     public function getUserOrders(User $user)

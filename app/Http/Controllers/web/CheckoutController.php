@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\DTOs\Order\PlaceOrderData;
 use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\CheckoutRequest;
@@ -30,6 +31,7 @@ class CheckoutController extends Controller
                 ->getCheckoutData($request->user())
         );
     }
+
     public function store(
         CheckoutRequest $request,
     ) {
@@ -37,11 +39,13 @@ class CheckoutController extends Controller
 
             $order = $this->orderService->placeOrder(
                 $request->user(),
-                $request->integer('address_id'),
-                PaymentMethod::from(
-                    $request->string('payment_method')->value()
+                new PlaceOrderData(
+                    addressId: $request->integer('address_id'),
+                    paymentMethod: PaymentMethod::from(
+                        $request->string('payment_method')->value()
+                    ),
+                    couponCode: session('coupon.code'),
                 ),
-                session('coupon.code'),
             );
 
             session()->forget('coupon');
@@ -75,7 +79,6 @@ class CheckoutController extends Controller
                 );
         }
     }
-
 
     public function applyCoupon(Request $request)
     {

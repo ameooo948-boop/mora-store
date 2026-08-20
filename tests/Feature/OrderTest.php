@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\DTOs\Order\PlaceOrderData;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
@@ -10,15 +11,17 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use App\Services\OrderService;
-use Tests\TestCase;
 use Spatie\Permission\Models\Role;
+use Tests\TestCase;
 
 class OrderTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected OrderService $orderService;
 
     protected function setUp(): void
     {
@@ -28,6 +31,8 @@ class OrderTest extends TestCase
             'name' => 'admin',
             'guard_name' => 'web',
         ]);
+
+        $this->orderService = app(OrderService::class);
     }
 
     public function test_user_can_place_order_with_cash_on_delivery(): void
@@ -80,12 +85,12 @@ class OrderTest extends TestCase
         /*
          * Place order
          */
-        $orderService = app(OrderService::class);
-
-        $order = $orderService->placeOrder(
+        $order = $this->orderService->placeOrder(
             $user,
-            $address->id,
-            PaymentMethod::CashOnDelivery,
+            new PlaceOrderData(
+                addressId: $address->id,
+                paymentMethod: PaymentMethod::CashOnDelivery,
+            ),
         );
 
         /*
@@ -178,12 +183,13 @@ class OrderTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Not enough stock for');
 
-        app(OrderService::class)->placeOrder(
+        $this->orderService->placeOrder(
             $user,
-            $address->id,
-            PaymentMethod::CashOnDelivery,
+            new PlaceOrderData(
+                addressId: $address->id,
+                paymentMethod: PaymentMethod::CashOnDelivery,
+            ),
         );
-
         $this->assertDatabaseMissing('orders', [
             'user_id' => $user->id,
         ]);
@@ -232,10 +238,12 @@ class OrderTest extends TestCase
 
         $this->expectException(\Exception::class);
 
-        app(OrderService::class)->placeOrder(
+        $this->orderService->placeOrder(
             $user,
-            $address->id,
-            PaymentMethod::CashOnDelivery,
+            new PlaceOrderData(
+                addressId: $address->id,
+                paymentMethod: PaymentMethod::CashOnDelivery,
+            ),
         );
     }
 
@@ -277,12 +285,13 @@ class OrderTest extends TestCase
         ]);
 
         try {
-            app(OrderService::class)->placeOrder(
+            $this->orderService->placeOrder(
                 $user,
-                $address->id,
-                PaymentMethod::CashOnDelivery,
+                new PlaceOrderData(
+                    addressId: $address->id,
+                    paymentMethod: PaymentMethod::CashOnDelivery,
+                ),
             );
-
             $this->fail('Expected order placement to fail.');
         } catch (\Exception $e) {
             $this->assertStringContainsString(
