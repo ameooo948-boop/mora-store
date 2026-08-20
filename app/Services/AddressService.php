@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\AddressRepositoryInterface;
+use App\DTOs\Address\CreateAddressData;
+use App\DTOs\Address\UpdateAddressData;
 use App\Models\Address;
 use App\Models\User;
+use App\Repositories\Contracts\AddressRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -30,37 +32,51 @@ class AddressService
         return $this->addressRepository->find($user, $id);
     }
 
-    public function create(array $data): Address
+    public function create(CreateAddressData $data): Address
     {
         return DB::transaction(function () use ($data) {
-            $user = User::findOrFail($data['user_id']);
 
-            if ($data['is_default'] ?? false) {
-                $this->addressRepository
-                    ->clearDefault($user);
+            $user = $data->user;
+
+            if ($data->isDefault) {
+                $this->addressRepository->clearDefault($user);
             }
 
-            if (!$this->addressRepository->getDefault($user)) {
-                $data['is_default'] = true;
+            if (! $this->addressRepository->getDefault($user)) {
+                $data = new CreateAddressData(
+                    user: $data->user,
+                    fullName: $data->fullName,
+                    phone: $data->phone,
+                    country: $data->country,
+                    state: $data->state,
+                    city: $data->city,
+                    addressLine: $data->addressLine,
+                    postalCode: $data->postalCode,
+                    isDefault: true,
+                );
             }
 
-            return $this->addressRepository
-                ->create($data);
+            return $this->addressRepository->create(
+                $data->toArray()
+            );
         });
     }
 
-    public function update(Address $address, array $data): bool
-    {
+    public function update(
+        Address $address,
+        UpdateAddressData $data
+    ): bool {
         return DB::transaction(function () use ($address, $data) {
 
-            if ($data['is_default'] ?? false) {
-
+            if ($data->isDefault) {
                 $this->addressRepository
                     ->clearDefault($address->user);
             }
 
-            return $this->addressRepository
-                ->update($address, $data);
+            return $this->addressRepository->update(
+                $address,
+                $data->toArray()
+            );
         });
     }
 

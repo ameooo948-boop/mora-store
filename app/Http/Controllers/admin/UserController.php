@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTOs\User\CreateUserData;
+use App\DTOs\User\UpdateUserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use App\Services\UserService;
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -46,7 +48,12 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->userService->create(
-            $request->validated()
+            new CreateUserData(
+                name: $request->string('name')->value(),
+                email: $request->string('email')->value(),
+                password: $request->string('password')->value(),
+                role: $request->string('role')->value(),
+            )
         );
 
         return redirect()
@@ -76,7 +83,14 @@ class UserController extends Controller
     ) {
         $this->userService->update(
             $user,
-            $request->validated()
+            new UpdateUserData(
+                name: $request->string('name')->value(),
+                email: $request->string('email')->value(),
+                password: $request->filled('password')
+                    ? $request->string('password')->value()
+                    : null,
+                role: $request->string('role')->value(),
+            )
         );
 
         return redirect()

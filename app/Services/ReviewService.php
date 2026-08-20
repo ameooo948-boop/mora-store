@@ -2,15 +2,16 @@
 
 namespace App\Services;
 
+use App\DTOs\Review\CreateReviewData;
+use App\DTOs\Review\UpdateReviewData;
 use App\Enums\ReviewStatus;
+use App\Events\ReviewCreated;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
-use App\Events\ReviewCreated;
 use App\Notifications\ReviewApprovedNotification;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\ReviewRepositoryInterface;
-use App\Services\NotificationService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +28,7 @@ class ReviewService
     public function create(
         Product $product,
         User $user,
-        int $rating,
-        string $comment,
+        CreateReviewData $data,
     ): Review {
 
         if (
@@ -51,7 +51,6 @@ class ReviewService
         ) {
 
             throw ValidationException::withMessages([
-
                 'review' => 'You have already reviewed this product.',
 
             ]);
@@ -63,9 +62,9 @@ class ReviewService
 
             'user_id' => $user->id,
 
-            'rating' => $rating,
+            'rating' => $data->rating,
 
-            'comment' => $comment,
+            'comment' => $data->comment,
 
             'status' => ReviewStatus::Pending,
 
@@ -78,17 +77,16 @@ class ReviewService
 
     public function update(
         Review $review,
-        int $rating,
-        string $comment,
+        UpdateReviewData $data,
     ): bool {
 
         return $this->repository->update(
             $review,
             [
 
-                'rating' => $rating,
+                'rating' => $data->rating,
 
-                'comment' => $comment,
+                'comment' => $data->comment,
 
                 'status' => ReviewStatus::Pending,
 
@@ -227,7 +225,6 @@ class ReviewService
         ) {
 
             throw ValidationException::withMessages([
-
                 'review' => 'You have already reviewed this product.',
 
             ]);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTOs\Category\CreateCategoryData;
+use App\DTOs\Category\UpdateCategoryData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
@@ -11,10 +13,10 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-
     public function __construct(
         private readonly CategoryService $categoryService
     ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -65,6 +67,7 @@ class CategoryController extends Controller
     public function create()
     {
         $parents = $this->categoryService->getParents();
+
         return view('admin.categories.create', compact('parents'));
     }
 
@@ -73,12 +76,25 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $this->categoryService->create($request->validated());
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
+        $this->categoryService->create(
+            new CreateCategoryData(
+                name: $request->string('name')->value(),
+                description: $request->input('description'),
+                image: $request->file('image'),
+                parentId: $request->filled('parent_id')
+                    ? $request->integer('parent_id')
+                    : null,
+                status: $request->boolean('status'),
+                sortOrder: $request->integer('sort_order', 0),
+            )
+        );
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category created successfully.');
     }
 
     /**
-
      * Show the form for editing the specified resource.
      */
     public function edit(Category $category)
@@ -95,11 +111,22 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
-    {
+    public function update(
+        UpdateCategoryRequest $request,
+        Category $category
+    ) {
         $this->categoryService->update(
             $category,
-            $request->validated()
+            new UpdateCategoryData(
+                name: $request->string('name')->value(),
+                description: $request->input('description'),
+                image: $request->file('image'),
+                parentId: $request->filled('parent_id')
+                    ? $request->integer('parent_id')
+                    : null,
+                status: $request->boolean('status'),
+                sortOrder: $request->integer('sort_order', 0),
+            )
         );
 
         return redirect()

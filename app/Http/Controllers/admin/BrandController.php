@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTOs\Brand\CreateBrandData;
+use App\DTOs\Brand\UpdateBrandData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreBrandRequest;
 use App\Http\Requests\Admin\UpdateBrandRequest;
-use App\Services\BrandService;
 use App\Models\Brand;
+use App\Services\BrandService;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-
     public function __construct(
         private readonly BrandService $brandService,
     ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -63,12 +65,22 @@ class BrandController extends Controller
      */
     public function store(StoreBrandRequest $request)
     {
-        $this->brandService->create($request->validated());
-        return redirect()->route('admin.brands.index')->with('success', 'Brand created successfully.');
+        $this->brandService->create(
+            new CreateBrandData(
+                name: $request->string('name')->value(),
+                description: $request->input('description'),
+                logo: $request->file('logo'),
+                status: $request->boolean('status'),
+                sortOrder: $request->integer('sort_order', 0),
+            )
+        );
+
+        return redirect()
+            ->route('admin.brands.index')
+            ->with('success', 'Brand created successfully.');
     }
 
     /**
-
      * Show the form for editing the specified resource.
      */
     public function edit(Brand $brand)
@@ -82,11 +94,19 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBrandRequest $request, Brand $brand)
-    {
+    public function update(
+        UpdateBrandRequest $request,
+        Brand $brand
+    ) {
         $this->brandService->update(
             $brand,
-            $request->validated()
+            new UpdateBrandData(
+                name: $request->string('name')->value(),
+                description: $request->input('description'),
+                logo: $request->file('logo'),
+                status: $request->boolean('status'),
+                sortOrder: $request->integer('sort_order', 0),
+            )
         );
 
         return redirect()

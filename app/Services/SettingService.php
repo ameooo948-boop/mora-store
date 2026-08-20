@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\Setting\UpdateSettingData;
 use App\Repositories\Contracts\SettingRepositoryInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -21,7 +22,7 @@ class SettingService
 
             self::CACHE_KEY,
 
-            fn() => $this->repository->all()
+            fn () => $this->repository->all()
 
         );
     }
@@ -34,72 +35,55 @@ class SettingService
         return $this->all()[$key] ?? $default;
     }
 
-    public function update(array $data): void
+    public function update(UpdateSettingData $data): void
     {
-        if (
-            isset($data['site_logo']) &&
-            $data['site_logo'] instanceof UploadedFile
-        ) {
+        $settings = [
+            'site_name' => $data->siteName,
+            'site_description' => $data->siteDescription,
+            'currency' => $data->currency,
+            'currency_symbol' => $data->currencySymbol,
+            'shipping_cost' => $data->shippingCost,
+            'tax_percentage' => $data->taxPercentage,
+            'email' => $data->email,
+            'phone' => $data->phone,
+            'address' => $data->address,
+            'facebook' => $data->facebook,
+            'instagram' => $data->instagram,
+            'linkedin' => $data->linkedin,
+            'maintenance_mode' => $data->maintenanceMode,
+        ];
 
+        if ($data->siteLogo) {
             $oldLogo = $this->get('site_logo');
 
-            if (
-                $oldLogo &&
-                Storage::disk('public')->exists($oldLogo)
-            ) {
-
-                Storage::disk('public')->delete(
-                    $oldLogo
-                );
+            if ($oldLogo) {
+                Storage::disk('public')->delete($oldLogo);
             }
 
-            $data['site_logo'] = $this->upload(
-
-                $data['site_logo'],
-
+            $settings['site_logo'] = $this->upload(
+                $data->siteLogo,
                 'settings'
-
             );
         }
 
-        if (
-            isset($data['site_favicon']) &&
-            $data['site_favicon'] instanceof UploadedFile
-        ) {
-
+        if ($data->siteFavicon) {
             $oldFavicon = $this->get('site_favicon');
 
-            if (
-                $oldFavicon &&
-                Storage::disk('public')->exists($oldFavicon)
-            ) {
-
-                Storage::disk('public')->delete(
-                    $oldFavicon
-                );
+            if ($oldFavicon) {
+                Storage::disk('public')->delete($oldFavicon);
             }
 
-            $data['site_favicon'] = $this->upload(
-
-                $data['site_favicon'],
-
+            $settings['site_favicon'] = $this->upload(
+                $data->siteFavicon,
                 'settings'
-
             );
         }
 
-        if (! isset($data['maintenance_mode'])) {
-
-            $data['maintenance_mode'] = false;
-        }
-
-        $this->repository->updateMany(
-            $data
-        );
+        $this->repository->updateMany($settings);
 
         $this->clearCache();
     }
-    
+
     private function upload(
         UploadedFile $file,
         string $directory,

@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Services\BrandService;
-use App\Services\CategoryService;
-use App\Services\ProductService;
 
 class CatalogService
 {
@@ -17,7 +14,16 @@ class CatalogService
 
     public function products(array $filters = [])
     {
-        return $this->productService->paginateStore($filters);
+        return $this->productService->paginateStore(
+            search: $filters['search'] ?? null,
+            category: isset($filters['category'])
+                ? (int) $filters['category']
+                : null,
+            brand: isset($filters['brand'])
+                ? (int) $filters['brand']
+                : null,
+            sort: $filters['sort'] ?? null,
+        );
     }
 
     public function categories()

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\DTOs\Address\CreateAddressData;
+use App\DTOs\Address\UpdateAddressData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\StoreAddressRequest;
 use App\Http\Requests\Web\UpdateAddressRequest;
@@ -42,7 +44,19 @@ class AddressController extends Controller
 
         $data['user_id'] = $request->user()->id;
 
-        $this->addressService->create($data);
+        $this->addressService->create(
+            new CreateAddressData(
+                user: $request->user(),
+                fullName: $request->string('full_name')->value(),
+                phone: $request->string('phone')->value(),
+                country: $request->string('country')->value(),
+                state: $request->string('state')->value(),
+                city: $request->string('city')->value(),
+                addressLine: $request->string('address_line')->value(),
+                postalCode: $request->input('postal_code'),
+                isDefault: $request->boolean('is_default'),
+            )
+        );
 
         return redirect()
             ->route('addresses.index')
@@ -80,11 +94,19 @@ class AddressController extends Controller
 
         abort_if(! $address, 404);
 
-        $this->addressService
-            ->update(
-                $address,
-                $request->validated()
-            );
+        $this->addressService->update(
+            $address,
+            new UpdateAddressData(
+                fullName: $request->string('full_name')->value(),
+                phone: $request->string('phone')->value(),
+                country: $request->string('country')->value(),
+                state: $request->string('state')->value(),
+                city: $request->string('city')->value(),
+                addressLine: $request->string('address_line')->value(),
+                postalCode: $request->input('postal_code'),
+                isDefault: $request->boolean('is_default'),
+            )
+        );
 
         return redirect()
             ->route('addresses.index')

@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\DTOs\Profile\UpdateProfileData;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -11,60 +13,36 @@ class ProfileService
 {
     public function updateProfile(
         User $user,
-        array $data,
+        UpdateProfileData $data,
     ): bool {
 
-        if (
+        $updateData = [
+            'name' => $data->name,
+            'email' => $data->email,
+        ];
 
-            isset($data['avatar']) &&
-
-            $data['avatar'] instanceof \Illuminate\Http\UploadedFile
-
-        ) {
+        if ($data->avatar instanceof UploadedFile) {
 
             if (
-
                 $user->avatar &&
-
-                Storage::disk('public')->exists(
-                    $user->avatar
-                )
-
+                Storage::disk('public')->exists($user->avatar)
             ) {
-
                 Storage::disk('public')->delete(
                     $user->avatar
                 );
             }
 
-            $data['avatar'] = $data['avatar']->store(
-
+            $updateData['avatar'] = $data->avatar->store(
                 'avatars',
-
                 'public'
-
-            );
-        } else {
-
-            unset(
-                $data['avatar']
             );
         }
 
-        if (
-
-            $user->email !== $data['email']
-
-        ) {
-
-            $data['email_verified_at'] = null;
+        if ($user->email !== $data->email) {
+            $updateData['email_verified_at'] = null;
         }
 
-        return $user->update(
-
-            $data
-
-        );
+        return $user->update($updateData);
     }
 
     public function updatePassword(
@@ -81,7 +59,6 @@ class ProfileService
         ) {
 
             throw ValidationException::withMessages([
-
                 'current_password' => 'Current password is incorrect.',
 
             ]);

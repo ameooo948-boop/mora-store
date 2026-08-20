@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTOs\Product\CreateProductData;
+use App\DTOs\Product\UpdateProductData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
@@ -32,15 +34,12 @@ class ProductController extends Controller
             ? (int) $request->status
             : null;
 
-
         $products = $this->productService->paginateAdmin(
 
             $request->search,
             $request->category,
             $request->brand,
             $status,
-
-
 
         );
 
@@ -92,7 +91,21 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $this->productService->create(
-            $request->validated(),
+            new CreateProductData(
+                categoryId: $request->integer('category_id'),
+                brandId: $request->integer('brand_id'),
+                name: $request->string('name')->value(),
+                description: $request->input('description'),
+                price: (float) $request->input('price'),
+                salePrice: $request->filled('sale_price')
+                    ? (float) $request->input('sale_price')
+                    : null,
+                quantity: $request->integer('quantity'),
+                status: $request->boolean('status'),
+                featured: $request->boolean('featured'),
+                sortOrder: $request->integer('sort_order', 0),
+                images: $request->file('images', []),
+            )
         );
 
         return redirect()
@@ -120,7 +133,21 @@ class ProductController extends Controller
     {
         $this->productService->update(
             $product,
-            $request->validated()
+            new UpdateProductData(
+                categoryId: $request->integer('category_id'),
+                brandId: $request->integer('brand_id'),
+                name: $request->string('name')->value(),
+                description: $request->input('description'),
+                price: (float) $request->input('price'),
+                salePrice: $request->filled('sale_price')
+                    ? (float) $request->input('sale_price')
+                    : null,
+                quantity: $request->integer('quantity'),
+                status: $request->boolean('status'),
+                featured: $request->boolean('featured'),
+                sortOrder: $request->integer('sort_order', 0),
+                images: $request->file('images', []),
+            )
         );
 
         return redirect()

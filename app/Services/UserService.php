@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\User\CreateUserData;
+use App\DTOs\User\UpdateUserData;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -50,31 +52,33 @@ class UserService
         ];
     }
 
-    public function create(array $data): User
+    public function create(CreateUserData $data): User
     {
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'name' => $data->name,
+            'email' => $data->email,
+            'password' => Hash::make($data->password),
         ]);
 
-        $user->assignRole($data['role']);
+        $user->assignRole($data->role);
 
         return $user;
     }
 
-    public function update(User $user, array $data): User
-    {
-        $user->name = $data['name'];
-        $user->email = $data['email'];
+    public function update(
+        User $user,
+        UpdateUserData $data,
+    ): User {
+        $user->name = $data->name;
+        $user->email = $data->email;
 
-        if (! empty($data['password'])) {
-            $user->password = Hash::make($data['password']);
+        if (! empty($data->password)) {
+            $user->password = Hash::make($data->password);
         }
 
         $user->save();
 
-        $user->syncRoles($data['role']);
+        $user->syncRoles($data->role);
 
         return $user->fresh('roles');
     }

@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\DTOs\Product\CreateProductData;
+use App\DTOs\Product\UpdateProductData;
 use App\Enums\StockMovementType;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
-use App\Services\NotificationService;
-use App\Services\StockMovementService;
 use DomainException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -22,19 +22,27 @@ class ProductService
         private readonly NotificationService $notificationService,
     ) {}
 
-    public function create(array $data): Product
+    public function create(CreateProductData $data): Product
     {
         return DB::transaction(function () use ($data) {
 
-            $images = $data['images'] ?? [];
+            $images = $data->images;
 
-            unset($data['images']);
+            $product = $this->productRepository->create([
+                'category_id' => $data->categoryId,
+                'brand_id' => $data->brandId,
+                'name' => $data->name,
+                'description' => $data->description,
+                'sku' => $this->generateSku(),
+                'price' => $data->price,
+                'sale_price' => $data->salePrice,
+                'quantity' => $data->quantity,
+                'status' => $data->status,
+                'featured' => $data->featured,
+                'sort_order' => $data->sortOrder,
+            ]);
 
-            $data['sku'] = $this->generateSku();
-
-            $product = $this->productRepository->create($data);
-
-            if (!empty($images)) {
+            if (! empty($images)) {
                 $this->productImageRepository->createMany(
                     $product,
                     $images
@@ -64,21 +72,33 @@ class ProductService
         });
     }
 
-    public function update(Product $product, array $data): bool
-    {
+    public function update(
+        Product $product,
+        UpdateProductData $data,
+    ): bool {
         return DB::transaction(function () use ($product, $data) {
 
-            $images = $data['images'] ?? [];
+            $images = $data->images;
 
-            unset($data['images']);
             $beforeQuantity = $product->quantity;
 
             $updated = $this->productRepository->update(
                 $product,
-                $data
+                [
+                    'category_id' => $data->categoryId,
+                    'brand_id' => $data->brandId,
+                    'name' => $data->name,
+                    'description' => $data->description,
+                    'price' => $data->price,
+                    'sale_price' => $data->salePrice,
+                    'quantity' => $data->quantity,
+                    'status' => $data->status,
+                    'featured' => $data->featured,
+                    'sort_order' => $data->sortOrder,
+                ]
             );
 
-            if (!empty($images)) {
+            if (! empty($images)) {
 
                 $this->productImageRepository->createMany(
                     $product,
@@ -138,10 +158,17 @@ class ProductService
     }
 
     public function paginateStore(
-        array $filters = []
+        ?string $search = null,
+        ?int $category = null,
+        ?int $brand = null,
+        ?string $sort = null,
     ) {
-        return $this->productRepository
-            ->paginateStore($filters);
+        return $this->productRepository->paginateStore(
+            $search,
+            $category,
+            $brand,
+            $sort
+        );
     }
 
     public function getStatistics(): array
@@ -157,7 +184,7 @@ class ProductService
             ? $lastProduct->id + 1
             : 1;
 
-        return 'PRD-' . str_pad($nextId, 6, '0', STR_PAD_LEFT);
+        return 'PRD-'.str_pad($nextId, 6, '0', STR_PAD_LEFT);
     }
 
     public function latest(int $limit = 8)

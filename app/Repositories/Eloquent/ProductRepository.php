@@ -7,7 +7,6 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-
     public function create(array $data): Product
     {
         return Product::create($data);
@@ -63,9 +62,12 @@ class ProductRepository implements ProductRepositoryInterface
             ->withQueryString();
     }
 
-
-    public function paginateStore(array $filters = [])
-    {
+    public function paginateStore(
+        ?string $search = null,
+        ?int $category = null,
+        ?int $brand = null,
+        ?string $sort = null,
+    ) {
         return Product::query()
 
             ->with([
@@ -77,68 +79,64 @@ class ProductRepository implements ProductRepositoryInterface
             ->where('status', true)
 
             ->when(
-                filled($filters['search'] ?? null),
-                function ($query) use ($filters) {
+                filled($search),
+                function ($query) use ($search) {
 
-                    $query->where(function ($q) use ($filters) {
-
-                        $q->where(
-                            'name',
-                            'like',
-                            "%{$filters['search']}%"
-                        );
-                    });
+                    $query->where(
+                        'name',
+                        'like',
+                        "%{$search}%"
+                    );
                 }
             )
 
             ->when(
-                filled($filters['category'] ?? null),
-                fn($query) => $query->where(
+                $category !== null,
+                fn ($query) => $query->where(
                     'category_id',
-                    $filters['category']
+                    $category
                 )
             )
 
             ->when(
-                filled($filters['brand'] ?? null),
-                fn($query) => $query->where(
+                $brand !== null,
+                fn ($query) => $query->where(
                     'brand_id',
-                    $filters['brand']
+                    $brand
                 )
             )
 
             ->when(
-                ($filters['sort'] ?? null) === 'price_low',
-                fn($query) => $query->orderBy('price')
+                $sort === 'price_low',
+                fn ($query) => $query->orderBy('price')
             )
 
             ->when(
-                ($filters['sort'] ?? null) === 'price_high',
-                fn($query) => $query->orderByDesc('price')
+                $sort === 'price_high',
+                fn ($query) => $query->orderByDesc('price')
             )
 
             ->when(
-                ($filters['sort'] ?? null) === 'oldest',
-                fn($query) => $query->oldest()
+                $sort === 'oldest',
+                fn ($query) => $query->oldest()
             )
 
             ->when(
                 ! in_array(
-                    $filters['sort'] ?? null,
+                    $sort,
                     [
                         'price_low',
                         'price_high',
                         'oldest',
                     ]
                 ),
-                fn($query) => $query->latest()
+                fn ($query) => $query->latest()
             )
 
             ->paginate(12)
 
             ->withQueryString();
     }
-
 
     public function getStatistics(): array
     {

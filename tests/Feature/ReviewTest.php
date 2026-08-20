@@ -2,12 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\DTOs\Review\CreateReviewData;
+use App\DTOs\Review\UpdateReviewData;
 use App\Enums\ReviewStatus;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
+use App\Notifications\ReviewApprovedNotification;
 use App\Services\ReviewService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -72,7 +76,7 @@ class ReviewTest extends TestCase
             'status' => ReviewStatus::Pending,
         ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         Review::create([
             'product_id' => $product->id,
@@ -107,8 +111,10 @@ class ReviewTest extends TestCase
         app(ReviewService::class)->create(
             $product,
             $user,
-            5,
-            'Excellent product.'
+            new CreateReviewData(
+                rating: 5,
+                comment: 'Excellent product.',
+            ),
         );
     }
 
@@ -139,12 +145,13 @@ class ReviewTest extends TestCase
             'approved_at' => now(),
         ]);
 
-        app(\App\Services\ReviewService::class)->update(
+        app(ReviewService::class)->update(
             $review,
-            3,
-            'Updated review.'
+            new UpdateReviewData(
+                rating: 3,
+                comment: 'Updated review.',
+            ),
         );
-
         $review->refresh();
 
         $this->assertSame(3, $review->rating);
@@ -186,7 +193,7 @@ class ReviewTest extends TestCase
 
         $this->actingAs($admin);
 
-        $result = app(\App\Services\ReviewService::class)
+        $result = app(ReviewService::class)
             ->approve($review);
 
         $review->refresh();
@@ -209,7 +216,7 @@ class ReviewTest extends TestCase
 
         Notification::assertSentTo(
             $user,
-            \App\Notifications\ReviewApprovedNotification::class
+            ReviewApprovedNotification::class
         );
     }
 
@@ -240,7 +247,7 @@ class ReviewTest extends TestCase
             'approved_at' => now(),
         ]);
 
-        $result = app(\App\Services\ReviewService::class)
+        $result = app(ReviewService::class)
             ->reject($review);
 
         $review->refresh();

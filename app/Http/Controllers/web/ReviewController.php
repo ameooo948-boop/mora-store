@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\DTOs\Review\CreateReviewData;
+use App\DTOs\Review\UpdateReviewData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\StoreReviewRequest;
 use App\Http\Requests\Web\UpdateReviewRequest;
@@ -13,6 +15,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class ReviewController extends Controller
 {
     use AuthorizesRequests;
+
     public function __construct(
         protected ReviewService $service,
     ) {}
@@ -23,15 +26,12 @@ class ReviewController extends Controller
     ) {
 
         $this->service->create(
-
             $product,
-
             $request->user(),
-
-            $request->integer('rating'),
-
-            $request->string('comment')
-
+            new CreateReviewData(
+                rating: $request->integer('rating'),
+                comment: $request->string('comment')->value(),
+            ),
         );
 
         return back()->with(
@@ -51,13 +51,11 @@ class ReviewController extends Controller
         );
 
         $this->service->update(
-
             $review,
-
-            $request->integer('rating'),
-
-            $request->string('comment')
-
+            new UpdateReviewData(
+                rating: $request->integer('rating'),
+                comment: $request->string('comment')->value(),
+            ),
         );
 
         return back()->with(

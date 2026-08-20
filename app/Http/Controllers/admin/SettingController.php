@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTOs\Setting\UpdateSettingData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Setting\UpdateSettingRequest;
 use App\Services\SettingService;
@@ -30,9 +31,23 @@ class SettingController extends Controller
     ) {
 
         $this->service->update(
-
-            $request->validated()
-
+            new UpdateSettingData(
+                siteName: $request->string('site_name')->value(),
+                siteDescription: $request->input('site_description'),
+                siteLogo: $request->file('site_logo'),
+                siteFavicon: $request->file('site_favicon'),
+                currency: $request->string('currency')->value(),
+                currencySymbol: $request->string('currency_symbol')->value(),
+                shippingCost: (float) $request->input('shipping_cost'),
+                taxPercentage: (float) $request->input('tax_percentage'),
+                email: $request->input('email'),
+                phone: $request->input('phone'),
+                address: $request->input('address'),
+                facebook: $request->input('facebook'),
+                instagram: $request->input('instagram'),
+                linkedin: $request->input('linkedin'),
+                maintenanceMode: $request->boolean('maintenance_mode'),
+            )
         );
 
         return back()->with(

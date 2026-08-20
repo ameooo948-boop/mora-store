@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\Coupon\CreateCouponData;
+use App\DTOs\Coupon\UpdateCouponData;
 use App\Enums\CouponType;
 use App\Models\Coupon;
 use App\Repositories\Contracts\CouponRepositoryInterface;
@@ -34,18 +36,39 @@ class CouponService
         return $this->couponRepository->findByCode($code);
     }
 
-    public function create(array $data): Coupon
+    public function create(CreateCouponData $data): Coupon
     {
-        $data['code'] = strtoupper($data['code']);
-
-        return $this->couponRepository->create($data);
+        return $this->couponRepository->create([
+            'code' => strtoupper($data->code),
+            'type' => $data->type,
+            'value' => $data->value,
+            'minimum_amount' => $data->minimumAmount,
+            'maximum_discount' => $data->maximumDiscount,
+            'usage_limit' => $data->usageLimit,
+            'starts_at' => $data->startsAt,
+            'expires_at' => $data->expiresAt,
+            'status' => $data->status,
+        ]);
     }
 
-    public function update(Coupon $coupon, array $data): bool
-    {
-        $data['code'] = strtoupper($data['code']);
-
-        return $this->couponRepository->update($coupon, $data);
+    public function update(
+        Coupon $coupon,
+        UpdateCouponData $data,
+    ): bool {
+        return $this->couponRepository->update(
+            $coupon,
+            [
+                'code' => strtoupper($data->code),
+                'type' => $data->type,
+                'value' => $data->value,
+                'minimum_amount' => $data->minimumAmount,
+                'maximum_discount' => $data->maximumDiscount,
+                'usage_limit' => $data->usageLimit,
+                'starts_at' => $data->startsAt,
+                'expires_at' => $data->expiresAt,
+                'status' => $data->status,
+            ]
+        );
     }
 
     public function delete(Coupon $coupon): bool

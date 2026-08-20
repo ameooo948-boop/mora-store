@@ -6,7 +6,6 @@ use App\Models\Product;
 
 interface ProductRepositoryInterface
 {
-
     public function create(array $data): Product;
 
     public function update(Product $product, array $data): bool;
@@ -21,7 +20,10 @@ interface ProductRepositoryInterface
     );
 
     public function paginateStore(
-        array $filters = []
+        ?string $search = null,
+        ?int $category = null,
+        ?int $brand = null,
+        ?string $sort = null,
     );
 
     public function getStatistics(): array;
