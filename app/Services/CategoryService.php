@@ -102,7 +102,7 @@ class CategoryService
             if ($category->image) {
                 $this->storageService->delete($category->image);
             }
-            
+
             $result = $this->categoryRepository->delete($category);
 
             if ($result) {

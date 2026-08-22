@@ -247,9 +247,9 @@
 
                                     <i class="bi bi-box-seam"></i>
 
-                                    {{ $order->items->count() }}
+                                    {{ $order->items_count }}
 
-                                    {{ Str::plural('item', $order->items->count()) }}
+                                    {{ Str::plural('item', $order->items_count) }}
 
                                 </span>
 
@@ -381,7 +381,7 @@
                             </span>
 
                             <strong>
-                                {{ $order->items->count() }}
+                                {{ $order->items_count }}
                             </strong>
 
                         </div>
