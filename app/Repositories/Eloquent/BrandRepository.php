@@ -6,10 +6,10 @@ use App\Models\Brand;
 use App\Repositories\Contracts\BrandRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class BrandRepository implements BrandRepositoryInterface
 {
-
     public function create(array $data): Brand
     {
         return Brand::create($data);
@@ -53,9 +53,9 @@ class BrandRepository implements BrandRepositoryInterface
 
             'total' => Brand::count(),
 
-            'active' => Brand::where('status', true)->count(),
+            'active' => Brand::active()->count(),
 
-            'inactive' => Brand::where('status', false)->count(),
+            'inactive' => Brand::inactive()->count(),
 
             'with_products' => Brand::has('products')->count(),
 
@@ -64,6 +64,11 @@ class BrandRepository implements BrandRepositoryInterface
 
     public function getActive(): Collection
     {
-        return Brand::where('status', true)->orderBy('sort_order')->get();
+        return Cache::rememberForever(
+            'brands.active',
+            fn () => Brand::active()
+                ->orderBy('sort_order')
+                ->get()
+        );
     }
 }

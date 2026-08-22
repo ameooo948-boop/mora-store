@@ -24,19 +24,4 @@ class Wishlist extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    protected $appends = [
-        'is_in_wishlist',
-    ];
-
-    public function getIsInWishlistAttribute(): bool
-    {
-        if (! Auth::check()) {
-            return false;
-        }
-
-        return self::where('product_id', $this->product_id)
-            ->where('user_id', Auth::id())
-            ->exists();
-    }
 }

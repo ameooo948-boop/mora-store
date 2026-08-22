@@ -5,12 +5,7 @@
 @section('content')
 
 @php
-$inWishlist = auth()->check()
-? auth()->user()
-->wishlists()
-->where('product_id', $product->id)
-->exists()
-: false;
+$inWishlist = $product->is_in_wishlist ?? false;
 
 $mainImage = $product->images->first();
 @endphp

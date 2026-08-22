@@ -6,8 +6,8 @@ use App\Models\Cart;
 use App\Models\Product;
 use App\Repositories\Contracts\CartItemRepositoryInterface;
 use App\Repositories\Contracts\CartRepositoryInterface;
-use Illuminate\Support\Facades\DB;
 use DomainException;
+use Illuminate\Support\Facades\DB;
 
 class CartService
 {
@@ -47,9 +47,9 @@ class CartService
             } else {
 
                 $this->cartItemRepository->create([
-                    'cart_id'    => $cart->id,
+                    'cart_id' => $cart->id,
                     'product_id' => $product->id,
-                    'quantity'   => $quantity,
+                    'quantity' => $quantity,
                 ]);
             }
 
@@ -61,7 +61,7 @@ class CartService
     {
         $cart = $this->cartRepository->getOrCreate($userId)
             ->load([
-                'items.product',
+                'items.product.category',
                 'items.product.images',
             ]);
 
@@ -155,7 +155,7 @@ class CartService
         }
 
         return $cart->load([
-            'items.product',
+            'items.product.category',
             'items.product.images',
         ]);
     }

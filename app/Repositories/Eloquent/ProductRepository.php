@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -68,16 +69,18 @@ class ProductRepository implements ProductRepositoryInterface
         ?int $brand = null,
         ?string $sort = null,
     ) {
-        return Product::query()
-
+        $query = Product::query()
             ->with([
                 'category',
                 'brand',
                 'images',
-            ])
+            ]);
 
-            ->where('status', true)
+        $query = $this->withWishlistStatus($query);
 
+        return $query
+
+            ->active()
             ->when(
                 filled($search),
                 function ($query) use ($search) {
@@ -89,7 +92,6 @@ class ProductRepository implements ProductRepositoryInterface
                     );
                 }
             )
-
             ->when(
                 $category !== null,
                 fn ($query) => $query->where(
@@ -97,7 +99,6 @@ class ProductRepository implements ProductRepositoryInterface
                     $category
                 )
             )
-
             ->when(
                 $brand !== null,
                 fn ($query) => $query->where(
@@ -105,22 +106,18 @@ class ProductRepository implements ProductRepositoryInterface
                     $brand
                 )
             )
-
             ->when(
                 $sort === 'price_low',
                 fn ($query) => $query->orderBy('price')
             )
-
             ->when(
                 $sort === 'price_high',
                 fn ($query) => $query->orderByDesc('price')
             )
-
             ->when(
                 $sort === 'oldest',
                 fn ($query) => $query->oldest()
             )
-
             ->when(
                 ! in_array(
                     $sort,
@@ -132,9 +129,7 @@ class ProductRepository implements ProductRepositoryInterface
                 ),
                 fn ($query) => $query->latest()
             )
-
             ->paginate(12)
-
             ->withQueryString();
     }
 
@@ -144,9 +139,8 @@ class ProductRepository implements ProductRepositoryInterface
 
             'total' => Product::count(),
 
-            'active' => Product::where('status', true)->count(),
-
-            'inactive' => Product::where('status', false)->count(),
+            'active' => Product::active()->count(),
+            'inactive' => Product::inactive()->count(),
 
             'out_of_stock' => Product::where('quantity', 0)->count(),
 
@@ -155,23 +149,24 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function latest(int $limit = 8)
     {
-        return Product::query()
+        $query = Product::query()
             ->with([
                 'brand',
                 'category',
                 'images',
                 'approvedReviews.user',
             ])
-
             ->withAvg([
                 'approvedReviews',
             ], 'rating')
-
             ->withCount([
                 'approvedReviews',
-            ])
+            ]);
 
-            ->where('status', true)
+        $query = $this->withWishlistStatus($query);
+
+        return $query
+            ->active()
             ->latest()
             ->take($limit)
             ->get();
@@ -179,54 +174,64 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function find(Product $product)
     {
-        return Product::query()
-
+        $query = Product::query()
             ->with([
                 'brand',
                 'category',
                 'images',
                 'approvedReviews.user',
             ])
-
-            ->withAvg([
+            ->withAvg(
                 'approvedReviews',
-            ], 'rating')
+                'rating'
+            )
+            ->withCount(
+                'approvedReviews'
+            );
 
-            ->withCount([
-                'approvedReviews',
-            ])
+        $query = $this->withWishlistStatus($query);
 
-            ->where('status', true)
+        return $query
+            ->active()
             ->findOrFail($product->id);
     }
 
     public function related(Product $product, int $limit = 4)
     {
-        return Product::query()
-
+        $query = Product::query()
             ->with([
                 'brand',
                 'category',
                 'images',
                 'approvedReviews.user',
             ])
-
             ->withAvg([
                 'approvedReviews',
             ], 'rating')
-
             ->withCount([
                 'approvedReviews',
-            ])
+            ]);
 
-            ->where('status', true)
+        $query = $this->withWishlistStatus($query);
 
+        return $query
+            ->active()
             ->where('category_id', $product->category_id)
-
             ->whereKeyNot($product->id)
-
             ->take($limit)
-
             ->get();
+    }
+
+    private function withWishlistStatus($query)
+    {
+        if (Auth::check()) {
+            $query->withExists([
+                'wishlists as is_in_wishlist' => function ($query) {
+                    $query->where('user_id', Auth::id());
+                },
+            ]);
+        }
+
+        return $query;
     }
 }

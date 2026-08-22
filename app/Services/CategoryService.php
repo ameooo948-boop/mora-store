@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class CategoryService
@@ -31,7 +32,7 @@ class CategoryService
                 );
             }
 
-            return $this->categoryRepository->create([
+            $category = $this->categoryRepository->create([
                 'name' => $data->name,
                 'description' => $data->description,
                 'image' => $image,
@@ -39,6 +40,10 @@ class CategoryService
                 'status' => $data->status,
                 'sort_order' => $data->sortOrder,
             ]);
+
+            Cache::forget('categories.active');
+
+            return $category;
         });
     }
 
@@ -70,10 +75,15 @@ class CategoryService
                 $updateData['image'] = $image;
             }
 
-            return $this->categoryRepository->update(
+            $result = $this->categoryRepository->update(
                 $category,
                 $updateData
             );
+
+            Cache::forget('categories.active');
+
+            return $result;
+
         });
     }
 
@@ -92,8 +102,14 @@ class CategoryService
             if ($category->image) {
                 $this->storageService->delete($category->image);
             }
+            
+            $result = $this->categoryRepository->delete($category);
 
-            return $this->categoryRepository->delete($category);
+            if ($result) {
+                Cache::forget('categories.active');
+            }
+
+            return $result;
         });
     }
 

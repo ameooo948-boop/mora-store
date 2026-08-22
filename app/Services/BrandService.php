@@ -8,6 +8,7 @@ use App\Models\Brand;
 use App\Repositories\Contracts\BrandRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class BrandService
@@ -30,13 +31,19 @@ class BrandService
                 );
             }
 
-            return $this->brandRepository->create([
+            $result = $this->brandRepository->create([
                 'name' => $data->name,
                 'description' => $data->description,
                 'logo' => $logo,
                 'status' => $data->status,
                 'sort_order' => $data->sortOrder,
             ]);
+
+            if ($result) {
+                Cache::forget('brands.active');
+            }
+
+            return $result;
         });
     }
 
@@ -67,10 +74,16 @@ class BrandService
                 $updateData['logo'] = $logo;
             }
 
-            return $this->brandRepository->update(
+            $result = $this->brandRepository->update(
                 $brand,
                 $updateData
             );
+
+            if ($result) {
+                Cache::forget('brands.active');
+            }
+
+            return $result;
         });
     }
 
@@ -86,7 +99,13 @@ class BrandService
                 $this->storageService->delete($brand->logo);
             }
 
-            return $this->brandRepository->delete($brand);
+            $result = $this->brandRepository->delete($brand);
+
+            if ($result) {
+                Cache::forget('brands.active');
+            }
+
+            return $result;
         });
     }
 

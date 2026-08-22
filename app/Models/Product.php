@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use App\Models\Traits\HasSlug;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug;
+    use HasFactory, HasSlug, SoftDeletes;
 
     protected $fillable = [
         'category_id',
@@ -31,28 +31,26 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'price'      => 'decimal:2',
+        'price' => 'decimal:2',
         'sale_price' => 'decimal:2',
-        'status'     => 'boolean',
-        'featured'   => 'boolean',
+        'status' => 'boolean',
+        'featured' => 'boolean',
     ];
 
     protected $appends = [
-        'is_in_wishlist',
         'final_price',
         'has_discount',
         'discount_percentage',
     ];
 
-    public function getIsInWishlistAttribute(): bool
+    public function scopeActive(Builder $query): Builder
     {
-        if (! Auth::check()) {
-            return false;
-        }
+        return $query->where('status', true);
+    }
 
-        return $this->wishlists()
-            ->where('user_id', Auth::id())
-            ->exists();
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', false);
     }
 
     /*
@@ -81,14 +79,14 @@ class Product extends Model
     protected function finalPrice(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->sale_price ?: $this->price,
+            get: fn () => $this->sale_price ?: $this->price,
         );
     }
 
     protected function hasDiscount(): Attribute
     {
         return Attribute::make(
-            get: fn() => ! is_null($this->sale_price)
+            get: fn () => ! is_null($this->sale_price)
                 && $this->sale_price < $this->price,
         );
     }
@@ -96,7 +94,7 @@ class Product extends Model
     protected function discountPercentage(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->has_discount
+            get: fn () => $this->has_discount
                 ? round(
                     (($this->price - $this->sale_price) / $this->price) * 100
                 )
@@ -106,22 +104,26 @@ class Product extends Model
 
     public function getAverageRatingAttribute(): float
     {
+        if (array_key_exists('approved_reviews_avg_rating', $this->attributes)) {
+            return round(
+                (float) $this->attributes['approved_reviews_avg_rating'],
+                1
+            );
+        }
+
         return round(
-
-            $this->approvedReviews()
-
-                ->avg('rating') ?? 0,
-
+            $this->approvedReviews()->avg('rating') ?? 0,
             1
-
         );
     }
 
     public function getReviewsCountAttribute(): int
     {
-        return $this->approvedReviews()
+        if (array_key_exists('approved_reviews_count', $this->attributes)) {
+            return (int) $this->attributes['approved_reviews_count'];
+        }
 
-            ->count();
+        return $this->approvedReviews()->count();
     }
 
     public function images(): HasMany

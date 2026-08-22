@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasSlug;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Traits\HasSlug;
 
 class Category extends Model
 {
-    use HasFactory, SoftDeletes, HasSlug;
+    use HasFactory, HasSlug, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -24,6 +25,21 @@ class Category extends Model
         'status',
         'sort_order',
     ];
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', true);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', false);
+    }
+
+    public function scopeMain(Builder $query): Builder
+    {
+        return $query->whereNull('parent_id');
+    }
 
     public function parent(): BelongsTo
     {
@@ -50,7 +66,7 @@ class Category extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->image
+            get: fn () => $this->image
                 ? Storage::url($this->image)
                 : null
         );
