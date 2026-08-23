@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -76,5 +77,53 @@ class CategoryRepository implements CategoryRepositoryInterface
                 ->orderBy('sort_order')
                 ->get()
         );
+    }
+
+    public function getActiveParents()
+    {
+        return Category::query()
+            ->active()
+            ->main()
+            ->with([
+                'children' => fn ($query) => $query
+                    ->active()
+                    ->orderBy('sort_order'),
+            ])
+            ->withCount([
+                'products as direct_products_count' => fn ($query) => $query->active(),
+                'children as children_count' => fn ($query) => $query->active(),
+            ])
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function findBySlug(string $slug): ?Category
+    {
+        return Category::query()
+            ->active()
+            ->where('slug', $slug)
+            ->with([
+                'parent',
+                'children' => fn ($query) => $query
+                    ->active()
+                    ->orderBy('sort_order'),
+            ])
+            ->first();
+    }
+
+    public function getProductsForCategory(Category $category)
+    {
+        $categoryIds = collect([$category->id])
+            ->merge($category->children()->active()->pluck('id'));
+
+        return Product::query()
+            ->active()
+            ->whereIn('category_id', $categoryIds)
+            ->with([
+                'brand',
+                'images',
+            ])
+            ->latest()
+            ->paginate(12);
     }
 }

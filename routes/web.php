@@ -1,8 +1,10 @@
 <?php
 
 use App\Events\PasswordResetRequested;
+use App\Http\Controllers\Web\CategoryController;
 use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\BrandController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\HomeController;
@@ -94,6 +96,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         '/products/{product}',
         [ProductController::class, 'show']
     )->name('products.show');
+
+    Route::get(
+        '/categories',
+        [CategoryController::class, 'index']
+    )->name('categories.index');
+
+    Route::get(
+        '/categories/{category:slug}',
+        [CategoryController::class, 'show']
+    )->name('categories.show');
+
+    Route::get(
+        '/brands',
+        [BrandController::class, 'index']
+    )->name('brands.index');
+
+    Route::get(
+        '/brands/{brand}',
+        [BrandController::class, 'show']
+    )->name('brands.show');
 
     Route::post(
         'products/{product}/reviews',

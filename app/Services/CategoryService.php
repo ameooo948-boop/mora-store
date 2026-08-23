@@ -137,4 +137,20 @@ class CategoryService
     {
         return $this->categoryRepository->getActive();
     }
+
+    public function getActiveParents()
+    {
+        return $this->categoryRepository->getActiveParents();
+    }
+
+    public function findBySlug(string $slug): ?Category
+    {
+        return $this->categoryRepository->findBySlug($slug);
+    }
+
+    public function getProductsForCategory(Category $category)
+    {
+        return $this->categoryRepository->getProductsForCategory($category);
+    }
+    
 }
