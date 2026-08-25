@@ -18042,3 +18042,303 @@ svg {
     }
 
 }
+
+/* ================================
+   Account Navbar - Better Spacing
+================================ */
+
+.account-navbar-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 30px;
+}
+
+.account-nav-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: 1;
+}
+
+.account-nav-list li {
+    flex-shrink: 0;
+}
+
+.account-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 14px;
+    min-height: 44px;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.account-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    min-width: 20px;
+}
+
+.account-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.account-user-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    white-space: nowrap;
+}
+
+.account-user-name {
+    white-space: nowrap;
+}
+
+/* Notifications */
+.notification-menu-header {
+    padding: 16px 18px;
+}
+
+.notification-read-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    white-space: nowrap;
+}
+
+.notification-menu-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+}
+
+.notification-menu-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.notification-menu-title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-menu-content p {
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+.notification-menu-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.notification-menu-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    white-space: nowrap;
+}
+
+/* User dropdown */
+.account-user-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 1200px) {
+    .account-navbar-content {
+        gap: 15px;
+    }
+
+    .account-nav-list {
+        gap: 3px;
+    }
+
+    .account-nav-link {
+        padding: 10px 9px;
+        gap: 7px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .account-navbar-content {
+        display: block;
+    }
+
+    .account-nav-list {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 5px;
+        margin-top: 15px;
+    }
+
+    .account-nav-link {
+        width: 100%;
+        padding: 12px 14px;
+    }
+
+    .account-nav-actions {
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+}
+
+/* =========================================================
+   ACCOUNT NAVBAR — NO OVERLAP FIX
+   ========================================================= */
+
+.account-navbar .account-nav-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+}
+
+.account-navbar .account-user-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    width: auto !important;
+    min-width: 145px !important;
+    max-width: 190px !important;
+
+    flex: 0 0 auto !important;
+
+    padding: 4px 12px 4px 6px !important;
+    gap: 9px !important;
+
+    overflow: hidden !important;
+}
+
+.account-navbar .account-user-avatar {
+    width: 38px !important;
+    height: 38px !important;
+
+    flex: 0 0 38px !important;
+}
+
+.account-navbar .account-user-name {
+    display: block !important;
+
+    min-width: 0 !important;
+    max-width: 115px !important;
+
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+
+    flex: 1 1 auto !important;
+}
+
+
+/* Notification button */
+.account-navbar .account-icon-btn {
+    width: 46px !important;
+    height: 46px !important;
+
+    min-width: 46px !important;
+    flex: 0 0 46px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* Cart */
+.account-navbar .account-cart-btn {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+}
+
+
+/* =========================================================
+   DESKTOP — USE SPACE BETTER
+   ========================================================= */
+
+@media (min-width: 1200px) {
+
+    .account-navbar .account-navbar-content {
+        gap: 14px !important;
+    }
+
+    .account-navbar .account-nav-list {
+        gap: 3px !important;
+        min-width: 0 !important;
+    }
+
+    .account-navbar .account-nav-link {
+        padding-left: 11px !important;
+        padding-right: 11px !important;
+
+        gap: 7px !important;
+
+        font-size: 14px !important;
+    }
+
+    .account-navbar .account-nav-icon {
+        width: 20px !important;
+        min-width: 20px !important;
+    }
+
+    .account-navbar .account-nav-icon i {
+        font-size: 16px !important;
+    }
+}
+
+
+/* =========================================================
+   992px → 1199px
+   ========================================================= */
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+    .account-navbar .account-nav-list {
+        gap: 2px !important;
+    }
+
+    .account-navbar .account-nav-link {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        gap: 5px !important;
+        font-size: 13px !important;
+    }
+
+    .account-navbar .account-user-btn {
+        min-width: 130px !important;
+        max-width: 160px !important;
+    }
+
+    .account-navbar .account-user-name {
+        max-width: 90px !important;
+    }
+}

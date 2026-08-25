@@ -42,11 +42,4 @@ class ProductImageRepository implements ProductImageRepositoryInterface
     {
         return $image->delete();
     }
-
-    public function deleteByProduct(Product $product): void
-    {
-        foreach ($product->images as $image) {
-            $this->delete($image);
-        }
-    }
 }

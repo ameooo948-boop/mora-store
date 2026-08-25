@@ -19,7 +19,7 @@ class ProductService
         private readonly ProductImageRepositoryInterface $productImageRepository,
         protected StockMovementService $stockMovementService,
         protected ReviewService $reviewService,
-        private readonly NotificationService $notificationService,
+        private readonly StorageService $storageService,
     ) {}
 
     public function create(CreateProductData $data): Product
@@ -75,14 +75,14 @@ class ProductService
     public function update(
         Product $product,
         UpdateProductData $data,
-    ): bool {
+    ): Product {
         return DB::transaction(function () use ($product, $data) {
 
             $images = $data->images;
 
             $beforeQuantity = $product->quantity;
 
-            $updated = $this->productRepository->update(
+            $this->productRepository->update(
                 $product,
                 [
                     'category_id' => $data->categoryId,
@@ -99,7 +99,6 @@ class ProductService
             );
 
             if (! empty($images)) {
-
                 $this->productImageRepository->createMany(
                     $product,
                     $images
@@ -115,25 +114,18 @@ class ProductService
                     : StockMovementType::Decrease;
 
                 $this->stockMovementService->create(
-
                     product: $product,
-
                     beforeQuantity: $beforeQuantity,
-
                     type: $type,
-
                     quantity: abs(
                         $product->quantity - $beforeQuantity
                     ),
-
                     reference: $product,
-
                     notes: 'Stock adjusted from admin.'
-
                 );
             }
 
-            return $updated;
+            return $product;
         });
     }
 
@@ -141,7 +133,16 @@ class ProductService
     {
         return DB::transaction(function () use ($product) {
 
-            $this->productImageRepository->deleteByProduct($product);
+            $product->loadMissing('images');
+
+            foreach ($product->images as $image) {
+
+                if ($image->image) {
+                    $this->storageService->delete($image->image);
+                }
+
+                $this->productImageRepository->delete($image);
+            }
 
             return $this->productRepository->delete($product);
         });

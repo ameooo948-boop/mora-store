@@ -1,27 +1,22 @@
 <?php
 
-use App\Events\PasswordResetRequested;
-use App\Http\Controllers\Web\CategoryController;
 use App\Http\Controllers\Web\AddressController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\BrandController;
 use App\Http\Controllers\Web\CartController;
+use App\Http\Controllers\Web\CategoryController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\NotificationController;
 use App\Http\Controllers\Web\OrderController;
+use App\Http\Controllers\Web\PasswordController;
 use App\Http\Controllers\Web\PaymentController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
-use App\Services\SettingService;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home')->middleware('auth', 'verified');
@@ -197,101 +192,47 @@ Route::prefix('notifications')
         )->name('read-all');
     });
 
-Route::get('/forgot-password', function () {
-    $siteLogo = app()->make(SettingService::class)
-        ->value('site_logo');
+Route::middleware('guest')->group(function () {
 
-    return view('web.auth.forgot-password', compact('siteLogo'));
-})->middleware('guest')->name('password.request');
+    Route::get(
+        '/forgot-password',
+        [PasswordController::class, 'forgotPassword']
+    )->name('password.request');
 
-Route::post('/forgot-password', function (Request $request) {
+    Route::post(
+        '/forgot-password',
+        [PasswordController::class, 'sendResetLink']
+    )->name('password.email');
 
-    $request->validate(['email' => 'required|email']);
+    Route::get(
+        '/reset-password/{token}',
+        [PasswordController::class, 'resetPassword']
+    )->name('password.reset');
 
-    $status = Password::sendResetLink(
-        $request->only('email'),
-        function ($user, $token) {
-            event(new PasswordResetRequested($user, $token));
-        }
-    );
+    Route::post(
+        '/reset-password',
+        [PasswordController::class, 'updatePassword']
+    )->name('password.update');
+});
 
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with('success', __($status))
-        : back()->withErrors(['email' => __($status)]);
-})->middleware('guest')->name('password.email');
+Route::middleware('auth')->group(function () {
 
-Route::get('/reset-password/{token}', function ($token) {
+    Route::get(
+        '/email/verify',
+        [PasswordController::class, 'verificationNotice']
+    )->name('verification.notice');
 
-    $siteLogo = app()->make(SettingService::class)
-        ->value('site_logo');
+    Route::get(
+        '/email/verify/{id}/{hash}',
+        [PasswordController::class, 'verifyEmail']
+    )
+        ->middleware('signed')
+        ->name('verification.verify');
 
-    return view('web.auth.reset-password', compact(
-        'token',
-        'siteLogo'
-    ));
-})->middleware('guest')->name('password.reset');
-
-Route::post('/reset-password', function (Request $request) {
-
-    $request->validate([
-        'token' => ['required'],
-        'email' => ['required', 'email'],
-        'password' => ['required', 'confirmed', 'min:8'],
-    ]);
-
-    $status = Password::reset(
-        $request->only(
-            'email',
-            'password',
-            'password_confirmation',
-            'token'
-        ),
-        function ($user, $password) {
-
-            $user->forceFill([
-                'password' => $password,
-            ])->save();
-
-            $user->setRememberToken(
-                Str::random(60)
-            );
-        }
-    );
-
-    return $status === Password::PASSWORD_RESET
-        ? redirect()
-            ->route('login')
-            ->with('success', __($status))
-        : back()
-            ->withErrors(['email' => [__($status)]]);
-})->middleware('guest')->name('password.update');
-
-Route::get('/email/verify', function () {
-
-    $siteLogo = app()->make(SettingService::class)
-        ->value('site_logo');
-
-    return view(
-        'web.auth.verify-email',
-        compact('siteLogo')
-    );
-
-})->middleware(['auth'])->name('verification.notice');
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-
-    $request->fulfill();
-
-    return redirect()
-        ->route('home')
-        ->with('success', 'Your email has been verified successfully.');
-
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (Request $request) {
-
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('success', 'A new verification link has been sent to your email.');
-
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+    Route::post(
+        '/email/verification-notification',
+        [PasswordController::class, 'sendVerificationNotification']
+    )
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+});

@@ -11,28 +11,17 @@ use Illuminate\Support\Facades\Storage;
 class ProductImage extends Model
 {
     use HasFactory;
+    
     protected $fillable = [
         'product_id',
         'image',
         'sort_order',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
-
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Accessors
-    |--------------------------------------------------------------------------
-    */
 
     protected function imageUrl(): Attribute
     {

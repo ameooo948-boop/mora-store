@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Order\PlaceOrderData;
 use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
+use App\Enums\PaymentMethod;
 use App\Events\OrderCreated;
 use App\Events\OrderStatusChanged;
 use App\Models\Cart;
@@ -308,13 +308,26 @@ class OrderService
 
             if ($status === OrderStatus::Cancelled) {
 
-                $order->loadMissing('items.product');
+                $order->loadMissing([
+                    'items.product',
+                    'payment',
+                ]);
 
                 foreach ($order->items as $item) {
+
                     $this->productService->increaseStock(
                         product: $item->product,
                         quantity: $item->quantity,
                         reference: $order,
+                    );
+                }
+
+                if (
+                    $order->payment &&
+                    $order->payment->status->isPaid()
+                ) {
+                    $this->paymentService->refund(
+                        $order->payment
                     );
                 }
             }
@@ -323,14 +336,15 @@ class OrderService
 
                 $order->loadMissing('payment');
 
-                if ($order->payment) {
-                    $order->payment->update([
-                        'status' => PaymentStatus::Paid,
-                        'paid_at' => now(),
-                    ]);
+                if (
+                    $order->payment &&
+                    $order->payment->payment_method === PaymentMethod::CashOnDelivery
+                ) {
+                    $this->paymentService->markAsPaid(
+                        $order->payment
+                    );
                 }
             }
-
             $this->historyService->create(
                 $updatedOrder,
                 $oldStatus,

@@ -14,7 +14,6 @@ use App\Repositories\Contracts\DashboardRepositoryInterface;
 
 class DashboardRepository implements DashboardRepositoryInterface
 {
-
     public function statistics(): array
     {
         return [
@@ -113,6 +112,7 @@ class DashboardRepository implements DashboardRepositoryInterface
 
         return $days;
     }
+
     public function latestOrders(
         int $limit = 5
     ) {
@@ -181,28 +181,37 @@ class DashboardRepository implements DashboardRepositoryInterface
             ->get();
     }
 
-public function recentActivity(
-    int $limit = 10,
-)
-{
-    return [
+    public function recentActivity(
+        int $limit = 10,
+    ) {
+        return [
 
-        'orders' => Order::latest()
-            ->take(3)
-            ->get(),
+            'orders' => Order::with('user')
+                ->latest()
+                ->take(3)
+                ->get(),
 
-        'payments' => Payment::latest()
-            ->take(3)
-            ->get(),
+            'payments' => Payment::with('order.user')
+                ->latest()
+                ->take(3)
+                ->get(),
 
-        'reviews' => Review::latest()
-            ->take(3)
-            ->get(),
+            'reviews' => Review::with([
+                'user',
+                'product',
+            ])
+                ->latest()
+                ->take(3)
+                ->get(),
 
-        'stock' => StockMovement::latest()
-            ->take(3)
-            ->get(),
+            'stock' => StockMovement::with([
+                'product',
+                'user',
+            ])
+                ->latest()
+                ->take(3)
+                ->get(),
 
-    ];
-}
+        ];
+    }
 }

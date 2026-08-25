@@ -56,8 +56,7 @@ public function login(LoginRequest $request)
     $user = Auth::user();
 
     if (! $user->hasVerifiedEmail()) {
-
-    event(new \Illuminate\Auth\Events\Registered($request->user()));
+        
         return redirect()
             ->route('verification.notice')
             ->with(

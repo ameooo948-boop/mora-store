@@ -3,23 +3,19 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Cart;
-use App\Models\Order;
-use App\Models\Wishlist;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
-use App\Notifications\PasswordResetNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-
-    use  HasFactory, Notifiable, HasRoles, MustVerifyEmailTrait;
+    use HasApiTokens, HasFactory, HasRoles, MustVerifyEmailTrait,Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -62,7 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->avatar
 
             ? asset(
-                'storage/' . $this->avatar
+                'storage/'.$this->avatar
             )
 
             : asset(

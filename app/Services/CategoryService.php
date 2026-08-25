@@ -50,7 +50,7 @@ class CategoryService
     public function update(
         Category $category,
         UpdateCategoryData $data,
-    ): bool {
+    ): Category {
         return DB::transaction(function () use ($category, $data) {
 
             $image = $data->image;
@@ -75,14 +75,16 @@ class CategoryService
                 $updateData['image'] = $image;
             }
 
-            $result = $this->categoryRepository->update(
+            $this->categoryRepository->update(
                 $category,
                 $updateData
             );
 
+            $category->refresh();
+
             Cache::forget('categories.active');
 
-            return $result;
+            return $category;
 
         });
     }
@@ -91,13 +93,13 @@ class CategoryService
     {
         return DB::transaction(function () use ($category) {
 
-            $category->children()->update([
-                'parent_id' => null,
-            ]);
-
             if ($category->products()->exists()) {
                 return false;
             }
+
+            $category->children()->update([
+                'parent_id' => null,
+            ]);
 
             if ($category->image) {
                 $this->storageService->delete($category->image);
@@ -152,5 +154,4 @@ class CategoryService
     {
         return $this->categoryRepository->getProductsForCategory($category);
     }
-    
 }

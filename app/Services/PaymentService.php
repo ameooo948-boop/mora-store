@@ -4,12 +4,11 @@ namespace App\Services;
 
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Events\PaymentCreated;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Events\PaymentCreated;
 use App\Repositories\Contracts\PaymentGatewayInterface;
 use App\Repositories\Contracts\PaymentRepositoryInterface;
-use App\Services\NotificationService;
 use App\Services\Payments\CashOnDeliveryGateway;
 use App\Services\Payments\PaypalGateway;
 use App\Services\Payments\StripeGateway;
@@ -68,15 +67,6 @@ class PaymentService
         ]);
     }
 
-    public function refund(Payment $payment): void
-    {
-        $this->paymentRepository->update($payment, [
-
-            'status' => PaymentStatus::Refunded,
-
-        ]);
-    }
-
     public function getOrderPayment(Order $order): ?Payment
     {
         return $this->paymentRepository->findByOrder($order);
@@ -89,9 +79,6 @@ class PaymentService
             PaymentMethod::CashOnDelivery,
 
             PaymentMethod::Stripe,
-
-            PaymentMethod::Paypal,
-
         ];
     }
 
@@ -101,14 +88,11 @@ class PaymentService
 
         return match ($method) {
 
-            PaymentMethod::CashOnDelivery
-            => app(CashOnDeliveryGateway::class),
+            PaymentMethod::CashOnDelivery => app(CashOnDeliveryGateway::class),
 
-            PaymentMethod::Stripe
-            => app(StripeGateway::class),
+            PaymentMethod::Stripe => app(StripeGateway::class),
 
-            PaymentMethod::Paypal
-            => app(PaypalGateway::class),
+            PaymentMethod::Paypal => app(PaypalGateway::class),
         };
     }
 
@@ -143,4 +127,24 @@ class PaymentService
                 $search
             );
     }
+
+    public function refund(Payment $payment): void
+    {
+        if ($payment->status->isRefunded()) {
+            return;
+        }
+
+        if ($payment->payment_method === PaymentMethod::Stripe) {
+
+            app(StripeGateway::class)->refund($payment);
+        }
+
+        $this->paymentRepository->update(
+            $payment,
+            [
+                'status' => PaymentStatus::Refunded,
+            ]
+        );
+    }
+    
 }

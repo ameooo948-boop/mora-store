@@ -11,57 +11,59 @@ class BrandImageSeeder extends Seeder
 {
     public function run(): void
     {
-        $logos = [
-
-            'gigabyte' => 'gigabyte',
-
-            'tcl' => 'tcltechnology',
-
-            'soundcore' => 'soundcore',
+        $brands = [
+            'gigabyte' => [
+                'gigabyte',
+                'gigabyte-technology',
+            ],
         ];
 
-        foreach ($logos as $slug => $url) {
+        foreach ($brands as $brandSlug => $possibleSlugs) {
 
-            $brand = Brand::where('slug', $slug)->first();
+            $brand = Brand::where('slug', $brandSlug)->first();
 
             if (! $brand) {
                 continue;
             }
 
-            try {
+            foreach ($possibleSlugs as $iconSlug) {
 
-                $response = Http::timeout(30)
-                    ->retry(3, 2000)
-                    ->get($url);
+                $url = "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{$iconSlug}.svg";
 
-                if (! $response->successful()) {
+                try {
 
-                    $this->command->error(
-                        "{$brand->name}: HTTP {$response->status()}"
+                    $response = Http::timeout(20)
+                        ->get($url);
+
+                    if (! $response->successful()) {
+                        continue;
+                    }
+
+                    $path = "brands/{$brandSlug}.svg";
+
+                    Storage::disk('public')->put(
+                        $path,
+                        $response->body()
                     );
 
+                    $brand->forceFill([
+                        'logo' => $path,
+                    ])->save();
+
+                    $this->command->info(
+                        "SUCCESS {$brand->name} using {$iconSlug}"
+                    );
+
+                    break;
+
+                } catch (\Throwable $e) {
                     continue;
                 }
+            }
 
-                $path = "brands/{$slug}.svg";
-
-                Storage::disk('public')->put(
-                    $path,
-                    $response->body()
-                );
-
-                $brand->forceFill([
-                    'logo' => $path,
-                ])->save();
-
-                $this->command->info(
-                    "SUCCESS {$brand->name}"
-                );
-
-            } catch (\Throwable $e) {
-
+            if (! $brand->fresh()->logo) {
                 $this->command->error(
-                    "ERROR {$brand->name}: {$e->getMessage()}"
+                    "FAILED {$brand->name}"
                 );
             }
         }

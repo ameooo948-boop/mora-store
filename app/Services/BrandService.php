@@ -50,7 +50,7 @@ class BrandService
     public function update(
         Brand $brand,
         UpdateBrandData $data,
-    ): bool {
+    ): Brand {
         return DB::transaction(function () use ($brand, $data) {
 
             $logo = $data->logo;
@@ -74,16 +74,16 @@ class BrandService
                 $updateData['logo'] = $logo;
             }
 
-            $result = $this->brandRepository->update(
+            $this->brandRepository->update(
                 $brand,
                 $updateData
             );
 
-            if ($result) {
-                Cache::forget('brands.active');
-            }
+            $brand->refresh();
 
-            return $result;
+            Cache::forget('brands.active');
+
+            return $brand;
         });
     }
 

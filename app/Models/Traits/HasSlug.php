@@ -7,15 +7,18 @@ use Illuminate\Support\Str;
 
 trait HasSlug
 {
-
     public static function bootHasSlug(): void
     {
         static::creating(function (Model $model) {
-            $model->slug = Str::slug($model->name);
+            if (empty($model->slug)) {
+                $model->slug = Str::slug($model->name);
+            }
         });
 
         static::updating(function (Model $model) {
-            $model->slug = Str::slug($model->name);
+            if ($model->isDirty('name')) {
+                $model->slug = Str::slug($model->name);
+            }
         });
     }
 }

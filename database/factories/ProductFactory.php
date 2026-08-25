@@ -458,6 +458,48 @@ class ProductFactory extends Factory
         ];
     }
 
+    public function withRelations(): static
+    {
+        return $this->state(function (array $attributes) {
+            $selected = collect(self::products())
+                ->firstWhere('slug', $attributes['slug']);
+
+            if (! $selected) {
+                return [];
+            }
+
+            return [
+                'category_id' => Category::firstOrCreate(
+                    ['slug' => $selected['category']],
+                    [
+                        'name' => str($selected['category'])
+                            ->replace('-', ' ')
+                            ->title()
+                            ->toString(),
+                        'status' => true,
+                        'sort_order' => 0,
+                    ]
+                )->id,
+
+                'brand_id' => Brand::firstOrCreate(
+                    ['slug' => $selected['brand']],
+                    [
+                        'name' => str($selected['brand'])
+                            ->replace('-', ' ')
+                            ->title()
+                            ->toString(),
+                        'status' => true,
+                        'sort_order' => 0,
+                    ]
+                )->id,
+
+                'slug' => $attributes['slug'].'-'.fake()->unique()->numberBetween(1, 999999),
+
+                'sku' => $attributes['sku'].'-'.fake()->unique()->numberBetween(1, 999999),
+            ];
+        });
+    }
+
     public function onSale(): static
     {
         return $this->state(function (array $attributes) {

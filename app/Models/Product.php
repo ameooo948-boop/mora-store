@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReviewStatus;
 use App\Models\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -143,10 +144,7 @@ class Product extends Model
     {
         return $this->hasMany(
             Review::class
-        )->where(
-            'status',
-            true
-        );
+        )->where('status', ReviewStatus::Approved);
     }
 
     public function getRouteKeyName(): string

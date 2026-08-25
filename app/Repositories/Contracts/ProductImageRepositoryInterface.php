@@ -13,6 +13,4 @@ interface ProductImageRepositoryInterface
     public function createMany(Product $product, array $images): Collection;
 
     public function delete(ProductImage $image): bool;
-
-    public function deleteByProduct(Product $product): void;
 }

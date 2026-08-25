@@ -17,60 +17,6 @@ class CategoryImageSeeder extends Seeder
                 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
             ],
 
-            'laptops' => [
-                'https://images.unsplash.com/photo-1496181133206-80ce9b88a853',
-            ],
-
-            'desktop-computers' => [
-                'https://images.unsplash.com/photo-1593640408182-31c70c8268f5',
-            ],
-
-            'computer-components' => [
-                'https://images.unsplash.com/photo-1591488320449-011701bb6704',
-            ],
-
-            'monitors' => [
-                'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf',
-            ],
-
-            'tvs' => [
-                'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1',
-            ],
-
-            'home-appliances' => [
-                'https://images.unsplash.com/photo-1584622650111-993a426fbf0a',
-            ],
-
-            'audio' => [
-                'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
-            ],
-
-            'air-conditioners' => [
-                'https://images.unsplash.com/photo-1621905252507-b35492cc74b4',
-            ],
-
-            'mobile-accessories' => [
-                'https://images.unsplash.com/photo-1585060544812-6b45742d762f',
-            ],
-            'computer-accessories' => [
-                'https://images.unsplash.com/photo-1527814050087-3793815479db',
-            ],
-
-            'networking' => [
-                'https://images.unsplash.com/photo-1558494949-ef010cbdcc31',
-            ],
-
-            'gaming' => [
-                'https://images.unsplash.com/photo-1593305841991-05c297ba4575',
-            ],
-
-            'smart-devices' => [
-                'https://images.unsplash.com/photo-1551817958-d9d86fb29431',
-            ],
-
-            'storage' => [
-                'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b',
-            ],
         ];
 
         foreach ($categories as $slug => $urls) {

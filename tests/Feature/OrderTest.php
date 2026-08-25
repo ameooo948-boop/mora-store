@@ -9,6 +9,8 @@ use App\Enums\PaymentStatus;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\OrderService;
@@ -314,5 +316,119 @@ class OrderTest extends TestCase
             'product_id' => $product->id,
             'quantity' => 3,
         ]);
+    }
+
+    public function test_delivered_cash_on_delivery_order_marks_payment_as_paid(): void
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $order = Order::create([
+            'user_id' => $user->id,
+            'order_number' => 'ORD-TEST-'.uniqid(),
+            'subtotal' => 200,
+            'shipping' => 0,
+            'discount' => 0,
+            'total' => 200,
+            'status' => OrderStatus::Shipped,
+
+            'shipping_name' => 'Test User',
+            'shipping_phone' => '01012345678',
+            'shipping_country' => 'Egypt',
+            'shipping_state' => 'Dakahlia',
+            'shipping_city' => 'Mansoura',
+            'shipping_address' => 'Test Address',
+            'shipping_postal_code' => '35511',
+        ]);
+
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'amount' => 200,
+            'payment_method' => PaymentMethod::CashOnDelivery,
+            'status' => PaymentStatus::Pending,
+            'paid_at' => null,
+        ]);
+
+        $this->orderService->updateStatus(
+            $order,
+            OrderStatus::Delivered,
+        );
+
+        $payment->refresh();
+        $order->refresh();
+
+        $this->assertSame(
+            OrderStatus::Delivered,
+            $order->status
+        );
+
+        $this->assertSame(
+            PaymentStatus::Paid,
+            $payment->status
+        );
+
+        $this->assertNotNull(
+            $payment->paid_at
+        );
+    }
+
+    public function test_cancelling_order_restores_product_stock(): void
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $product = Product::factory()
+            ->withRelations()
+            ->create([
+                'price' => 100,
+                'sale_price' => null,
+                'quantity' => 8,
+                'status' => true,
+            ]);
+
+        $order = Order::create([
+            'user_id' => $user->id,
+            'order_number' => 'ORD-STOCK-TEST-'.uniqid(),
+            'subtotal' => 200,
+            'shipping' => 0,
+            'discount' => 0,
+            'total' => 200,
+            'status' => OrderStatus::Processing,
+
+            'shipping_name' => 'Test User',
+            'shipping_phone' => '01012345678',
+            'shipping_country' => 'Egypt',
+            'shipping_state' => 'Dakahlia',
+            'shipping_city' => 'Mansoura',
+            'shipping_address' => 'Test Address',
+            'shipping_postal_code' => '35511',
+        ]);
+
+        $order->items()->create([
+            'product_id' => $product->id,
+            'price' => 100,
+            'quantity' => 2,
+            'total' => 200,
+        ]);
+
+        $this->orderService->updateStatus(
+            $order,
+            OrderStatus::Cancelled,
+        );
+
+        $product->refresh();
+        $order->refresh();
+
+        $this->assertSame(
+            OrderStatus::Cancelled,
+            $order->status
+        );
+
+        $this->assertSame(
+            10,
+            $product->quantity
+        );
     }
 }

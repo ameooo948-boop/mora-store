@@ -42,6 +42,11 @@ class OrderRepository implements OrderRepositoryInterface
     public function getUserOrders(User $user): LengthAwarePaginator
     {
         return $user->orders()
+            ->with([
+                'user',
+                'items.product.images',
+                'payment',
+            ])
             ->withCount('items')
             ->latest()
             ->paginate(10);
@@ -87,6 +92,7 @@ class OrderRepository implements OrderRepositoryInterface
             ->with([
                 'user',
                 'items.product.images',
+                'payment',
             ])
             ->where('user_id', $user->id)
             ->find($id);
