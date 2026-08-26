@@ -11,63 +11,219 @@ class CategoryImageSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = [
+        $queries = [
+            'mobile-phones' => 'smartphone',
+            'iphones' => 'iPhone smartphone',
+            'android-phones' => 'Android smartphone',
+            'budget-phones' => 'smartphone',
+            'mid-range-phones' => 'smartphone',
+            'flagship-phones' => 'premium smartphone',
 
-            'mobile-phones' => [
-                'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
-            ],
+            'laptops' => 'laptop',
+            'gaming-laptops' => 'gaming laptop',
+            'business-laptops' => 'business laptop',
+            'student-laptops' => 'laptop studying',
+            'ultrabooks' => 'ultrabook laptop',
+            '2-in-1-laptops' => '2 in 1 laptop',
+            'professional-laptops' => 'professional laptop',
 
+            'desktop-computers' => 'desktop computer',
+            'gaming-pcs' => 'gaming PC',
+            'office-pcs' => 'office desktop computer',
+            'all-in-one-pcs' => 'all in one computer',
+            'mini-pcs' => 'mini PC',
+
+            'graphics-cards' => 'graphics card GPU',
+            'processors' => 'computer processor CPU',
+            'motherboards' => 'computer motherboard',
+            'ram' => 'computer RAM',
+            'ssds' => 'SSD storage',
+            'hard-drives' => 'hard disk drive',
+            'power-supplies' => 'PC power supply',
+            'pc-cases' => 'gaming PC case',
+            'cpu-coolers' => 'CPU cooler',
+
+            'monitors' => 'computer monitor',
+            'gaming-monitors' => 'gaming monitor',
+            '4k-monitors' => '4K monitor',
+            'curved-monitors' => 'curved computer monitor',
+            'professional-monitors' => 'professional monitor',
+
+            'tvs' => 'smart television',
+            'smart-tvs' => 'smart TV',
+            'led-tvs' => 'LED television',
+            'oled-tvs' => 'OLED television',
+            'qled-tvs' => 'QLED television',
+            '4k-tvs' => '4K television',
+
+            'refrigerators' => 'modern refrigerator',
+            'washing-machines' => 'washing machine',
+            'dishwashers' => 'dishwasher',
+            'microwaves' => 'microwave oven',
+            'electric-ovens' => 'electric oven',
+            'vacuum-cleaners' => 'vacuum cleaner',
+
+            'air-conditioners' => 'air conditioner',
+            'split-air-conditioners' => 'split air conditioner',
+            'inverter-air-conditioners' => 'inverter air conditioner',
+            'portable-air-conditioners' => 'portable air conditioner',
+
+            'audio' => 'audio equipment',
+            'wireless-earbuds' => 'wireless earbuds',
+            'headphones' => 'headphones',
+            'bluetooth-speakers' => 'bluetooth speaker',
+            'soundbars' => 'soundbar',
+            'home-audio-systems' => 'home audio system',
+
+            'mobile-accessories' => 'smartphone accessories',
+            'chargers' => 'phone charger',
+            'charging-cables' => 'USB charging cable',
+            'power-banks' => 'power bank',
+            'phone-cases' => 'smartphone case',
+            'screen-protectors' => 'phone screen protector',
+            'wireless-chargers' => 'wireless charger',
+
+            'keyboards' => 'computer keyboard',
+            'gaming-keyboards' => 'gaming keyboard',
+            'mice' => 'computer mouse',
+            'gaming-mice' => 'gaming mouse',
+            'webcams' => 'computer webcam',
+            'mouse-pads' => 'gaming mouse pad',
+            'laptop-bags' => 'laptop bag',
+            'laptop-stands' => 'laptop stand',
+
+            'routers' => 'WiFi router',
+            'wifi-extenders' => 'WiFi extender',
+            'network-switches' => 'network switch',
+            'network-adapters' => 'network adapter',
+            'mesh-wifi-systems' => 'mesh WiFi system',
+
+            'playstation' => 'PlayStation console',
+            'xbox' => 'Xbox console',
+            'nintendo' => 'Nintendo console',
+            'gaming-controllers' => 'gaming controller',
+            'gaming-headsets' => 'gaming headset',
+            'gaming-accessories' => 'gaming accessories',
+
+            'smart-watches' => 'smart watch',
+            'smart-bands' => 'fitness smart band',
+            'smart-home-devices' => 'smart home technology',
+            'smart-cameras' => 'smart security camera',
+
+            'external-ssds' => 'external SSD',
+            'external-hard-drives' => 'external hard drive',
+            'usb-flash-drives' => 'USB flash drive',
+            'memory-cards' => 'SD memory card',
         ];
 
-        foreach ($categories as $slug => $urls) {
+        $apiKey = config('services.pexels.key');
 
-            $category = Category::where('slug', $slug)->first();
+        if (! $apiKey) {
+            $this->command?->error('PEXELS_API_KEY is missing.');
 
-            if (! $category) {
-                continue;
-            }
+            return;
+        }
 
-            $url = $urls[0].'?auto=format&fit=crop&w=1200&q=85';
+        $categories = Category::query()
+            ->whereNull('image')
+            ->where('status', true)
+            ->orderBy('id')
+            ->get();
+
+        foreach ($categories as $category) {
+
+            $query = $queries[$category->slug]
+                ?? $category->name.' technology product';
 
             try {
 
-                $response = Http::timeout(30)
-                    ->retry(2, 1000)
+                $search = Http::timeout(30)
                     ->withHeaders([
-                        'User-Agent' => 'Mozilla/5.0',
+                        'Authorization' => $apiKey,
                     ])
-                    ->get($url);
+                    ->get('https://api.pexels.com/v1/search', [
+                        'query' => $query,
+                        'orientation' => 'landscape',
+                        'size' => 'large',
+                        'per_page' => 5,
+                    ]);
 
-                if (! $response->successful()) {
-
-                    $this->command?->warn(
-                        "Category image failed: {$slug}"
+                if (! $search->successful()) {
+                    $this->command?->error(
+                        "{$category->slug}: Search HTTP {$search->status()}"
                     );
 
                     continue;
                 }
 
-                $path = "categories/{$slug}.jpg";
+                $photos = $search->json('photos', []);
+
+                if (empty($photos)) {
+                    $this->command?->warn(
+                        "{$category->slug}: No suitable photos found."
+                    );
+
+                    continue;
+                }
+
+                /*
+                 * Use the first search result.
+                 */
+                $photo = $photos[0];
+
+                $imageUrl =
+                    $photo['src']['large2x']
+                    ?? $photo['src']['large']
+                    ?? null;
+
+                if (! $imageUrl) {
+                    continue;
+                }
+
+                /*
+                 * Download the actual image.
+                 */
+                $image = Http::timeout(45)
+                    ->get($imageUrl);
+
+                if (! $image->successful()) {
+                    $this->command?->error(
+                        "{$category->slug}: Image download failed."
+                    );
+
+                    continue;
+                }
+
+                $path = "categories/{$category->slug}.jpg";
 
                 Storage::disk('public')->put(
                     $path,
-                    $response->body()
+                    $image->body()
                 );
 
-                $category->update([
+                $category->forceFill([
                     'image' => $path,
-                ]);
+                ])->save();
 
                 $this->command?->info(
-                    "Category image downloaded: {$slug}"
+                    "SUCCESS {$category->name}"
                 );
+
+                /*
+                 * Small delay.
+                 */
+                usleep(300000);
 
             } catch (\Throwable $e) {
 
                 $this->command?->error(
-                    "Category image error: {$slug}"
+                    "{$category->slug}: {$e->getMessage()}"
                 );
             }
         }
+
+        $this->command?->info(
+            'Category images imported successfully.'
+        );
     }
 }
