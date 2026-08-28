@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\DTOs\Profile\UpdateProfileData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Profile\UpdatePasswordRequest;
 use App\Http\Requests\Web\Profile\UpdateProfileRequest;
@@ -12,66 +13,55 @@ class ProfileController extends Controller
 {
     public function __construct(
         protected ProfileService $service,
-    ) {
-    }
+    ) {}
 
     public function edit(
         Request $request,
     ) {
-
         return view(
             'web.profile.edit',
             [
-
                 'user' => $request->user(),
 
                 'statistics' => $this->service
                     ->statistics(
                         $request->user()
                     ),
-
             ]
         );
-
     }
 
     public function update(
         UpdateProfileRequest $request,
     ) {
+        $data = new UpdateProfileData(
+            name: $request->validated('name'),
+            email: $request->validated('email'),
+            avatar: $request->file('avatar'),
+        );
 
         $this->service->updateProfile(
-
             $request->user(),
-
-            $request->validated()
-
+            $data
         );
 
         return back()->with(
-
             'success',
-
             'Profile updated successfully.'
-
         );
-
     }
 
     public function password()
     {
-
         return view(
             'web.profile.password'
         );
-
     }
 
     public function updatePassword(
         UpdatePasswordRequest $request,
     ) {
-
         $this->service->updatePassword(
-
             $request->user(),
 
             $request->string(
@@ -81,20 +71,13 @@ class ProfileController extends Controller
             $request->string(
                 'password'
             )
-
         );
 
         return redirect()
-
             ->route('profile.edit')
-
             ->with(
-
                 'success',
-
                 'Password updated successfully.'
-
             );
-
     }
 }
