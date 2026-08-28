@@ -179,13 +179,24 @@ class ProductService
 
     private function generateSku(): string
     {
-        $lastProduct = Product::latest('id')->first();
+        $lastProduct = Product::withTrashed()
+            ->latest('id')
+            ->first();
 
         $nextId = $lastProduct
             ? $lastProduct->id + 1
             : 1;
 
-        return 'PRD-'.str_pad($nextId, 6, '0', STR_PAD_LEFT);
+        do {
+            $sku = 'PRD-'.str_pad($nextId, 6, '0', STR_PAD_LEFT);
+            $nextId++;
+        } while (
+            Product::withTrashed()
+                ->where('sku', $sku)
+                ->exists()
+        );
+
+        return $sku;
     }
 
     public function latest(int $limit = 8)
