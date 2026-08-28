@@ -31,9 +31,11 @@ class AuthController extends Controller
             'phone' => $request->phone,
         ]);
 
+        $user->assignRole('customer');
+
         Auth::login($user);
 
-        event(new Registered($request->user()));
+        event(new Registered($user));
 
         return redirect()->route('home');
     }
