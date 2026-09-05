@@ -468,12 +468,21 @@
                                 Shipping
                             </span>
 
-                            <strong class="free-shipping">
+                            <strong id="summary-shipping">
+                                {{ number_format($totals['shipping'], 2) }} {{ setting('currency') }}
+                            </strong>
 
-                                <i class="bi bi-check-circle-fill"></i>
+                        </div>
 
-                                Free
 
+                        <div class="cart-summary-line">
+
+                            <span>
+                                Tax
+                            </span>
+
+                            <strong id="summary-tax">
+                                {{ number_format($totals['tax'], 2) }} {{ setting('currency') }}
                             </strong>
 
                         </div>

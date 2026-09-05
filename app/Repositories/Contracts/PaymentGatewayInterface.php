@@ -7,5 +7,5 @@ use App\Models\Payment;
 
 interface PaymentGatewayInterface
 {
-    public function pay(Order $order, Payment $payment): mixed;
+    public function pay(Order $order, Payment $payment, array $context = []): mixed;
 }

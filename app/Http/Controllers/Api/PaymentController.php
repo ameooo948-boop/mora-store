@@ -4,32 +4,25 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use App\Services\PaymentService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Services\OrderService;
 
 class PaymentController extends Controller
 {
-    use AuthorizesRequests;
-
     public function __construct(
-        protected PaymentService $paymentService
+        private readonly OrderService $orderService,
     ) {}
 
-    public function success(Payment $payment)
-    {
-        $this->authorize('view', $payment);
-
-        return redirect(config('app.frontend_url')."/orders/{$payment->order_id}?status=success");
-    }
-
+    /**
+     * Stripe sends the browser here after a cancelled Checkout session.
+     * The signed URL is the authorization mechanism because Stripe cannot
+     * send the user's Sanctum token/session.
+     */
     public function cancel(Payment $payment)
     {
-        $this->authorize('view', $payment);
+        $this->orderService->cancelUnpaidOrder($payment->order);
 
-        if ($payment->status->isPending()) {
-            $this->paymentService->markAsFailed($payment);
-        }
+        $frontendUrl = rtrim((string) config('app.frontend_url'), '/');
 
-        return redirect(config('app.frontend_url')."/orders/{$payment->order_id}?status=cancelled");
+        return redirect("{$frontendUrl}/orders/{$payment->order_id}?status=cancelled&payment_id={$payment->id}");
     }
 }

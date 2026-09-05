@@ -694,6 +694,23 @@
                         <div class="checkout-summary-line">
 
                             <span>
+                                Tax
+                            </span>
+
+                            <strong>
+
+                                {{ number_format($totals['tax'], 2) }}
+
+                                {{ setting('currency') }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="checkout-summary-line">
+
+                            <span>
                                 Discount
                             </span>
 

@@ -599,6 +599,11 @@
                     </div>
 
 
+                    <div class="summary-row">
+                        <span>Tax</span>
+                        <strong>{{ number_format($order->tax, 2) }}</strong>
+                    </div>
+
                     <div class="summary-row discount">
 
                         <span>

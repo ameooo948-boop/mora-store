@@ -7,6 +7,7 @@ use App\Enums\PaymentMethod;
 use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -282,6 +283,40 @@ class CheckoutTest extends TestCase
             'quantity' => 8,
         ]);
     }
+
+    public function test_checkout_totals_include_configured_shipping_and_tax(): void
+    {
+        Setting::updateOrCreate(['key' => 'shipping_cost'], ['value' => '25', 'type' => 'number']);
+        Setting::updateOrCreate(['key' => 'tax_percentage'], ['value' => '14', 'type' => 'number']);
+
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $product = Product::factory()
+            ->withRelations()
+            ->create([
+                'price' => 100,
+                'sale_price' => null,
+                'quantity' => 10,
+                'status' => true,
+            ]);
+
+        $cart = $user->cart()->create();
+
+        $cart->items()->create([
+            'product_id' => $product->id,
+            'quantity' => 2,
+        ]);
+
+        $totals = app(\App\Services\CartService::class)->calculateTotals($cart->fresh('items.product'));
+
+        $this->assertSame(200.0, $totals['subtotal']);
+        $this->assertSame(25.0, $totals['shipping']);
+        $this->assertSame(28.0, $totals['tax']);
+        $this->assertSame(253.0, $totals['total']);
+    }
+
     public function test_cart_can_be_cleared(): void
     {
         $user = User::factory()->create();

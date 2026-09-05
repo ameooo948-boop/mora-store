@@ -660,6 +660,20 @@ $currentStep = array_key_exists($currentStatus, $steps)
             <div class="summary-row">
 
                 <span>
+                    Tax
+                </span>
+
+                <strong>
+                    {{ $order->formatted_tax }}
+                    {{ setting('currency') }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
                     Discount
                 </span>
 

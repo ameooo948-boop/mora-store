@@ -25,7 +25,7 @@ class NewPaymentNotification extends Notification
 
             'title' => 'New Payment',
 
-            'message' => 'A payment has been completed successfully.',
+            'message' => 'A new payment has been created and is awaiting confirmation.',
 
             'payment_id' => $this->payment->id,
 

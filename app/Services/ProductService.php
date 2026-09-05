@@ -11,6 +11,7 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 use DomainException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProductService
 {
@@ -33,13 +34,19 @@ class ProductService
                 'brand_id' => $data->brandId,
                 'name' => $data->name,
                 'description' => $data->description,
-                'sku' => $this->generateSku(),
+                // Use a unique placeholder first; the auto-increment ID then gives us
+                // a deterministic human-friendly SKU without a race on MAX(id).
+                'sku' => 'TMP-' . Str::uuid(),
                 'price' => $data->price,
                 'sale_price' => $data->salePrice,
                 'quantity' => $data->quantity,
                 'status' => $data->status,
                 'featured' => $data->featured,
                 'sort_order' => $data->sortOrder,
+            ]);
+
+            $product->update([
+                'sku' => 'PRD-' . str_pad((string) $product->id, 6, '0', STR_PAD_LEFT),
             ]);
 
             if (! empty($images)) {
@@ -132,19 +139,24 @@ class ProductService
     public function delete(Product $product): bool
     {
         return DB::transaction(function () use ($product) {
-
             $product->loadMissing('images');
+            $paths = $product->images->pluck('image')->filter()->values()->all();
 
             foreach ($product->images as $image) {
-
-                if ($image->image) {
-                    $this->storageService->delete($image->image);
-                }
-
                 $this->productImageRepository->delete($image);
             }
 
-            return $this->productRepository->delete($product);
+            $deleted = $this->productRepository->delete($product);
+
+            if ($deleted) {
+                DB::afterCommit(function () use ($paths) {
+                    foreach ($paths as $path) {
+                        $this->storageService->delete($path);
+                    }
+                });
+            }
+
+            return $deleted;
         });
     }
 
@@ -175,28 +187,6 @@ class ProductService
     public function getStatistics(): array
     {
         return $this->productRepository->getStatistics();
-    }
-
-    private function generateSku(): string
-    {
-        $lastProduct = Product::withTrashed()
-            ->latest('id')
-            ->first();
-
-        $nextId = $lastProduct
-            ? $lastProduct->id + 1
-            : 1;
-
-        do {
-            $sku = 'PRD-'.str_pad($nextId, 6, '0', STR_PAD_LEFT);
-            $nextId++;
-        } while (
-            Product::withTrashed()
-                ->where('sku', $sku)
-                ->exists()
-        );
-
-        return $sku;
     }
 
     public function latest(int $limit = 8)
@@ -285,6 +275,10 @@ class ProductService
             $quantity,
             $reference,
         ) {
+
+            $product = Product::query()
+                ->lockForUpdate()
+                ->findOrFail($product->id);
 
             $beforeQuantity = $product->quantity;
 

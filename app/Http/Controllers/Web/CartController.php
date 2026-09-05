@@ -122,15 +122,10 @@ class CartController extends Controller
 
                         'quantity' => $cart->items->sum('quantity'),
 
-                        'subtotal' => number_format(
-                            $totals['subtotal'],
-                            2
-                        ),
-
-                        'total' => number_format(
-                            $totals['total'],
-                            2
-                        ),
+                        'subtotal' => number_format($totals['subtotal'], 2),
+                        'shipping' => number_format($totals['shipping'], 2),
+                        'tax' => number_format($totals['tax'], 2),
+                        'total' => number_format($totals['total'], 2),
                     ],
 
                     'cartCount' => $this->cartService->count(
@@ -199,15 +194,10 @@ class CartController extends Controller
 
                     'quantity' => $cart->items->sum('quantity'),
 
-                    'subtotal' => number_format(
-                        $totals['subtotal'],
-                        2
-                    ),
-
-                    'total' => number_format(
-                        $totals['total'],
-                        2
-                    ),
+                    'subtotal' => number_format($totals['subtotal'], 2),
+                    'shipping' => number_format($totals['shipping'], 2),
+                    'tax' => number_format($totals['tax'], 2),
+                    'total' => number_format($totals['total'], 2),
                 ],
 
                 'cartCount' => $this->cartService->count(

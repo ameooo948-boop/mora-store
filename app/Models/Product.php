@@ -80,7 +80,7 @@ class Product extends Model
     protected function finalPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->sale_price ?: $this->price,
+            get: fn () => $this->sale_price !== null ? (float) $this->sale_price : (float) $this->price,
         );
     }
 
@@ -96,9 +96,9 @@ class Product extends Model
     {
         return Attribute::make(
             get: fn () => $this->has_discount
-                ? round(
-                    (($this->price - $this->sale_price) / $this->price) * 100
-                )
+                ? ($this->price > 0
+                    ? round((($this->price - $this->sale_price) / $this->price) * 100)
+                    : 0)
                 : 0,
         );
     }

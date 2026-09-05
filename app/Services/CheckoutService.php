@@ -16,46 +16,31 @@ class CheckoutService
     public function getCheckoutData(User $user): array
     {
         $cart = $this->cartService->getCart($user->id);
-
         $totals = $this->cartService->calculateTotals($cart);
-
         $coupon = null;
 
-        if (session()->has('coupon')) {
-
+        if (session()->has('coupon.code')) {
             try {
-
                 $coupon = $this->couponService->applyCoupon(
                     session('coupon.code'),
                     $totals['subtotal']
                 );
 
-                $totals['discount'] = $coupon['discount'];
-
-                $totals['total'] =
-                    $totals['subtotal']
-                    - $coupon['discount']
-                    + $totals['shipping'];
+                $totals = $this->cartService->calculateTotals(
+                    $cart,
+                    (float) $coupon['discount']
+                );
             } catch (\Throwable) {
-
                 session()->forget('coupon');
             }
         }
 
         return [
-
             'cart' => $cart,
-
             'totals' => $totals,
-
             'coupon' => $coupon,
-
-            'addresses' => $this->addressService
-                ->getUserAddresses($user),
-
-            'paymentMethods' => $this->paymentService
-                ->availableMethods(),
-
+            'addresses' => $this->addressService->getUserAddresses($user),
+            'paymentMethods' => $this->paymentService->availableMethods(),
         ];
     }
 }

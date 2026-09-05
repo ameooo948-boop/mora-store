@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Services\OrderService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use App\Services\PaymentService;
 
 class PaymentController extends Controller
 {
     use AuthorizesRequests;
-
     public function __construct(
-        protected PaymentService $paymentService
+        private readonly OrderService $orderService,
     ) {}
 
     public function success(
@@ -27,7 +26,7 @@ class PaymentController extends Controller
             )
             ->with(
                 'success',
-                'Your payment has been received successfully.'
+                'Payment was submitted. We are confirming it now.'
             );
     }
 
@@ -36,10 +35,7 @@ class PaymentController extends Controller
     ) {
         $this->authorize('view', $payment);
 
-        if ($payment->status->isPending()) {
-            $this->paymentService
-                ->markAsFailed($payment);
-        }
+        $this->orderService->cancelUnpaidOrder($payment->order);
 
         return redirect()
             ->route(

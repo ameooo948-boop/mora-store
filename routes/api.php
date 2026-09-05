@@ -24,7 +24,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Api\StripeWebhookController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Api\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -63,8 +63,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:sanctum', 'role:admin'
     Route::delete('product-images/{productImage}', [ProductImageController::class, 'destroy']);
 });
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+
+Route::get('payments/{payment}/cancel', [PaymentController::class, 'cancel'])
+    ->middleware('signed')
+    ->name('api.payments.cancel');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -111,8 +115,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('home', [HomeController::class, 'index']);
 
-    Route::get('payments/{payment}/success', [PaymentController::class, 'success']);
-    Route::get('payments/{payment}/cancel', [PaymentController::class, 'cancel']);
 });
 
 Route::post('stripe/webhook', StripeWebhookController::class);

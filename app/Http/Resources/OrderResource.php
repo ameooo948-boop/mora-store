@@ -16,6 +16,13 @@ class OrderResource extends JsonResource
 
             'status' => $this->status?->value,
 
+            'subtotal' => $this->subtotal,
+            'shipping_cost' => $this->shipping,
+            'discount' => $this->discount,
+            'tax' => $this->tax,
+            'tax_percentage' => $this->tax > 0 && $this->subtotal > 0
+                ? round(($this->tax / max(0.01, $this->subtotal - $this->discount)) * 100, 2)
+                : 0,
             'total' => $this->total,
 
             'user' => UserResource::make(

@@ -53,6 +53,8 @@ class CategoryService
     ): Category {
         return DB::transaction(function () use ($category, $data) {
 
+            $this->assertValidParent($category, $data->parentId);
+
             $image = $data->image;
 
             if ($image) {
@@ -87,6 +89,25 @@ class CategoryService
             return $category;
 
         });
+    }
+
+    private function assertValidParent(Category $category, ?int $parentId): void
+    {
+        if ($parentId === null) {
+            return;
+        }
+
+        $visited = [$category->id => true];
+        $cursor = Category::query()->find($parentId);
+
+        while ($cursor) {
+            if (isset($visited[$cursor->id])) {
+                throw new \DomainException('A category cannot be placed inside one of its descendants.');
+            }
+
+            $visited[$cursor->id] = true;
+            $cursor = $cursor->parent_id ? Category::query()->find($cursor->parent_id) : null;
+        }
     }
 
     public function delete(Category $category): bool

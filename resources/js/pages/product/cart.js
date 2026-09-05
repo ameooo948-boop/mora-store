@@ -142,6 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('summary-subtotal').textContent =
                     `${data.summary.subtotal} ${data.currency ?? ''}`;
 
+                const summaryShipping = document.getElementById('summary-shipping');
+                const summaryTax = document.getElementById('summary-tax');
+
+                if (summaryShipping) {
+                    summaryShipping.textContent = `${data.summary.shipping} ${data.currency ?? ''}`;
+                }
+
+                if (summaryTax) {
+                    summaryTax.textContent = `${data.summary.tax} ${data.currency ?? ''}`;
+                }
+
                 document.getElementById('summary-total').innerHTML =
                     `${data.summary.total}
                     <small>${data.currency ?? ''}</small>`;

@@ -17,26 +17,14 @@ class AddressService
         private readonly AddressRepositoryInterface $addressRepository,
     ) {}
 
-    public function paginate(User $user): LengthAwarePaginator
-    {
-        return $this->addressRepository->paginate($user);
-    }
-
-    public function all(User $user): Collection
-    {
-        return $this->addressRepository->all($user);
-    }
-
-    public function find(User $user, int $id): ?Address
-    {
-        return $this->addressRepository->find($user, $id);
-    }
+    public function paginate(User $user): LengthAwarePaginator { return $this->addressRepository->paginate($user); }
+    public function all(User $user): Collection { return $this->addressRepository->all($user); }
+    public function find(User $user, int $id): ?Address { return $this->addressRepository->find($user, $id); }
 
     public function create(CreateAddressData $data): Address
     {
         return DB::transaction(function () use ($data) {
-
-            $user = $data->user;
+            $user = User::query()->lockForUpdate()->findOrFail($data->user->id);
 
             if ($data->isDefault) {
                 $this->addressRepository->clearDefault($user);
@@ -56,56 +44,58 @@ class AddressService
                 );
             }
 
-            return $this->addressRepository->create(
-                $data->toArray()
-            );
+            return $this->addressRepository->create($data->toArray());
         });
     }
 
-    public function update(
-        Address $address,
-        UpdateAddressData $data
-    ): bool {
+    public function update(Address $address, UpdateAddressData $data): bool
+    {
         return DB::transaction(function () use ($address, $data) {
+            $user = User::query()->lockForUpdate()->findOrFail($address->user_id);
 
             if ($data->isDefault) {
-                $this->addressRepository
-                    ->clearDefault($address->user);
+                $this->addressRepository->clearDefault($user);
             }
 
-            return $this->addressRepository->update(
-                $address,
-                $data->toArray()
-            );
+            $result = $this->addressRepository->update($address, $data->toArray());
+
+            // Keep one default address when the current default is edited.
+            if (! $this->addressRepository->getDefault($user)) {
+                $this->addressRepository->setDefault($address->fresh());
+            }
+
+            return $result;
         });
     }
 
     public function delete(Address $address): bool
     {
-        return $this->addressRepository
-            ->delete($address);
+        return DB::transaction(function () use ($address) {
+            $user = User::query()->lockForUpdate()->findOrFail($address->user_id);
+            $wasDefault = (bool) $address->is_default;
+            $result = $this->addressRepository->delete($address);
+
+            if ($result && $wasDefault) {
+                $replacement = $user->addresses()->latest('id')->first();
+                if ($replacement) {
+                    $this->addressRepository->setDefault($replacement);
+                }
+            }
+
+            return $result;
+        });
     }
 
     public function setDefault(Address $address): bool
     {
         return DB::transaction(function () use ($address) {
+            $user = User::query()->lockForUpdate()->findOrFail($address->user_id);
+            $this->addressRepository->clearDefault($user);
 
-            $this->addressRepository
-                ->clearDefault($address->user);
-
-            return $this->addressRepository
-                ->setDefault($address);
+            return $this->addressRepository->setDefault($address);
         });
     }
 
-    public function getDefault(User $user): ?Address
-    {
-        return $this->addressRepository
-            ->getDefault($user);
-    }
-
-    public function getUserAddresses(User $user)
-    {
-        return $user->addresses()->get();
-    }
+    public function getDefault(User $user): ?Address { return $this->addressRepository->getDefault($user); }
+    public function getUserAddresses(User $user) { return $user->addresses()->latest('id')->get(); }
 }

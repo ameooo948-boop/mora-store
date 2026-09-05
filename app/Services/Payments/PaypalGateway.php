@@ -11,6 +11,7 @@ class PaypalGateway implements PaymentGatewayInterface
     public function pay(
         Order $order,
         Payment $payment,
+        array $context = [],
     ): mixed {
 
         throw new \RuntimeException(

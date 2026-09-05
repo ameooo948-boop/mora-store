@@ -67,6 +67,7 @@ class StripeWebhookTest extends TestCase
                 'object' => [
                     'id' => $payment->transaction_id,
                     'object' => 'checkout.session',
+                    'payment_status' => 'paid',
                 ],
             ],
         ], JSON_THROW_ON_ERROR);
@@ -103,6 +104,13 @@ class StripeWebhookTest extends TestCase
 
         $this->assertNotNull(
             $payment->paid_at
+        );
+
+        $order->refresh();
+
+        $this->assertSame(
+            OrderStatus::Processing,
+            $order->status
         );
     }
 

@@ -38,129 +38,43 @@ use App\Repositories\Eloquent\StockMovementRepository;
 use App\Repositories\Eloquent\WishlistRepository;
 use App\Services\SettingService;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        $this->app->bind(
-            CategoryRepositoryInterface::class,
-            CategoryRepository::class
-        );
+        $bindings = [
+            CategoryRepositoryInterface::class => CategoryRepository::class,
+            BrandRepositoryInterface::class => BrandRepository::class,
+            ProductRepositoryInterface::class => ProductRepository::class,
+            ProductImageRepositoryInterface::class => ProductImageRepository::class,
+            CartRepositoryInterface::class => CartRepository::class,
+            CartItemRepositoryInterface::class => CartItemRepository::class,
+            OrderItemRepositoryInterface::class => OrderItemRepository::class,
+            OrderRepositoryInterface::class => OrderRepository::class,
+            AddressRepositoryInterface::class => AddressRepository::class,
+            WishlistRepositoryInterface::class => WishlistRepository::class,
+            CouponRepositoryInterface::class => CouponRepository::class,
+            PaymentRepositoryInterface::class => PaymentRepository::class,
+            OrderStatusHistoryRepositoryInterface::class => OrderStatusHistoryRepository::class,
+            StockMovementRepositoryInterface::class => StockMovementRepository::class,
+            ReviewRepositoryInterface::class => ReviewRepository::class,
+            DashboardRepositoryInterface::class => DashboardRepository::class,
+            SettingRepositoryInterface::class => SettingRepository::class,
+        ];
 
-        $this->app->bind(
-            BrandRepositoryInterface::class,
-            BrandRepository::class
-        );
-
-        $this->app->bind(
-            ProductRepositoryInterface::class,
-            ProductRepository::class
-        );
-
-        $this->app->bind(
-            ProductImageRepositoryInterface::class,
-            ProductImageRepository::class
-        );
-
-        $this->app->bind(
-            CartRepositoryInterface::class,
-            CartRepository::class
-        );
-
-        $this->app->bind(
-            CartItemRepositoryInterface::class,
-            CartItemRepository::class
-        );
-
-        $this->app->bind(
-            OrderItemRepositoryInterface::class,
-            OrderItemRepository::class
-        );
-
-        $this->app->bind(
-            OrderRepositoryInterface::class,
-            OrderRepository::class
-        );
-
-        $this->app->bind(
-            AddressRepositoryInterface::class,
-            AddressRepository::class
-        );
-
-        $this->app->bind(
-            WishlistRepositoryInterface::class,
-            WishlistRepository::class
-        );
-
-        $this->app->bind(
-            CouponRepositoryInterface::class,
-            CouponRepository::class
-        );
-
-        $this->app->bind(
-
-            PaymentRepositoryInterface::class,
-
-            PaymentRepository::class
-
-        );
-
-        $this->app->bind(
-            OrderStatusHistoryRepositoryInterface::class,
-            OrderStatusHistoryRepository::class
-        );
-
-        $this->app->bind(
-            StockMovementRepositoryInterface::class,
-            StockMovementRepository::class
-        );
-
-        $this->app->bind(
-            ReviewRepositoryInterface::class,
-            ReviewRepository::class
-        );
-
-        $this->app->bind(
-            DashboardRepositoryInterface::class,
-            DashboardRepository::class
-        );
-
-        $this->app->bind(
-            SettingRepositoryInterface::class,
-            SettingRepository::class
-        );
+        foreach ($bindings as $abstract => $concrete) {
+            $this->app->bind($abstract, $concrete);
+        }
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        if (! Schema::hasTable('settings')) {
-            return;
-        }
-
-        View::composer(
-            'web.layouts.navbar',
-            function ($view) {
-
-                $siteLogo = app(
-                    SettingService::class
-                )->value('site_logo');
-
-                $view->with(
-                    'siteLogo',
-                    $siteLogo
-                );
-            }
-        );
+        View::composer('web.layouts.navbar', function ($view) {
+            $view->with('siteLogo', app(SettingService::class)->value('site_logo'));
+        });
 
         Paginator::useBootstrapFive();
     }

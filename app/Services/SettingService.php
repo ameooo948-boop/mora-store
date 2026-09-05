@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\Setting\UpdateSettingData;
 use App\Repositories\Contracts\SettingRepositoryInterface;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,13 +54,10 @@ class SettingService
             'maintenance_mode' => $data->maintenanceMode,
         ];
 
+        $oldLogo = $data->siteLogo ? $this->get('site_logo') : null;
+        $oldFavicon = $data->siteFavicon ? $this->get('site_favicon') : null;
+
         if ($data->siteLogo) {
-            $oldLogo = $this->get('site_logo');
-
-            if ($oldLogo) {
-                Storage::disk('public')->delete($oldLogo);
-            }
-
             $settings['site_logo'] = $this->upload(
                 $data->siteLogo,
                 'settings'
@@ -67,12 +65,6 @@ class SettingService
         }
 
         if ($data->siteFavicon) {
-            $oldFavicon = $this->get('site_favicon');
-
-            if ($oldFavicon) {
-                Storage::disk('public')->delete($oldFavicon);
-            }
-
             $settings['site_favicon'] = $this->upload(
                 $data->siteFavicon,
                 'settings'
@@ -82,6 +74,15 @@ class SettingService
         $this->repository->updateMany($settings);
 
         $this->clearCache();
+
+        // Delete replaced files only after the database update succeeds.
+        foreach ([$oldLogo, $oldFavicon] as $oldFile) {
+            if ($oldFile) {
+                DB::afterCommit(function () use ($oldFile) {
+                    Storage::disk('public')->delete($oldFile);
+                });
+            }
+        }
     }
 
     private function upload(

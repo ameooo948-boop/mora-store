@@ -45,7 +45,7 @@ class CheckoutController extends Controller
 
             $order->load('payment');
 
-            $redirectUrl = $this->paymentService->processPayment($order->payment);
+            $redirectUrl = $this->paymentService->processPayment($order->payment, 'api');
 
             return response()->json([
                 'message' => 'Order placed successfully.',
@@ -56,6 +56,13 @@ class CheckoutController extends Controller
             report($exception);
 
             if (isset($order)) {
+                try {
+                    $this->orderService->cancelUnpaidOrder($order);
+                    $order->refresh();
+                } catch (\Throwable $cancelException) {
+                    report($cancelException);
+                }
+
                 return response()->json([
                     'message' => 'Unable to initialize payment.',
                     'order' => new OrderResource($order),

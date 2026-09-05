@@ -53,7 +53,8 @@ class CheckoutController extends Controller
             $order->load('payment');
 
             $redirectUrl = $this->paymentService->processPayment(
-                $order->payment
+                $order->payment,
+                'web',
             );
 
             return redirect()->to($redirectUrl);
@@ -62,6 +63,12 @@ class CheckoutController extends Controller
             report($exception);
 
             if (isset($order)) {
+
+                try {
+                    $this->orderService->cancelUnpaidOrder($order);
+                } catch (\Throwable $cancelException) {
+                    report($cancelException);
+                }
 
                 return redirect()
                     ->route('orders.show', $order)

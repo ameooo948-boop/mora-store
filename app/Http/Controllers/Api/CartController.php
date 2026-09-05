@@ -72,12 +72,14 @@ class CartController extends Controller
 
             return response()->json([
                 'message' => 'Cart updated successfully.',
-                'item_total' => number_format($item->product->final_price * $item->quantity, 2),
+                'item_total' => number_format((float) $item->product->final_price * $item->quantity, 2),
                 'currency' => setting('currency'),
                 'summary' => [
                     'items' => $cart->items->count(),
                     'quantity' => $cart->items->sum('quantity'),
                     'subtotal' => number_format($totals['subtotal'], 2),
+                    'shipping' => number_format($totals['shipping'], 2),
+                    'tax' => number_format($totals['tax'], 2),
                     'total' => number_format($totals['total'], 2),
                 ],
                 'cart_count' => $this->cartService->count($request->user()->id),
@@ -109,6 +111,8 @@ class CartController extends Controller
                 'items' => $cart->items->count(),
                 'quantity' => $cart->items->sum('quantity'),
                 'subtotal' => number_format($totals['subtotal'], 2),
+                'shipping' => number_format($totals['shipping'], 2),
+                'tax' => number_format($totals['tax'], 2),
                 'total' => number_format($totals['total'], 2),
             ],
             'cart_count' => $this->cartService->count($request->user()->id),

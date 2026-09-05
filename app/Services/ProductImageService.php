@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use App\Models\ProductImage;
-use Illuminate\Support\Facades\DB;
 use App\Repositories\Contracts\ProductImageRepositoryInterface;
-use App\Services\StorageService;
+use Illuminate\Support\Facades\DB;
 
 class ProductImageService
 {
@@ -17,13 +16,18 @@ class ProductImageService
     public function delete(ProductImage $image): bool
     {
         return DB::transaction(function () use ($image) {
+            $image->loadMissing('product');
 
             if ($image->product->images()->count() <= 1) {
                 return false;
             }
-            $this->storageService->delete($image->image);
 
+            $path = $image->image;
             $this->productImageRepository->delete($image);
+
+            DB::afterCommit(function () use ($path) {
+                $this->storageService->delete($path);
+            });
 
             return true;
         });

@@ -14,15 +14,15 @@ use App\Http\Controllers\Web\PaymentController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\ReviewController;
-use App\Http\Controllers\Web\StripeWebhookController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Web\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home')->middleware('auth', 'verified');
 
-Route::post('/register', [AuthController::class, 'register'])->name('register.submit')->middleware('guest');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit')->middleware('guest');
+Route::post('/register', [AuthController::class, 'register'])->name('register.submit')->middleware(['guest', 'throttle:5,1']);
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit')->middleware(['guest', 'throttle:5,1']);
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register')->middleware('guest');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -202,7 +202,7 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/forgot-password',
         [PasswordController::class, 'sendResetLink']
-    )->name('password.email');
+    )->middleware('throttle:5,1')->name('password.email');
 
     Route::get(
         '/reset-password/{token}',

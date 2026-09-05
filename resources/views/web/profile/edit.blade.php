@@ -62,6 +62,9 @@
                 </div>
 
             </div>
+                    <a href="{{ route('profile.password') }}" class="btn btn-outline-primary mt-3">
+                        <i class="bi bi-shield-lock me-1"></i> Change Password
+                    </a>
 
         </div>
 

@@ -54,6 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+    'stripe_checkout_timeout_minutes' => max(30, min(1440, (int) env('STRIPE_CHECKOUT_TIMEOUT_MINUTES', 30))),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

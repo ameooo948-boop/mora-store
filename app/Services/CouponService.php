@@ -159,6 +159,13 @@ class CouponService
         $coupon->increment('used_count');
     }
 
+    public function decrementUsedCount(Coupon $coupon): void
+    {
+        if ($coupon->used_count > 0) {
+            $coupon->decrement('used_count');
+        }
+    }
+
     public function findByCodeForUpdate(string $code): ?Coupon
     {
         return $this->couponRepository
